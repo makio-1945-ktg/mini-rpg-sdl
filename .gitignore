@@ -1,0 +1,4 @@
+*.o
+game
+mini_RPG
+save.dat
