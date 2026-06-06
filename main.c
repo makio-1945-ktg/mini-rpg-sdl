@@ -3,8 +3,8 @@
 #include <SDL2/SDL.h>
 
 #include "render.h"
-#include "player.h"
 #include "map.h"
+#include "battle.h"
 
 int main(void)
 {
@@ -33,6 +33,7 @@ int main(void)
             );
     bool running = true;
     bool menu_open = false;
+    bool battle_mode = false;
 
     while(running)
     {
@@ -45,12 +46,17 @@ int main(void)
                 running = false;
             }
 //プレイヤー操作
-            if(event.type == SDL_KEYDOWN && !menu_open)
+            if(event.type == SDL_KEYDOWN && !battle_mode)
             {
 
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                 {
                     menu_open = !menu_open;
+                }
+
+                if(menu_open)
+                {
+                    continue;
                 }
 
                 int new_x = player.x;
@@ -108,7 +114,25 @@ int main(void)
                 {
                     chest_event(new_x, new_y);
                 }
+
+                if(tile == 'E')
+                {
+                        battle_mode =true;
+
+                        enemy_event(new_x, new_y);
+                }
             }
+
+            if(event.type == SDL_KEYDOWN && battle_mode)
+            {
+                if(event.key.keysym.sym == SDLK_1)
+                {
+                    printf("攻撃！\n");
+
+                    battle_mode = false;
+                }
+            }
+
         }
 //プレイヤー表示
         SDL_SetRenderDrawColor(
@@ -146,9 +170,30 @@ int main(void)
             );
         }
 
+        if(battle_mode)
+        {
+            SDL_Rect battle = {
+                80,
+                50,
+                480,
+                300
+            };
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                120,0,0,255
+            );
+
+            SDL_RenderFillRect(
+                renderer,
+                &battle
+            );
+        }
+
         SDL_RenderPresent(renderer);
 
         SDL_Delay(16);
+
     }
 
     SDL_DestroyRenderer(renderer);

@@ -84,6 +84,15 @@ void draw_map(SDL_Renderer *renderer)
                     );
 
                     break;
+
+                case 'E':
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255,0,0,255
+                    );
+
+                    break;
             }
 
             SDL_RenderFillRect(renderer, &rect);

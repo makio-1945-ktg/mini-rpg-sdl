@@ -5,7 +5,7 @@
 char field_map[5][6] = {
 
     "MMMMM",
-    "MGNGM",
+    "MENGM",
     "MCGGM",
     "MGTGM",
     "MMMMM"
@@ -29,6 +29,13 @@ void npc_event(void)
 void chest_event(int x, int y)
 {
     printf("50G入手した！\n");
+
+    field_map[y][x] = 'G';
+}
+
+void enemy_event(int x, int y)
+{
+    printf("敵が現れた！\n");
 
     field_map[y][x] = 'G';
 }

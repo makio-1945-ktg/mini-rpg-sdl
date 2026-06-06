@@ -6,7 +6,7 @@ LDFLAGS = $(shell sdl2-config --libs)
 
 TARGET = game
 
-OBJS = main.o render.o player.o map.o
+OBJS = main.o render.o player.o map.o battle.o
 
 all: $(TARGET)
 

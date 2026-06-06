@@ -12,4 +12,6 @@ void npc_event(void);
 
 void chest_event(int x, int y);
 
+void enemy_event(int x, int y);
+
 #endif
