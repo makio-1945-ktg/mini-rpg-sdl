@@ -1,31 +1,30 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "battle.h"
 
-void battle_start(void)
-{
-    int enemy_hp = 10;
-
-    printf("\n");
-    printf("=== BATTLE ===\n");
-    printf("スライムが現れた！\n");
-
-    while(enemy_hp > 0)
+bool battle_attack(
+    Player *player,
+    Enemy *enemy
+    )
     {
-        printf("\n");
-        printf("スライム HP:%d\n", enemy_hp);
-        printf("1:攻撃\n");
+        enemy->hp -= 3;
 
-        int cmd;
-        scanf("%d", &cmd);
+        printf("攻撃！\n");
 
-        if(cmd == 1)
+        printf("敵HP:%d\n", enemy->hp);
+
+        if(enemy->hp <= 0)
         {
-            printf("攻撃！\n");
+            printf("敵を倒した！\n");
 
-            enemy_hp -= 3;
+            return true;
         }
-    }
 
-    printf("スライムを倒した！\n");
-}
+        player->hp -= 2;
+
+        printf("敵の攻撃！\n");
+        printf("プレイヤーHP:%d\n", player->hp);
+
+        return false;
+    }

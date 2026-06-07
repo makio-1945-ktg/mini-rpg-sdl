@@ -5,12 +5,20 @@
 #include "render.h"
 #include "map.h"
 #include "battle.h"
+#include "player.h"
 
 int main(void)
 {
     Player player = {
         2,
-        2
+        2,
+        20,
+        20
+    };
+
+    Enemy enemy = {
+        0,
+        0
     };
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -119,7 +127,14 @@ int main(void)
                 {
                         battle_mode =true;
 
+                        enemy.hp = 10;
+                        enemy.max_hp = 10;
+
+                        printf("プレイヤーHP:%d\n", player.hp);
+
                         enemy_event(new_x, new_y);
+
+                        printf("敵HP:%d\n", enemy.hp);
                 }
             }
 
@@ -127,12 +142,12 @@ int main(void)
             {
                 if(event.key.keysym.sym == SDLK_1)
                 {
-                    printf("攻撃！\n");
-
-                    battle_mode = false;
+                    if(battle_attack(&player, &enemy))
+                    {
+                        battle_mode = false;
+                    }
                 }
             }
-
         }
 //プレイヤー表示
         SDL_SetRenderDrawColor(

@@ -8,10 +8,7 @@ typedef struct {
 
     int hp;
     int max_hp;
-    int attack;
-    int defense;
-}Player;
 
-void init_player(Player *p);
+}Player;
 
 #endif
