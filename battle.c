@@ -8,11 +8,23 @@ bool battle_attack(
     Enemy *enemy
     )
     {
-        enemy->hp -= 3;
+    int player_damage =
+        player->attack - enemy->defense;
+
+    if(player_damage < 1)
+    {
+        player_damage = 1;
+    }
+
+    enemy->hp -= player_damage;
 
         printf("攻撃！\n");
+        printf("プレイヤーダメージ:%d\n",
+               player_damage);
 
-        printf("敵HP:%d\n", enemy->hp);
+        printf("%s HP:%d\n",
+               enemy->name,
+               enemy->hp);
 
         if(enemy->hp <= 0)
         {
@@ -20,11 +32,27 @@ bool battle_attack(
 
             return true;
         }
+    int enemy_damage =
 
-        player->hp -= 2;
+        enemy->attack - player->defense;
+
+    if(enemy_damage < 1)
+    {
+        enemy_damage = 1;
+    }
+
+        player->hp -= enemy_damage;
 
         printf("敵の攻撃！\n");
+        printf("敵ダメージ:%d\n",
+               enemy_damage);
         printf("プレイヤーHP:%d\n", player->hp);
 
+        if(player->hp <= 0)
+        {
+            printf("ゲームオーバー！\n");
+
+            return true;
+        }
         return false;
     }

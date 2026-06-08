@@ -1,4 +1,7 @@
 #include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include <SDL2/SDL.h>
 
@@ -7,16 +10,30 @@
 #include "battle.h"
 #include "player.h"
 
+EnemyData enemy_table[] = {
+
+    {"スライム", 10, 2, 1},
+    {"ゴブリン", 15, 3, 2},
+    {"オーク", 20, 5, 3}
+};
+
 int main(void)
 {
+    srand(time(NULL));
+
     Player player = {
         2,
         2,
-        20,
-        20
+        25,
+        25,
+        4,
+        1
     };
 
     Enemy enemy = {
+        "",
+        0,
+        0,
         0,
         0
     };
@@ -125,15 +142,32 @@ int main(void)
 
                 if(tile == 'E')
                 {
-                        battle_mode =true;
+                    battle_mode =true;
 
-                        enemy.hp = 10;
-                        enemy.max_hp = 10;
+                    int enemy_type = rand() % 3;
+
+                    strcpy(
+                        enemy.name,
+                        enemy_table[enemy_type].name
+                    );
+
+                    enemy.hp =
+                        enemy_table[enemy_type].hp;
+
+                    enemy.max_hp =
+                        enemy_table[enemy_type].hp;
+
+                    enemy.attack =
+                        enemy_table[enemy_type].attack;
+
+                    enemy.defense =
+                        enemy_table[enemy_type].defense;
 
                         printf("プレイヤーHP:%d\n", player.hp);
 
                         enemy_event(new_x, new_y);
 
+                        printf("%sが現れた！\n", enemy.name);
                         printf("敵HP:%d\n", enemy.hp);
                 }
             }
