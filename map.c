@@ -5,9 +5,9 @@
 char field_map[5][6] = {
 
     "MMMMM",
-    "MENGM",
-    "MCGGM",
-    "MGTGM",
+    "MENEM",
+    "MCGEM",
+    "METEM",
     "MMMMM"
 };
 

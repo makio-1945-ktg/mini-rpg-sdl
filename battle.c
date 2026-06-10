@@ -36,8 +36,39 @@ bool battle_attack(
                    enemy->exp);
 
             printf("現在EXP:%d\n",
-                   enemy->exp);
+                   player->exp);
 
+            player->gold += enemy->gold;
+
+            printf("%d GOLD獲得！\n",
+                    enemy->gold);
+
+            printf("所持金:%d G\n",
+                    player->gold);
+
+        if(player->exp >= 30)
+        {
+
+            player->level++;
+
+            player->exp -= 30;
+
+            player->max_hp += 5;
+            player->hp = player->max_hp;
+
+            player->max_mp += 2;
+            player->mp = player->max_mp;
+
+            player->attack += 1;
+            player->defense += 1;
+
+            printf("レベルアップ！\n");
+            printf("Lv:%d\n", player->level);
+            printf("HP:%d\n", player->hp);
+            printf("MP:%d\n", player->mp);
+            printf("ATK:%d\n", player->attack);
+            printf("DEF:%d\n", player->defense);
+        }
             return true;
         }
 
@@ -117,6 +148,40 @@ bool battle_heal(
     );
 }
 
+bool battle_item(
+    Player *player,
+    Enemy *enemy
+)
+{
+    if(player->potion <= 0)
+    {
+        printf("ポーションが無い！\n");
+
+        return false;
+    }
+
+    player->potion--;
+
+    player->hp += 20;
+
+    if(player->hp > player->max_hp)
+    {
+        player->hp = player->max_hp;
+    }
+
+    printf("ポーションを使った！\n");
+
+    printf("HP:%d\n",
+           player->hp);
+
+    printf("残り:%d個\n",
+           player->potion);
+
+    return enemy_turn(
+        player,
+        enemy
+    );
+}
 bool enemy_turn(
     Player *player,
     Enemy *enemy

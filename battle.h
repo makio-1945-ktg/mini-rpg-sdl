@@ -14,6 +14,7 @@ typedef struct {
     int defense;
 
     int exp;
+    int gold;
 
 } Enemy;
 
@@ -26,6 +27,7 @@ typedef struct {
     int defense;
 
     int exp;
+    int gold;
 
 } EnemyData;
 
@@ -42,6 +44,11 @@ bool battle_defend(
 );
 
 bool battle_heal(
+    Player *player,
+    Enemy *enemy
+);
+
+bool battle_item(
     Player *player,
     Enemy *enemy
 );

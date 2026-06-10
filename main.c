@@ -12,9 +12,9 @@
 
 EnemyData enemy_table[] = {
 
-    {"スライム", 10, 2, 1, 5},
-    {"ゴブリン", 15, 3, 2, 10},
-    {"オーク", 20, 5, 3, 20}
+    {"スライム", 10, 2, 1, 5, 3},
+    {"ゴブリン", 15, 3, 2, 10, 8},
+    {"オーク", 20, 5, 3, 20, 15}
 };
 
 int main(void)
@@ -26,18 +26,22 @@ int main(void)
         2,
         2,
 //プレイヤーHP
-        25,
-        25,
+        60,
+        60,
 //プレイヤーMP
         10,
         10,
 //プレイヤー攻撃力・防御力
-        4,
-        1,
-//プレイヤーLV & EXP
+        6,
+        2,
+//プレイヤーLV & EXP & GOLD
         1,
 
-        0
+        0,
+
+        0,
+//プレイヤーアイテム
+        2
     };
 
     Enemy enemy = {
@@ -176,9 +180,14 @@ int main(void)
                     enemy.exp =
                         enemy_table[enemy_type].exp;
 
+                    enemy.gold =
+                        enemy_table[enemy_type].gold;
+
                         printf("プレイヤーHP:%d\n", player.hp);
                         printf("プレイヤーMP:%d\n", player.mp);
                         printf("プレイヤーLv:%d\n", player.level);
+                        printf("プレイヤーATK:%d\n", player.attack);
+                        printf("プレイヤーDEF:%d\n", player.defense);
 
                         enemy_event(new_x, new_y);
 
@@ -209,6 +218,14 @@ int main(void)
                 if(event.key.keysym.sym == SDLK_3)
                 {
                     if(battle_heal(&player, &enemy))
+                    {
+                        battle_mode = false;
+                    }
+                }
+//アイテムコマンド
+                if(event.key.keysym.sym == SDLK_4)
+                {
+                    if(battle_item(&player, &enemy))
                     {
                         battle_mode = false;
                     }

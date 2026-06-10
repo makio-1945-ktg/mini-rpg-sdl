@@ -2,10 +2,10 @@
 #define PLAYER_H
 
 typedef struct {
-
+//プレイヤー座標
     int x;
     int y;
-
+//プレイヤーステータス
     int hp;
     int max_hp;
 
@@ -18,6 +18,10 @@ typedef struct {
     int level;
 
     int exp;
+
+    int gold;
+//プレイヤーアイテム
+    int potion;
 
 }Player;
 
