@@ -12,9 +12,9 @@
 
 EnemyData enemy_table[] = {
 
-    {"スライム", 10, 2, 1},
-    {"ゴブリン", 15, 3, 2},
-    {"オーク", 20, 5, 3}
+    {"スライム", 10, 2, 1, 5},
+    {"ゴブリン", 15, 3, 2, 10},
+    {"オーク", 20, 5, 3, 20}
 };
 
 int main(void)
@@ -22,12 +22,22 @@ int main(void)
     srand(time(NULL));
 
     Player player = {
+//プレイヤー初期位置
         2,
         2,
+//プレイヤーHP
         25,
         25,
+//プレイヤーMP
+        10,
+        10,
+//プレイヤー攻撃力・防御力
         4,
-        1
+        1,
+//プレイヤーLV & EXP
+        1,
+
+        0
     };
 
     Enemy enemy = {
@@ -163,7 +173,12 @@ int main(void)
                     enemy.defense =
                         enemy_table[enemy_type].defense;
 
+                    enemy.exp =
+                        enemy_table[enemy_type].exp;
+
                         printf("プレイヤーHP:%d\n", player.hp);
+                        printf("プレイヤーMP:%d\n", player.mp);
+                        printf("プレイヤーLv:%d\n", player.level);
 
                         enemy_event(new_x, new_y);
 
@@ -174,9 +189,26 @@ int main(void)
 
             if(event.type == SDL_KEYDOWN && battle_mode)
             {
+//攻撃コマンド
                 if(event.key.keysym.sym == SDLK_1)
                 {
                     if(battle_attack(&player, &enemy))
+                    {
+                        battle_mode = false;
+                    }
+                }
+//防御コマンド
+                if(event.key.keysym.sym == SDLK_2)
+                {
+                    if(battle_defend(&player, &enemy))
+                    {
+                        battle_mode = false;
+                    }
+                }
+//魔法コマンド
+                if(event.key.keysym.sym == SDLK_3)
+                {
+                    if(battle_heal(&player, &enemy))
                     {
                         battle_mode = false;
                     }

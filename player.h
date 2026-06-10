@@ -9,8 +9,15 @@ typedef struct {
     int hp;
     int max_hp;
 
+    int mp;
+    int max_mp;
+
     int attack;
     int defense;
+
+    int level;
+
+    int exp;
 
 }Player;
 
