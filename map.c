@@ -2,13 +2,18 @@
 
 #include "map.h"
 
-char field_map[5][6] = {
+char field_map[10][11] = {
 
-    "MMMMM",
-    "MENEM",
-    "MCGEM",
-    "METEM",
-    "MMMMM"
+    "MMMMMMMMMM",
+    "MNGGGGGTGM",
+    "MCGEGGGGEM",
+    "MEGGGGEGGM",
+    "MMMMMMMMGM",
+    "MGGGGGGGGM",
+    "MGGGGGGGGM",
+    "MGGGGGGGGM",
+    "MGGGGGGGGM",
+    "MMMMMMMMMM"
 };
 
 char get_tile(int x, int y)
@@ -26,11 +31,32 @@ void npc_event(void)
     printf("こんにちは！\n");
 }
 
-void chest_event(int x, int y)
-{
-    printf("50G入手した！\n");
+void chest_event(
+    Player *player,
+    int x,
+    int y
+)
 
-    field_map[y][x] = 'G';
+{
+    player->potion++;
+
+    printf("ポーションを入手した！\n");
+    printf("現在:%d個\n",
+           player->potion);
+
+    open_chest(
+        x,
+        y
+    );
+}
+
+void open_chest(
+    int x,
+    int y
+)
+
+{
+    field_map[y][x] = '.';
 }
 
 void enemy_event(int x, int y)

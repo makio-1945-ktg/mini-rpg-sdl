@@ -151,7 +151,11 @@ int main(void)
 
                 if(tile == 'C')
                 {
-                    chest_event(new_x, new_y);
+                    chest_event(
+                        &player,
+                        new_x,
+                        new_y
+                    );
                 }
 
                 if(tile == 'E')
