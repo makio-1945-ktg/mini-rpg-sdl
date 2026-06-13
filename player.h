@@ -22,6 +22,8 @@ typedef struct {
     int gold;
 //プレイヤーアイテム
     int potion;
+//プレイヤー装備
+    int sword;
 
 }Player;
 

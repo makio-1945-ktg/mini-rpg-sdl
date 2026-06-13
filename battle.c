@@ -122,6 +122,7 @@ bool battle_heal(
     if(player->mp < 3)
     {
         printf("MPが足りない！\n");
+        return false;
     }
 
     player->mp -= 3;

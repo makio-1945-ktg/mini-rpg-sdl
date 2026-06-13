@@ -5,7 +5,7 @@
 char field_map[10][11] = {
 
     "MMMMMMMMMM",
-    "MNGGGGGTGM",
+    "MGGGGGGTGM",
     "MCGEGGGGEM",
     "MEGGGGEGGM",
     "MMMMMMMMGM",
@@ -24,6 +24,60 @@ char get_tile(int x, int y)
 void town_event(void)
 {
     printf("町に到着しました！\n");
+}
+
+void inn_event(Player *player)
+{
+    if(player->gold < 10)
+    {
+        printf("お金が足りない！\n");
+        return;
+    }
+
+    player->gold -= 10;
+
+    player->hp = player->max_hp;
+    player->mp = player->max_mp;
+
+    printf("宿屋に泊まった！\n");
+
+    printf("HP:%d\n",
+           player->hp);
+
+    printf("MP:%d\n",
+           player->mp);
+
+    printf("所持金:%dG\n",
+           player->gold);
+}
+
+void equipment_shop_event(Player *player)
+{
+    if(player->sword)
+    {
+        printf("既に剣を持っている！\n");
+        return;
+    }
+
+    if(player->gold < 20)
+    {
+        printf("お金が足りない！\n");
+        return;
+    }
+
+    player->gold -= 20;
+
+    player->attack++;
+
+    player->sword = 1;
+
+    printf("剣を購入した！\n");
+
+    printf("ATK:%d\n",
+           player->attack);
+
+    printf("所持金:%dG\n",
+           player->gold);
 }
 
 void npc_event(void)
@@ -64,4 +118,21 @@ void enemy_event(int x, int y)
     printf("敵が現れた！\n");
 
     field_map[y][x] = 'G';
+}
+
+char town_map[8][9] = {
+
+    "MMMMMMM",
+    "MGGGGGM",
+    "MGIGQGM",
+    "MGGGGGM",
+    "MGNGGGM",
+    "MGGGGGM",
+    "MGGOGGM",
+    "MMMMMMM"
+};
+
+char get_town_tile(int x, int y)
+{
+    return town_map[y][x];
 }

@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "render.h"
 #include "map.h"
@@ -39,20 +40,31 @@ int main(void)
 
         0,
 
-        0,
+        10,
 //プレイヤーアイテム
-        2
+        2,
+//プレイヤー装備
+        0
+
     };
 
-    Enemy enemy = {
-        "",
-        0,
-        0,
-        0,
-        0
-    };
+    Enemy enemy = {"",0,0,0,0,0};
 
     SDL_Init(SDL_INIT_VIDEO);
+
+    if(SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        printf("SDL error: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    TTF_Init();
+
+    if(TTF_Init() != 0)
+    {
+        printf("TTF error: %s\n", TTF_GetError());
+        return 1;
+    }
 
     SDL_Window *window =
         SDL_CreateWindow(
@@ -73,6 +85,20 @@ int main(void)
     bool running = true;
     bool menu_open = false;
     bool battle_mode = false;
+    bool in_town =false;
+
+    TTF_Font *font =
+        TTF_OpenFont(
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+            24
+        );
+
+    if(font == NULL)
+    {
+        printf("font load error: %s\n",
+               TTF_GetError());
+        return 1;
+    }
 
     while(running)
     {
@@ -121,13 +147,22 @@ int main(void)
                 }
 
                 //壁判定
-                if(get_tile(new_x, new_y) != 'M')
-                {
-                    player.x = new_x;
-                    player.y = new_y;
-                }
+                char tile;
 
-                char tile = get_tile(new_x, new_y);
+                if(in_town)
+                {
+                    tile = get_town_tile(
+                        new_x,
+                        new_y
+                    );
+                }
+                else
+                {
+                    tile = get_tile(
+                        new_x,
+                        new_y
+                    );
+                }
 
                 if(tile != 'M')
                 {
@@ -138,15 +173,40 @@ int main(void)
                 if(tile == 'T')
                 {
                     town_event();
+
+                    in_town = true;
+
+                    player.x = 3;
+                    player.y = 6;
                 }
-                else
+
+                if(in_town && tile == 'O')
                 {
-                    printf(" \n");
+                    printf("町を出た！\n");
+
+                    in_town = false;
+
+                    player.x = 6;
+                    player.y = 1;
                 }
 
                 if(tile == 'N')
                 {
                     npc_event();
+                }
+
+                if(tile == 'I')
+                {
+                    inn_event(
+                        &player
+                    );
+                }
+
+                if(tile == 'Q')
+                {
+                    equipment_shop_event(
+                        &player
+                    );
                 }
 
                 if(tile == 'C')
@@ -156,6 +216,11 @@ int main(void)
                         new_x,
                         new_y
                     );
+                }
+
+                else
+                {
+                    printf(" \n");
                 }
 
                 if(tile == 'E')
@@ -187,11 +252,16 @@ int main(void)
                     enemy.gold =
                         enemy_table[enemy_type].gold;
 
-                        printf("プレイヤーHP:%d\n", player.hp);
-                        printf("プレイヤーMP:%d\n", player.mp);
-                        printf("プレイヤーLv:%d\n", player.level);
-                        printf("プレイヤーATK:%d\n", player.attack);
-                        printf("プレイヤーDEF:%d\n", player.defense);
+                        printf("プレイヤーHP:%d\n",
+                                player.hp);
+                        printf("プレイヤーMP:%d\n",
+                                player.mp);
+                        printf("プレイヤーLv:%d\n",
+                                player.level);
+                        printf("プレイヤーATK:%d\n",
+                                player.attack);
+                        printf("プレイヤーDEF:%d\n",
+                                player.defense);
 
                         enemy_event(new_x, new_y);
 
@@ -244,7 +314,14 @@ int main(void)
 
         SDL_RenderClear(renderer);
 
-        draw_map(renderer);
+        if(in_town)
+        {
+            draw_town_map(renderer);
+        }
+        else
+        {
+            draw_map(renderer);
+        }
 
         draw_player(
             renderer,
@@ -271,15 +348,24 @@ int main(void)
                 &menu
             );
         }
-
+//戦闘描画
         if(battle_mode)
         {
             SDL_Rect battle = {
                 80,
                 50,
                 480,
-                300
+                320
             };
+
+            char enemy_info[64];
+
+            sprintf(
+                enemy_info,
+                "%s HP:%d",
+                enemy.name,
+                enemy.hp
+            );
 
             SDL_SetRenderDrawColor(
                 renderer,
@@ -290,6 +376,46 @@ int main(void)
                 renderer,
                 &battle
             );
+
+            draw_text(
+                renderer,
+                font,
+                "Battle!",
+                100,
+                70
+            );
+
+            draw_text(
+                renderer,
+                font,
+                enemy_info,
+                100,
+                110
+            );
+
+            draw_text(renderer, font, "1: Attack", 100, 160);
+            draw_text(renderer, font, "2: Defend", 100, 200);
+            draw_text(renderer, font, "3: Heal", 100, 240);
+            draw_text(renderer, font, "4: Item", 100, 280);
+
+            char player_info[64];
+
+            sprintf(
+                player_info,
+                "HP:%d/%d MP:%d/%d",
+                player.hp,
+                player.max_hp,
+                player.mp,
+                player.max_mp
+            );
+
+            draw_text(
+                renderer,
+                font,
+                player_info,
+                320,
+                320
+            );
         }
 
         SDL_RenderPresent(renderer);
@@ -298,9 +424,12 @@ int main(void)
 
     }
 
+    TTF_CloseFont(font);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
+    TTF_Quit();
     SDL_Quit();
 
     return 0;

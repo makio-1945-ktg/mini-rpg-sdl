@@ -2,7 +2,7 @@ CC = gcc
 
 CFLAGS = -Wall -O2 $(shell sdl2-config --cflags)
 
-LDFLAGS = $(shell sdl2-config --libs)
+LDFLAGS = $(shell sdl2-config --libs) -lSDL2_ttf
 
 TARGET = game
 
