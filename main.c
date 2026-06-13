@@ -27,8 +27,8 @@ int main(void)
         2,
         2,
 //プレイヤーHP
-        60,
-        60,
+        30,
+        30,
 //プレイヤーMP
         10,
         10,
@@ -50,15 +50,11 @@ int main(void)
 
     Enemy enemy = {"",0,0,0,0,0};
 
-    SDL_Init(SDL_INIT_VIDEO);
-
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         printf("SDL error: %s\n", SDL_GetError());
         return 1;
     }
-
-    TTF_Init();
 
     if(TTF_Init() != 0)
     {
@@ -71,8 +67,8 @@ int main(void)
             "Mini RPG",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            640,
-            480,
+            720,
+            560,
             0
         );
 
@@ -265,8 +261,7 @@ int main(void)
 
                         enemy_event(new_x, new_y);
 
-                        printf("%sが現れた！\n", enemy.name);
-                        printf("敵HP:%d\n", enemy.hp);
+                        add_battle_log("敵が現れた！");
                 }
             }
 
@@ -353,18 +348,19 @@ int main(void)
         {
             SDL_Rect battle = {
                 80,
-                50,
+                40,
                 480,
-                320
+                440
             };
 
             char enemy_info[64];
 
             sprintf(
                 enemy_info,
-                "%s HP:%d",
+                "%s HP:%d/%d",
                 enemy.name,
-                enemy.hp
+                enemy.hp,
+                enemy.max_hp
             );
 
             SDL_SetRenderDrawColor(
@@ -393,6 +389,14 @@ int main(void)
                 110
             );
 
+            draw_hp_bar(
+                renderer,
+                430,
+                120,
+                enemy.hp,
+                enemy.max_hp
+            );
+
             draw_text(renderer, font, "1: Attack", 100, 160);
             draw_text(renderer, font, "2: Defend", 100, 200);
             draw_text(renderer, font, "3: Heal", 100, 240);
@@ -413,9 +417,28 @@ int main(void)
                 renderer,
                 font,
                 player_info,
-                320,
+                100,
                 320
             );
+
+            draw_hp_bar(
+                renderer,
+                430,
+                330,
+                player.hp,
+                player.max_hp
+            );
+
+            for(int i = 0; i < LOG_LINES; i++)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    battle_logs[i],
+                    120,
+                    350 + i * 25
+                );
+            }
         }
 
         SDL_RenderPresent(renderer);

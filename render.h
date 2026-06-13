@@ -26,4 +26,12 @@ void draw_player(
     int y
 );
 
+void draw_hp_bar(
+    SDL_Renderer *renderer,
+    int x,
+    int y,
+    int current_hp,
+    int max_hp
+);
+
 #endif

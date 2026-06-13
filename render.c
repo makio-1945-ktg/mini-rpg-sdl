@@ -219,3 +219,63 @@ void draw_town_map(
         }
     }
 }
+
+void draw_hp_bar(
+    SDL_Renderer *renderer,
+    int x,
+    int y,
+    int current_hp,
+    int max_hp
+)
+{
+    SDL_Rect border = {
+        x,
+        y,
+        104,
+        24
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        255,255,255,255
+    );
+    SDL_RenderDrawRect(
+        renderer,
+        &border
+    );
+
+    int bar_width =
+        (100 * current_hp) / max_hp;
+
+    SDL_Rect hp_bar = {
+        x + 2,
+        y + 2,
+        bar_width,
+        20
+    };
+
+    int percent =
+        (100 * current_hp) / max_hp;
+
+    if(percent > 60)
+        SDL_SetRenderDrawColor(
+            renderer,
+            0,255,0,255
+        );
+    else if(percent > 20)
+        SDL_SetRenderDrawColor(
+            renderer,
+            160,255,0,255
+        );
+    else
+        SDL_SetRenderDrawColor(
+            renderer,
+            255,0,0,255
+        );
+
+    SDL_RenderFillRect(
+        renderer,
+        &hp_bar
+    );
+}
+

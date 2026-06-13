@@ -3,6 +3,12 @@
 
 #include "player.h"
 
+#define LOG_LINES 3
+
+extern char battle_logs[LOG_LINES][128];
+
+void add_battle_log(const char *message);
+
 typedef struct {
 
     char name[20];

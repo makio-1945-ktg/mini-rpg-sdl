@@ -1,7 +1,24 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "battle.h"
+
+#define LOG_LINES 3
+
+    char battle_logs[LOG_LINES][128] = {
+        "",
+        "",
+        ""
+    };
+
+void add_battle_log(const char *message)
+{
+    strcpy(battle_logs[0], battle_logs[1]);
+    strcpy(battle_logs[1], battle_logs[2]);
+    strcpy(battle_logs[2], message);
+}
+
 
 bool battle_attack(
     Player *player,
@@ -18,9 +35,9 @@ bool battle_attack(
 
     enemy->hp -= player_damage;
 
-        printf("攻撃！\n");
-        printf("プレイヤーダメージ:%d\n",
-               player_damage);
+        char msg[128];
+        sprintf(msg,"%dダメージ！", player_damage);
+        add_battle_log(msg);
 
         printf("%s HP:%d\n",
                enemy->name,
@@ -98,9 +115,9 @@ bool battle_defend(
 
     player->hp -= enemy_damage;
 
-    printf("敵の攻撃！\n");
-    printf("敵ダメージ:%d\n",
-           enemy_damage);
+    char msg[128];
+    sprintf(msg,"防御！%dダメージ！", enemy_damage);
+    add_battle_log(msg);
     printf("プレイヤーHP:%d\n",
            player->hp);
 
@@ -134,8 +151,7 @@ bool battle_heal(
         player->hp = player->max_hp;
     }
 
-    printf("ヒールを唱えた！\n");
-    printf("HPが10回復した！\n");
+    add_battle_log("ヒール！ HP+10");
 
     printf("HP:%d\n",
            player->hp);
@@ -199,9 +215,10 @@ bool enemy_turn(
 
     player->hp -= enemy_damage;
 
-    printf("敵の攻撃！\n");
-    printf("敵ダメージ:%d\n",
-           enemy_damage);
+    char msg[128];
+    sprintf(msg,"%dダメージ！", enemy_damage);
+    add_battle_log(msg);
+
     printf("プレイヤーHP:%d\n",
            player->hp);
 
@@ -214,3 +231,4 @@ bool enemy_turn(
 
     return false;
 }
+
