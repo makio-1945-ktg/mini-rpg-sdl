@@ -6,11 +6,11 @@
 
 #define LOG_LINES 3
 
-    char battle_logs[LOG_LINES][128] = {
-        "",
-        "",
-        ""
-    };
+char battle_logs[LOG_LINES][128] = {
+    "",
+    "",
+    ""
+};
 
 void add_battle_log(const char *message)
 {
@@ -19,10 +19,26 @@ void add_battle_log(const char *message)
     strcpy(battle_logs[2], message);
 }
 
+void show_damage_popup(
+    DamagePopup *popup,
+    int damage,
+    int x,
+    int y
+)
+{
+    sprintf(popup->text, "-%d", damage);
+
+    popup->x = x;
+    popup->y = y;
+
+    popup->timer = 60;
+    popup->active = true;
+}
 
 bool battle_attack(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    DamagePopup *popup
     )
     {
     int player_damage =
@@ -32,6 +48,13 @@ bool battle_attack(
     {
         player_damage = 1;
     }
+
+    show_damage_popup(
+        popup,
+        player_damage,
+        460,
+        90
+    );
 
     enemy->hp -= player_damage;
 

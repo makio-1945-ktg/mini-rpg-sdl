@@ -5,11 +5,13 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
-#include "render.h"
+
 #include "map.h"
 #include "battle.h"
 #include "player.h"
+#include "render.h"
 
 EnemyData enemy_table[] = {
 
@@ -48,11 +50,25 @@ int main(void)
 
     };
 
-    Enemy enemy = {"",0,0,0,0,0};
+    Enemy enemy = {"",0,0,0,0,0,0};
+
+    DamagePopup popup = {"", 0, 0, 0, false};
+
+    EnemySprite enemy_sprite = {
+        430,
+        120,
+        0
+    };
 
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         printf("SDL error: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+    {
+        printf("IMG error: %s\n", IMG_GetError());
         return 1;
     }
 
@@ -78,11 +94,37 @@ int main(void)
             -1,
             SDL_RENDERER_ACCELERATED
             );
+
+    SDL_Texture *slime_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/slime.png"
+        );
+
+    SDL_Texture *goblin_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/goblin.png"
+        );
+
+    SDL_Texture *orc_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/orc.png"
+        );
+
+    if(!slime_texture) {
+        printf("%s\n", IMG_GetError());
+    }
+
+    SDL_Texture *current_enemy_texture = NULL;
+
+//戦闘・MAP関数呼び出し
     bool running = true;
     bool menu_open = false;
     bool battle_mode = false;
     bool in_town =false;
-
+//フォント
     TTF_Font *font =
         TTF_OpenFont(
             "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
@@ -225,6 +267,21 @@ int main(void)
 
                     int enemy_type = rand() % 3;
 
+                    if(enemy_type == 0)
+                    {
+                        current_enemy_texture = slime_texture;
+                    }
+
+                    else if(enemy_type == 1)
+                    {
+                        current_enemy_texture = goblin_texture;
+                    }
+
+                    else
+                    {
+                        current_enemy_texture = orc_texture;
+                    }
+
                     strcpy(
                         enemy.name,
                         enemy_table[enemy_type].name
@@ -270,7 +327,9 @@ int main(void)
 //攻撃コマンド
                 if(event.key.keysym.sym == SDLK_1)
                 {
-                    if(battle_attack(&player, &enemy))
+                    enemy_sprite.shake_timer = 12;
+
+                    if(battle_attack(&player, &enemy, &popup))
                     {
                         battle_mode = false;
                     }
@@ -343,6 +402,30 @@ int main(void)
                 &menu
             );
         }
+//Popup描画
+        if(popup.active)
+        {
+            popup.y--;
+            popup.timer--;
+
+            if(popup.timer <= 0)
+            {
+                popup.active = false;
+            }
+        }
+//Shake描画
+        int enemy_draw_x = enemy_sprite.x;
+
+        if(enemy_sprite.shake_timer > 0)
+        {
+            if(enemy_sprite.shake_timer % 2 == 0)
+                enemy_draw_x += 5;
+            else
+                enemy_draw_x -= 5;
+
+            enemy_sprite.shake_timer--;
+        }
+
 //戦闘描画
         if(battle_mode)
         {
@@ -397,6 +480,20 @@ int main(void)
                 enemy.max_hp
             );
 
+            SDL_Rect enemy_rect = {
+                enemy_draw_x,
+                enemy_sprite.y,
+                96,
+                96
+            };
+
+            SDL_RenderCopy(
+                renderer,
+                current_enemy_texture,
+                NULL,
+                &enemy_rect
+            );
+
             draw_text(renderer, font, "1: Attack", 100, 160);
             draw_text(renderer, font, "2: Defend", 100, 200);
             draw_text(renderer, font, "3: Heal", 100, 240);
@@ -439,6 +536,17 @@ int main(void)
                     350 + i * 25
                 );
             }
+
+            if(popup.active)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    popup.text,
+                    popup.x,
+                    popup.y
+                );
+            }
         }
 
         SDL_RenderPresent(renderer);
@@ -451,9 +559,13 @@ int main(void)
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_DestroyTexture(slime_texture);
+    SDL_DestroyTexture(goblin_texture);
+    SDL_DestroyTexture(orc_texture);
 
     TTF_Quit();
     SDL_Quit();
+    IMG_Quit();
 
     return 0;
 }

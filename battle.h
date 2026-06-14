@@ -11,6 +11,16 @@ void add_battle_log(const char *message);
 
 typedef struct {
 
+    char text[32];
+    int x;
+    int y;
+    int timer;
+    bool active;
+
+} DamagePopup;
+
+typedef struct {
+
     char name[20];
 
     int hp;
@@ -37,11 +47,18 @@ typedef struct {
 
 } EnemyData;
 
+typedef struct {
+    int x;
+    int y;
+    int shake_timer;
+} EnemySprite;
+
 void battle_start(void);
 
 bool battle_attack(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    DamagePopup *popup
 );
 
 bool battle_defend(
