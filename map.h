@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-extern char field_map[10][11];
+extern char field_map[15][21];
 
 extern char town_map[8][9];
 

@@ -31,9 +31,9 @@ void draw_player(
 
 void draw_map(SDL_Renderer *renderer)
 {
-    for (int y = 0; y < 10; y++)
+    for (int y = 0; y < 15; y++)
     {
-        for (int x = 0; x < 10; x++)
+        for (int x = 0; x < 20; x++)
         {
             SDL_Rect rect = {
                 x * TILE_SIZE,
@@ -49,6 +49,13 @@ void draw_map(SDL_Renderer *renderer)
                     SDL_SetRenderDrawColor(
                         renderer,
                         100,100,100,255
+                    );
+                    break;
+
+                case 'W':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0,100,255,255
                     );
                     break;
 

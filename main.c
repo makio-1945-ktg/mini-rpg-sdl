@@ -54,6 +54,10 @@ int main(void)
 
     DamagePopup popup = {"", 0, 0, 0, false};
 
+    HitEffect hit_effect = {0, false};
+    SlashEffect slash_effect = {0, false};
+    FireEffect fire_effect = {0, false};
+
     EnemySprite enemy_sprite = {
         430,
         120,
@@ -152,6 +156,9 @@ int main(void)
             if(event.type == SDL_KEYDOWN && !battle_mode)
             {
 
+                int new_x = player.x;
+                int new_y = player.y;
+
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                 {
                     menu_open = !menu_open;
@@ -161,9 +168,6 @@ int main(void)
                 {
                     continue;
                 }
-
-                int new_x = player.x;
-                int new_y = player.y;
 
                 switch(event.key.keysym.sym)
                 {
@@ -184,8 +188,19 @@ int main(void)
                         break;
                 }
 
-                //壁判定
-                char tile;
+                char tile = get_tile(new_x, new_y);
+
+                if(get_tile(new_x, new_y) != 'M')
+                {
+                    player.x = new_x;
+                    player.y = new_y;
+                }
+
+                if(get_tile(new_x, new_y) != 'W')
+                {
+                    player.x = new_x;
+                    player.y = new_y;
+                }
 
                 if(in_town)
                 {
@@ -200,12 +215,6 @@ int main(void)
                         new_x,
                         new_y
                     );
-                }
-
-                if(tile != 'M')
-                {
-                    player.x = new_x;
-                    player.y = new_y;
                 }
 
                 if(tile == 'T')
@@ -329,7 +338,13 @@ int main(void)
                 {
                     enemy_sprite.shake_timer = 12;
 
-                    if(battle_attack(&player, &enemy, &popup))
+                    if(battle_attack(
+                            &player,
+                            &enemy,
+                            &popup,
+                            &hit_effect,
+                            &slash_effect
+                     ))
                     {
                         battle_mode = false;
                     }
@@ -342,7 +357,7 @@ int main(void)
                         battle_mode = false;
                     }
                 }
-//魔法コマンド
+//ヒールコマンド
                 if(event.key.keysym.sym == SDLK_3)
                 {
                     if(battle_heal(&player, &enemy))
@@ -350,8 +365,20 @@ int main(void)
                         battle_mode = false;
                     }
                 }
-//アイテムコマンド
+//ファイアコマンド
                 if(event.key.keysym.sym == SDLK_4)
+                {
+                    if(battle_fire(
+                            &player,
+                            &enemy,
+                            &fire_effect
+                    ))
+                    {
+                        battle_mode = false;
+                    }
+                }
+//アイテムコマンド
+                if(event.key.keysym.sym == SDLK_5)
                 {
                     if(battle_item(&player, &enemy))
                     {
@@ -402,7 +429,7 @@ int main(void)
                 &menu
             );
         }
-//Popup描画
+//戦闘特殊エフェクト描画
         if(popup.active)
         {
             popup.y--;
@@ -413,7 +440,27 @@ int main(void)
                 popup.active = false;
             }
         }
-//Shake描画
+
+        if(hit_effect.active)
+        {
+            hit_effect.timer--;
+
+            if(hit_effect.timer <= 0)
+            {
+                hit_effect.active = false;
+            }
+        }
+
+        if(slash_effect.active)
+        {
+            slash_effect.timer--;
+
+            if(slash_effect.timer <= 0)
+            {
+                slash_effect.active = false;
+            }
+        }
+
         int enemy_draw_x = enemy_sprite.x;
 
         if(enemy_sprite.shake_timer > 0)
@@ -426,16 +473,25 @@ int main(void)
             enemy_sprite.shake_timer--;
         }
 
+        if(fire_effect.active)
+        {
+            fire_effect.timer--;
+
+            if(fire_effect.timer <= 0)
+            {
+                fire_effect.active = false;
+            }
+        }
 //戦闘描画
         if(battle_mode)
         {
             SDL_Rect battle = {
                 80,
                 40,
-                480,
-                440
+                552,
+                428
             };
-
+//エネミー描画
             char enemy_info[64];
 
             sprintf(
@@ -461,7 +517,7 @@ int main(void)
                 font,
                 "Battle!",
                 100,
-                70
+                50
             );
 
             draw_text(
@@ -469,13 +525,13 @@ int main(void)
                 font,
                 enemy_info,
                 100,
-                110
+                80
             );
 
             draw_hp_bar(
                 renderer,
                 430,
-                120,
+                90,
                 enemy.hp,
                 enemy.max_hp
             );
@@ -494,10 +550,86 @@ int main(void)
                 &enemy_rect
             );
 
-            draw_text(renderer, font, "1: Attack", 100, 160);
-            draw_text(renderer, font, "2: Defend", 100, 200);
-            draw_text(renderer, font, "3: Heal", 100, 240);
-            draw_text(renderer, font, "4: Item", 100, 280);
+            if(fire_effect.active)
+            {
+                SDL_SetRenderDrawBlendMode(
+                    renderer,
+                    SDL_BLENDMODE_BLEND
+                );
+
+                for(int i = 0; i < 6; i++)
+                {
+                    SDL_Rect flame = {
+                        440 + rand() % 40,
+                        120 + rand() % 60,
+                        20,
+                        20
+                    };
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255,
+                        120 + rand() % 100,
+                        0,
+                        160
+                    );
+
+                    SDL_RenderFillRect(
+                        renderer,
+                        &flame
+                    );
+                }
+            }
+
+            if(hit_effect.active)
+            {
+                SDL_Rect flash = {
+                    enemy_draw_x,
+                    enemy_sprite.y,
+                    96,
+                    96
+                };
+
+                SDL_SetRenderDrawBlendMode(
+                    renderer,
+                    SDL_BLENDMODE_BLEND
+                );
+
+                SDL_SetRenderDrawColor(
+                    renderer,
+                    255,255,255,160
+                );
+
+                SDL_RenderFillRect(
+                    renderer,
+                    &flash
+                );
+            }
+
+            if(slash_effect.active)
+            {
+                SDL_SetRenderDrawColor(
+                    renderer,
+                    150,150,150,255
+                );
+
+                for(int i = 0; i < 5; i++)
+                {
+                    SDL_RenderDrawLine(
+                        renderer,
+                        450 + i * 8,
+                        140,
+                        490 + i * 8,
+                        180
+                    );
+                }
+            }
+//プレイヤー描画
+            draw_text(renderer, font, "1: Attack", 100, 120);
+            draw_text(renderer, font, "2: Defend", 100, 160);
+            draw_text(renderer, font, "3: Heal", 100, 200);
+            draw_text(renderer, font, "4: Fire", 100, 240);
+            draw_text(renderer, font, "5: Item", 100, 280);
 
             char player_info[64];
 
@@ -533,7 +665,7 @@ int main(void)
                     font,
                     battle_logs[i],
                     120,
-                    350 + i * 25
+                    360 + i * 25
                 );
             }
 

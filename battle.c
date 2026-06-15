@@ -38,7 +38,9 @@ void show_damage_popup(
 bool battle_attack(
     Player *player,
     Enemy *enemy,
-    DamagePopup *popup
+    DamagePopup *popup,
+    HitEffect *hit_effect,
+    SlashEffect *slash_effect
     )
     {
     int player_damage =
@@ -56,10 +58,16 @@ bool battle_attack(
         90
     );
 
+    hit_effect->active = true;
+    hit_effect->timer = 8;
+
+    slash_effect->active = true;
+    slash_effect->timer = 8;
+
     enemy->hp -= player_damage;
 
         char msg[128];
-        sprintf(msg,"%dダメージ！", player_damage);
+        sprintf(msg,"プレイヤーの攻撃！%dダメージ！", player_damage);
         add_battle_log(msg);
 
         printf("%s HP:%d\n",
@@ -188,6 +196,54 @@ bool battle_heal(
     );
 }
 
+bool battle_fire(
+    Player *player,
+    Enemy *enemy,
+    FireEffect *fire_effect
+)
+{
+    if(player->mp < 4)
+    {
+        add_battle_log("MPが足りない！");
+        return false;
+    }
+
+    player->mp -= 4;
+
+    fire_effect->active = true;
+    fire_effect->timer = 20;
+
+    int fire_damage =
+        player->attack + 8
+        - enemy->defense / 2;
+
+    if(fire_damage < 1)
+    {
+        fire_damage = 1;
+    }
+
+    enemy->hp -= fire_damage;
+
+    char msg[128];
+    sprintf(
+        msg,
+        "ファイアを唱えた！ %dダメージ！",
+        fire_damage
+    );
+
+    add_battle_log(msg);
+
+    if(enemy->hp <= 0)
+    {
+        enemy->hp = 0;
+        return true;
+    }
+
+    return enemy_turn(
+        player,
+        enemy
+    );
+}
 bool battle_item(
     Player *player,
     Enemy *enemy
@@ -239,7 +295,7 @@ bool enemy_turn(
     player->hp -= enemy_damage;
 
     char msg[128];
-    sprintf(msg,"%dダメージ！", enemy_damage);
+    sprintf(msg,"敵の攻撃！%dダメージ！", enemy_damage);
     add_battle_log(msg);
 
     printf("プレイヤーHP:%d\n",

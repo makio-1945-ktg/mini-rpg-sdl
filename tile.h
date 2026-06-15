@@ -4,6 +4,7 @@
 #define TILE_SIZE 32
 
 #define TILE_WALL 'M'
+#define TILE_WALL 'W'
 #define TILE_FLOOR 'G'
 
 #define TILE_PLAYER '@'

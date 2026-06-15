@@ -53,12 +53,29 @@ typedef struct {
     int shake_timer;
 } EnemySprite;
 
+typedef struct {
+    int timer;
+    bool active;
+} HitEffect;
+
+typedef struct {
+    int timer;
+    bool active;
+} SlashEffect;
+
+typedef struct {
+    int timer;
+    bool active;
+} FireEffect;
+
 void battle_start(void);
 
 bool battle_attack(
     Player *player,
     Enemy *enemy,
-    DamagePopup *popup
+    DamagePopup *popup,
+    HitEffect *hit_effect,
+    SlashEffect *slash_effect
 );
 
 bool battle_defend(
@@ -69,6 +86,12 @@ bool battle_defend(
 bool battle_heal(
     Player *player,
     Enemy *enemy
+);
+
+bool battle_fire(
+    Player *player,
+    Enemy *enemy,
+    FireEffect *fire_effect
 );
 
 bool battle_item(
