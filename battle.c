@@ -244,6 +244,56 @@ bool battle_fire(
         enemy
     );
 }
+
+bool battle_ice(
+    Player *player,
+    Enemy *enemy,
+    IceEffect *ice_effect
+)
+{
+    if(player->mp < 4)
+    {
+        add_battle_log("MPが足りない！");
+        return false;
+    }
+
+    player->mp -= 4;
+
+    ice_effect->active = true;
+    ice_effect->timer = 20;
+
+    int ice_damage =
+        player->attack + 6
+        - enemy->defense;
+
+    if(ice_damage < 1)
+    {
+        ice_damage = 1;
+    }
+
+    enemy->hp -= ice_damage;
+
+    char msg[128];
+    sprintf(
+        msg,
+        "アイスを唱えた！ %dダメージ！",
+        ice_damage
+    );
+
+    add_battle_log(msg);
+
+    if(enemy->hp <= 0)
+    {
+        enemy->hp = 0;
+        return true;
+    }
+
+    return enemy_turn(
+        player,
+        enemy
+    );
+}
+
 bool battle_item(
     Player *player,
     Enemy *enemy

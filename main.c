@@ -57,6 +57,7 @@ int main(void)
     HitEffect hit_effect = {0, false};
     SlashEffect slash_effect = {0, false};
     FireEffect fire_effect = {0, false};
+    IceEffect ice_effect = {0, false};
 
     EnemySprite enemy_sprite = {
         430,
@@ -377,8 +378,22 @@ int main(void)
                         battle_mode = false;
                     }
                 }
-//アイテムコマンド
+
+//アイスコマンド
                 if(event.key.keysym.sym == SDLK_5)
+                {
+                    if(battle_ice(
+                            &player,
+                            &enemy,
+                            &ice_effect
+                    ))
+                    {
+                        battle_mode = false;
+                    }
+                }
+
+//アイテムコマンド
+                if(event.key.keysym.sym == SDLK_6)
                 {
                     if(battle_item(&player, &enemy))
                     {
@@ -482,6 +497,17 @@ int main(void)
                 fire_effect.active = false;
             }
         }
+
+        if(ice_effect.active)
+        {
+            ice_effect.timer--;
+
+            if(ice_effect.timer <= 0)
+            {
+                ice_effect.active = false;
+            }
+        }
+
 //戦闘描画
         if(battle_mode)
         {
@@ -549,7 +575,7 @@ int main(void)
                 NULL,
                 &enemy_rect
             );
-
+//呪文エフェクト描画
             if(fire_effect.active)
             {
                 SDL_SetRenderDrawBlendMode(
@@ -577,6 +603,37 @@ int main(void)
                     SDL_RenderFillRect(
                         renderer,
                         &flame
+                    );
+                }
+            }
+
+            if(ice_effect.active)
+            {
+                SDL_SetRenderDrawBlendMode(
+                    renderer,
+                    SDL_BLENDMODE_BLEND
+                );
+
+                SDL_SetRenderDrawColor(
+                    renderer,
+                    100, 220, 255, 180
+                );
+
+                for(int i = 0; i < 4; i++)
+                {
+                    int x = 440 + i * 18;
+                    int y = 120 + rand() % 40;
+
+                    SDL_RenderDrawLine(
+                        renderer,
+                        x, y,
+                        x + 8, y + 20
+                    );
+
+                    SDL_RenderDrawLine(
+                        renderer,
+                        x + 8, y + 20,
+                        x + 16, y
                     );
                 }
             }
@@ -629,8 +686,8 @@ int main(void)
             draw_text(renderer, font, "2: Defend", 100, 160);
             draw_text(renderer, font, "3: Heal", 100, 200);
             draw_text(renderer, font, "4: Fire", 100, 240);
-            draw_text(renderer, font, "5: Item", 100, 280);
-
+            draw_text(renderer, font, "5: Ice", 100, 280);
+            draw_text(renderer, font, "6: Item", 100, 320);
             char player_info[64];
 
             sprintf(
@@ -647,13 +704,13 @@ int main(void)
                 font,
                 player_info,
                 100,
-                320
+                360
             );
 
             draw_hp_bar(
                 renderer,
                 430,
-                330,
+                370,
                 player.hp,
                 player.max_hp
             );
@@ -665,7 +722,7 @@ int main(void)
                     font,
                     battle_logs[i],
                     120,
-                    360 + i * 25
+                    400 + i * 25
                 );
             }
 

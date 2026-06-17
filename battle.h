@@ -68,6 +68,11 @@ typedef struct {
     bool active;
 } FireEffect;
 
+typedef struct {
+    int timer;
+    bool active;
+} IceEffect;
+
 void battle_start(void);
 
 bool battle_attack(
@@ -92,6 +97,12 @@ bool battle_fire(
     Player *player,
     Enemy *enemy,
     FireEffect *fire_effect
+);
+
+bool battle_ice(
+    Player *player,
+    Enemy *enemy,
+    IceEffect *ice_effect
 );
 
 bool battle_item(
