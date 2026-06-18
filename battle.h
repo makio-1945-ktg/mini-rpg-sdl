@@ -73,6 +73,11 @@ typedef struct {
     bool active;
 } IceEffect;
 
+typedef struct {
+    int timer;
+    bool active;
+} ThunderEffect;
+
 void battle_start(void);
 
 bool battle_attack(
@@ -103,6 +108,12 @@ bool battle_ice(
     Player *player,
     Enemy *enemy,
     IceEffect *ice_effect
+);
+
+bool battle_thunder(
+    Player *player,
+    Enemy *enemy,
+    ThunderEffect *thunder_effect
 );
 
 bool battle_item(

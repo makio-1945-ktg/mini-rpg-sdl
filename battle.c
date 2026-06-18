@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "battle.h"
 
@@ -67,7 +68,12 @@ bool battle_attack(
     enemy->hp -= player_damage;
 
         char msg[128];
-        sprintf(msg,"プレイヤーの攻撃！%dダメージ！", player_damage);
+        sprintf(
+            msg,
+            "プレイヤーの攻撃！%dダメージ！",
+            player_damage
+        );
+
         add_battle_log(msg);
 
         printf("%s HP:%d\n",
@@ -279,6 +285,75 @@ bool battle_ice(
         "アイスを唱えた！ %dダメージ！",
         ice_damage
     );
+
+    add_battle_log(msg);
+
+    if(enemy->hp <= 0)
+    {
+        enemy->hp = 0;
+        return true;
+    }
+
+    return enemy_turn(
+        player,
+        enemy
+    );
+}
+
+bool battle_thunder(
+    Player *player,
+    Enemy *enemy,
+    ThunderEffect *thunder_effect
+)
+{
+    if(player->mp < 5)
+    {
+        add_battle_log("MPが足りない！");
+        return false;
+    }
+
+    player->mp -= 5;
+
+    thunder_effect->active = true;
+    thunder_effect->timer = 15;
+
+    int thunder_damage =
+        player->attack + 10
+        - enemy->defense / 2;
+
+    if(thunder_damage < 1)
+    {
+        thunder_damage = 1;
+    }
+
+    bool critical = false;
+
+    if(rand() % 4 == 0)
+    {
+        thunder_damage += 8;
+        critical = true;
+    }
+
+    enemy->hp -= thunder_damage;
+
+    char msg[128];
+
+    if(critical)
+    {
+        sprintf(
+            msg,
+            "唱えたサンダーが直撃した！ %dダメージ！",
+            thunder_damage
+        );
+    }
+    else
+    {
+        sprintf(
+            msg,
+            "サンダーを唱えた！ %dダメージ！",
+            thunder_damage
+        );
+    }
 
     add_battle_log(msg);
 
