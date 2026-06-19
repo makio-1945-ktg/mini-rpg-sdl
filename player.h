@@ -25,6 +25,6 @@ typedef struct {
 //プレイヤー装備
     int sword;
 
-}Player;
+} Player;
 
 #endif

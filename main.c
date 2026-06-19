@@ -623,6 +623,99 @@ int main(void)
                 &battle
             );
 
+            SDL_Rect command_box = {
+                80, //x
+                130, //y
+                130, //width
+                160  //height
+            };
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                0, 50, 250, 250
+            );
+
+            SDL_RenderFillRect(
+                renderer,
+                &command_box
+            );
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                255,255,255,255
+            );
+
+            SDL_RenderDrawRect(
+                renderer,
+                &command_box
+            );
+
+            SDL_Rect cursor_box = {
+                80,
+                135 + battle_cursor * 30,
+                120,
+                28
+            };
+
+            SDL_RenderDrawRect(
+                renderer,
+                &cursor_box
+            );
+
+            SDL_Rect status_box = {
+                80,
+                300,
+                130,
+                70
+            };
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                40,100,100,255
+            );
+
+            SDL_RenderFillRect(
+                renderer,
+                &status_box
+            );
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                255,255,255,255
+            );
+
+            SDL_RenderDrawRect(
+                renderer,
+                &status_box
+            );
+
+            SDL_Rect log_box = {
+                165,
+                390,
+                400,
+                100
+            };
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                40,40,80,220
+            );
+
+            SDL_RenderFillRect(
+                renderer,
+                &log_box
+            );
+
+            SDL_SetRenderDrawColor(
+                renderer,
+                255,255,255,255
+            );
+
+            SDL_RenderDrawRect(
+                renderer,
+                &log_box
+            );
+
             draw_text(
                 renderer,
                 font,
@@ -646,7 +739,7 @@ int main(void)
                 enemy.hp,
                 enemy.max_hp
             );
-
+//敵スプライト
             SDL_Rect enemy_rect = {
                 enemy_draw_x,
                 enemy_sprite.y,
@@ -824,17 +917,23 @@ int main(void)
                 }
             }
 //プレイヤー描画
-            draw_text(renderer, font, battle_cursor == 0 ? "> Attack" : " Attack", 100, 120);
-            draw_text(renderer, font, battle_cursor == 1 ? "> Defend" : " Defend", 100, 150);
-            draw_text(renderer, font, battle_cursor == 2 ? "> Magic" : "Magic", 100, 180);
-            draw_text(renderer, font, battle_cursor == 3 ? "> Item" : "Item", 100, 210);
-            char player_info[64];
+            draw_text(renderer, font, "Attack", 90, 130);
+            draw_text(renderer, font, "Defend", 90, 160);
+            draw_text(renderer, font, "Magic", 90, 190);
+            draw_text(renderer, font, "Item", 90, 220);
+            char player_hp_info[64];
+            char player_mp_info[64];
 
             sprintf(
-                player_info,
-                "HP:%d/%d MP:%d/%d",
+                player_hp_info,
+                "HP:%d/%d",
                 player.hp,
-                player.max_hp,
+                player.max_hp
+            );
+
+            sprintf(
+                player_mp_info,
+                "MP:%d/%d",
                 player.mp,
                 player.max_mp
             );
@@ -842,15 +941,23 @@ int main(void)
             draw_text(
                 renderer,
                 font,
-                player_info,
-                100,
-                330
+                player_hp_info,
+                90,
+                300
             );
 
+             draw_text(
+                renderer,
+                font,
+                player_mp_info,
+                90,
+                325
+            );
+           
             draw_hp_bar(
                 renderer,
                 430,
-                340,
+                310,
                 player.hp,
                 player.max_hp
             );
@@ -861,8 +968,8 @@ int main(void)
                     renderer,
                     font,
                     battle_logs[i],
-                    120,
-                    380 + i * 25
+                    200,
+                    390 + i * 25
                 );
             }
 
@@ -880,12 +987,12 @@ int main(void)
             if(magic_menu)
             {
                 SDL_Rect magic_box = {
-                    220, 120, 180, 190
+                    80, 130, 130, 160
                 };
 
                 SDL_SetRenderDrawColor(
                     renderer,
-                    40, 40, 80, 220
+                    0, 50, 150, 150
                 );
 
                 SDL_RenderFillRect(
@@ -893,11 +1000,32 @@ int main(void)
                     &magic_box
                 );
 
-                draw_text(renderer, font, "Magic", 250, 120);
-                draw_text(renderer, font, magic_cursor == 0 ? "> Heal" : " Heal", 250, 150);
-                draw_text(renderer, font, magic_cursor == 1 ? "> Fire" : " Fire", 250, 180);
-                draw_text(renderer, font, magic_cursor == 2 ? "> Ice" : " Ice", 250, 210);
-                draw_text(renderer, font, magic_cursor == 3 ? "> Thunder" : " Thunder", 250, 240);
+                SDL_SetRenderDrawColor(
+                    renderer,
+                    255,255,255,255
+                );
+
+                SDL_RenderDrawRect(
+                    renderer,
+                    &magic_box
+                );
+
+                SDL_Rect magic_cursor_box = {
+                    80,
+                    135 + magic_cursor * 30,
+                    120,
+                    28
+                };
+
+                SDL_RenderDrawRect(
+                    renderer,
+                    &magic_cursor_box
+                );
+
+                draw_text(renderer, font, "Heal", 90, 130);
+                draw_text(renderer, font, "Fire", 90, 160);
+                draw_text(renderer, font, "Ice", 90, 190);
+                draw_text(renderer, font, "Thunder", 90, 220);
             }
         }
 
