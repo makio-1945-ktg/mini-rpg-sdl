@@ -130,6 +130,10 @@ int main(void)
     bool menu_open = false;
     bool battle_mode = false;
     bool magic_menu = false;
+
+    int battle_cursor = 0;
+    int magic_cursor = 0;
+
     bool in_town =false;
 //フォント
     TTF_Font *font =
@@ -274,7 +278,10 @@ int main(void)
 //敵情報セット段階
                 if(tile == 'E')
                 {
-                    battle_mode =true;
+                    battle_mode = true;
+                    battle_cursor = 0;
+                    magic_cursor = 0;
+                    magic_menu = false;
 
                     int enemy_type = rand() % 3;
 
@@ -338,99 +345,134 @@ int main(void)
 //戦闘中コマンド処理
             if(event.type == SDL_KEYDOWN && battle_mode)
             {
-                if(!magic_menu)
+//魔法メニュー処理
+                if(magic_menu)
                 {
-                    if(event.key.keysym.sym == SDLK_1)
+                    if(event.key.keysym.sym == SDLK_UP)
                     {
-                        enemy_sprite.shake_timer = 12;
+                        magic_cursor--;
 
-                        if(battle_attack(
-                                &player,
-                                &enemy,
-                                &popup,
-                                &hit_effect,
-                            &slash_effect
-                         ))
-                        {
-                            battle_mode = false;
-                        }
+                        if(magic_cursor < 0)
+                            magic_cursor = 3;
                     }
 
-                    if(event.key.keysym.sym == SDLK_2)
+                    if(event.key.keysym.sym == SDLK_DOWN)
                     {
-                        if(battle_defend(&player, &enemy))
-                        {
-                            battle_mode = false;
-                        }
+                        magic_cursor++;
+
+                        if(magic_cursor > 3)
+                            magic_cursor = 0;
                     }
 
-                    if(event.key.keysym.sym == SDLK_3)
-                    {
-                        magic_menu = !magic_menu;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_4)
-                    {
-                        if(battle_item(&player, &enemy))
-                        {
-                            battle_mode = false;
-                        }
-                    }
-                }
-//魔法選択処理
-                else
-                {
                     if(event.key.keysym.sym == SDLK_ESCAPE)
                     {
                         magic_menu = false;
                     }
 
-                    if(event.key.keysym.sym == SDLK_1)
+                    if(event.key.keysym.sym == SDLK_RETURN)
                     {
-                        if(battle_heal(&player, &enemy))
+                        switch(magic_cursor)
                         {
-                            battle_mode = false;
+                            case 0:
+                                if(battle_heal(&player, &enemy))
+                                {
+                                    battle_mode = false;
+                                }
+                                magic_menu = false;
+                                break;
+
+                            case 1:
+                                if(battle_fire(
+                                    &player,
+                                    &enemy,
+                                    &fire_effect))
+                                {
+                                    battle_mode = false;
+                                }
+
+                                magic_menu = false;
+                                break;
+
+                            case 2:
+                                if(battle_ice(
+                                    &player,
+                                    &enemy,
+                                    &ice_effect))
+                                {
+                                    battle_mode = false;
+                                }
+
+                                magic_menu = false;
+                                break;
+
+                            case 3:
+                                if(battle_thunder(
+                                    &player,
+                                    &enemy,
+                                    &thunder_effect))
+                                {
+                                    battle_mode = false;
+                                }
+                                magic_menu = false;
+                                break;
                         }
-                        magic_menu = false;
+                    }
+                }
+//通常戦闘処理
+                else
+                {
+                    if(event.key.keysym.sym == SDLK_UP)
+                    {
+                        battle_cursor--;
+
+                        if(battle_cursor < 0)
+                            battle_cursor = 3;
                     }
 
-                    if(event.key.keysym.sym == SDLK_2)
+                    if(event.key.keysym.sym == SDLK_DOWN)
                     {
-                        if(battle_fire(
-                                &player,
-                                &enemy,
-                                &fire_effect
-                        ))
-                        {
-                            battle_mode = false;
-                        }
-                        magic_menu = false;
+                        battle_cursor++;
+
+                        if(battle_cursor > 3)
+                            battle_cursor = 0;
                     }
 
-                    if(event.key.keysym.sym == SDLK_3)
+                    if(event.key.keysym.sym == SDLK_RETURN)
                     {
-                        if(battle_ice(
-                                &player,
-                                &enemy,
-                                &ice_effect
-                        ))
+                        switch(battle_cursor)
                         {
-                            battle_mode = false;
-                        }
-                        magic_menu = false;
-                    }
+                            case 0:
+                                enemy_sprite.shake_timer = 12;
 
-                     if(event.key.keysym.sym == SDLK_4)
-                    {
-                        if(battle_thunder(
-                                &player,
-                                &enemy,
-                                &thunder_effect
-                        ))
-                        {
-                            battle_mode = false;
+                                if(battle_attack(
+                                        &player,
+                                        &enemy,
+                                        &popup,
+                                        &hit_effect,
+                                        &slash_effect))
+                                {
+                                    battle_mode = false;
+                                }
+                                break;
+
+                            case 1:
+                                if(battle_defend(&player, &enemy))
+                                {
+                                    battle_mode = false;
+                                }
+                                break;
+
+                            case 2:
+                                magic_menu = true;
+                                break;
+
+                            case 3:
+                                if(battle_item(&player, &enemy))
+                                {
+                                    battle_mode = false;
+                                }
+                                break;
                         }
-                        magic_menu = false;
                     }
                 }
             }
@@ -782,10 +824,10 @@ int main(void)
                 }
             }
 //プレイヤー描画
-            draw_text(renderer, font, "1: Attack", 100, 120);
-            draw_text(renderer, font, "2: Defend", 100, 150);
-            draw_text(renderer, font, "3: Magic", 100, 180);
-            draw_text(renderer, font, "4: Item", 100, 210);
+            draw_text(renderer, font, battle_cursor == 0 ? "> Attack" : " Attack", 100, 120);
+            draw_text(renderer, font, battle_cursor == 1 ? "> Defend" : " Defend", 100, 150);
+            draw_text(renderer, font, battle_cursor == 2 ? "> Magic" : "Magic", 100, 180);
+            draw_text(renderer, font, battle_cursor == 3 ? "> Item" : "Item", 100, 210);
             char player_info[64];
 
             sprintf(
@@ -852,10 +894,10 @@ int main(void)
                 );
 
                 draw_text(renderer, font, "Magic", 250, 120);
-                draw_text(renderer, font, "1: Heal", 250, 150);
-                draw_text(renderer, font, "2: Fire", 250, 180);
-                draw_text(renderer, font, "3: Ice", 250, 210);
-                draw_text(renderer, font, "4: Thunder", 250, 240);
+                draw_text(renderer, font, magic_cursor == 0 ? "> Heal" : " Heal", 250, 150);
+                draw_text(renderer, font, magic_cursor == 1 ? "> Fire" : " Fire", 250, 180);
+                draw_text(renderer, font, magic_cursor == 2 ? "> Ice" : " Ice", 250, 210);
+                draw_text(renderer, font, magic_cursor == 3 ? "> Thunder" : " Thunder", 250, 240);
             }
         }
 
