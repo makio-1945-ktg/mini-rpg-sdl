@@ -271,7 +271,7 @@ int main(void)
                 {
                     printf(" \n");
                 }
-
+//敵情報セット段階
                 if(tile == 'E')
                 {
                     battle_mode =true;
@@ -315,6 +315,9 @@ int main(void)
 
                     enemy.gold =
                         enemy_table[enemy_type].gold;
+
+                    enemy.frozen = false;
+                    enemy.frozen_timer = 0;
 
                         printf("プレイヤーHP:%d\n",
                                 player.hp);
@@ -780,9 +783,9 @@ int main(void)
             }
 //プレイヤー描画
             draw_text(renderer, font, "1: Attack", 100, 120);
-            draw_text(renderer, font, "2: Defend", 100, 160);
-            draw_text(renderer, font, "3: Magic", 100, 200);
-            draw_text(renderer, font, "4: Item", 100, 240);
+            draw_text(renderer, font, "2: Defend", 100, 150);
+            draw_text(renderer, font, "3: Magic", 100, 180);
+            draw_text(renderer, font, "4: Item", 100, 210);
             char player_info[64];
 
             sprintf(
@@ -799,13 +802,13 @@ int main(void)
                 font,
                 player_info,
                 100,
-                360
+                330
             );
 
             draw_hp_bar(
                 renderer,
                 430,
-                390,
+                340,
                 player.hp,
                 player.max_hp
             );
@@ -817,7 +820,7 @@ int main(void)
                     font,
                     battle_logs[i],
                     120,
-                    410 + i * 25
+                    380 + i * 25
                 );
             }
 
@@ -835,7 +838,7 @@ int main(void)
             if(magic_menu)
             {
                 SDL_Rect magic_box = {
-                    220, 120, 180, 210
+                    220, 120, 180, 190
                 };
 
                 SDL_SetRenderDrawColor(
@@ -849,10 +852,10 @@ int main(void)
                 );
 
                 draw_text(renderer, font, "Magic", 250, 120);
-                draw_text(renderer, font, "1: Heal", 250, 160);
-                draw_text(renderer, font, "2: Fire", 250, 200);
-                draw_text(renderer, font, "3: Ice", 250, 240);
-                draw_text(renderer, font, "4: Thunder", 250, 280);
+                draw_text(renderer, font, "1: Heal", 250, 150);
+                draw_text(renderer, font, "2: Fire", 250, 180);
+                draw_text(renderer, font, "3: Ice", 250, 210);
+                draw_text(renderer, font, "4: Thunder", 250, 240);
             }
         }
 

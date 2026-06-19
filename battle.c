@@ -294,6 +294,14 @@ bool battle_ice(
         return true;
     }
 
+    if(rand() % 4 == 0)
+    {
+        enemy->frozen = true;
+        enemy->frozen_timer = 1;
+
+        add_battle_log("敵が凍った！攻撃力低下！");
+    }
+
     return enemy_turn(
         player,
         enemy
@@ -408,8 +416,15 @@ bool enemy_turn(
     Enemy *enemy
 )
 {
+    int enemy_attack = enemy->attack;
+
+    if(enemy->frozen)
+    {
+            enemy_attack /= 2;
+    }
+
     int enemy_damage =
-        enemy->attack
+        enemy_attack
         - player->defense;
 
     if(enemy_damage < 1)
@@ -431,6 +446,17 @@ bool enemy_turn(
         printf("ゲームオーバー！\n");
 
         return true;
+    }
+
+    if(enemy->frozen)
+    {
+        enemy->frozen_timer--;
+
+        if(enemy->frozen_timer <= 0)
+        {
+            enemy->frozen = false;
+            add_battle_log("敵の凍結が溶けた！");
+        }
     }
 
     return false;

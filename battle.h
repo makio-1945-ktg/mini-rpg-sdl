@@ -32,6 +32,9 @@ typedef struct {
     int exp;
     int gold;
 
+    bool frozen;
+    int frozen_timer;
+
 } Enemy;
 
 typedef struct {
