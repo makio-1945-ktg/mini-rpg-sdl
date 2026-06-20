@@ -32,6 +32,10 @@ typedef struct {
     int exp;
     int gold;
 
+    int fire_resist;
+    int ice_resist;
+    int thunder_resist;
+
     bool frozen;
     int frozen_timer;
 
@@ -48,6 +52,9 @@ typedef struct {
     int exp;
     int gold;
 
+    int fire_resist;
+    int ice_resist;
+    int thunder_resist;
 } EnemyData;
 
 typedef struct {

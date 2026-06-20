@@ -15,9 +15,9 @@
 
 EnemyData enemy_table[] = {
 
-    {"スライム", 10, 2, 1, 5, 3},
-    {"ゴブリン", 15, 3, 2, 10, 8},
-    {"オーク", 20, 5, 3, 20, 15}
+    {"スライム", 10, 2, 1, 5, 3, -50, 0, 50},
+    {"ゴブリン", 15, 3, 2, 10, 8, 0, 0, 0},
+    {"オーク", 20, 5, 3, 20, 15, 50, -50, 0}
 };
 
 int main(void)
@@ -323,6 +323,15 @@ int main(void)
                     enemy.gold =
                         enemy_table[enemy_type].gold;
 
+                    enemy.fire_resist =
+                        enemy_table[enemy_type].fire_resist;
+
+                    enemy.ice_resist =
+                        enemy_table[enemy_type].ice_resist;
+
+                    enemy.thunder_resist =
+                        enemy_table[enemy_type].thunder_resist;
+
                     enemy.frozen = false;
                     enemy.frozen_timer = 0;
 
@@ -503,8 +512,8 @@ int main(void)
         if(menu_open)
         {
             SDL_Rect menu = {
-                180,
                 80,
+                150,
                 280,
                 200
             };
@@ -615,7 +624,7 @@ int main(void)
 
             SDL_SetRenderDrawColor(
                 renderer,
-                120,0,0,255
+                50,50,50,255
             );
 
             SDL_RenderFillRect(

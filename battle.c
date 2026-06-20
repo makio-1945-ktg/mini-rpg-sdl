@@ -7,6 +7,14 @@
 
 #define LOG_LINES 3
 
+int apply_element_resistance(
+    int damage,
+    int resist
+)
+{
+    return damage * resist / 100;
+}
+
 char battle_logs[LOG_LINES][128] = {
     "",
     "",
@@ -223,6 +231,24 @@ bool battle_fire(
         player->attack + 8
         - enemy->defense / 2;
 
+    fire_damage = 
+        fire_damage *
+        (100 - enemy->fire_resist)
+        / 100;
+
+    if(enemy->fire_resist == 100)
+    {
+        add_battle_log("効果がない！");
+    }
+    else if(enemy->fire_resist >= 50)
+    {
+        add_battle_log("あまり効いてないようだ…");
+    }
+    else if(enemy->fire_resist < 0)
+    {
+        add_battle_log("弱点を突いた！");
+    }
+
     if(fire_damage < 1)
     {
         fire_damage = 1;
@@ -271,6 +297,24 @@ bool battle_ice(
     int ice_damage =
         player->attack + 6
         - enemy->defense;
+
+    ice_damage =
+        ice_damage *
+        (100 - enemy->ice_resist)
+        / 100;
+
+    if(enemy->ice_resist == 100)
+    {
+        add_battle_log("効果がない！");
+    }
+    else if(enemy->ice_resist >= 50)
+    {
+        add_battle_log("あまり効いてないようだ…");
+    }
+    else if(enemy->ice_resist < 0)
+    {
+        add_battle_log("弱点を突いた！");
+    }
 
     if(ice_damage < 1)
     {
@@ -328,6 +372,24 @@ bool battle_thunder(
     int thunder_damage =
         player->attack + 10
         - enemy->defense / 2;
+
+    thunder_damage =
+        thunder_damage *
+        (100 - enemy->thunder_resist)
+        / 100;
+
+    if(enemy->thunder_resist == 100)
+    {
+        add_battle_log("効果がない！");
+    }
+    else if(enemy->thunder_resist >= 50)
+    {
+        add_battle_log("あまり効いてないようだ…");
+    }
+    else if(enemy->thunder_resist < 0)
+    {
+        add_battle_log("弱点を突いた！");
+    }
 
     if(thunder_damage < 1)
     {
