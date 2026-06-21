@@ -1,6 +1,8 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
+#include <stdbool.h>
+
 #include "player.h"
 
 #define LOG_LINES 3

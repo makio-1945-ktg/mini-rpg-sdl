@@ -20,6 +20,12 @@ EnemyData enemy_table[] = {
     {"オーク", 20, 5, 3, 20, 15, 50, -50, 0}
 };
 
+typedef enum {
+    MODE_FIELD,
+    MODE_BATTLE,
+    MODE_MAGIC
+} BattleMode;
+
 int main(void)
 {
     srand(time(NULL));
@@ -39,17 +45,13 @@ int main(void)
         2,
 //プレイヤーLV & EXP & GOLD
         1,
-
         0,
-
         10,
 //プレイヤーアイテム
         2,
 //プレイヤー装備
         0
-
     };
-
     Enemy enemy = {"",0,0,0,0,0,0};
 
     DamagePopup popup = {"", 0, 0, 0, false};
@@ -128,8 +130,7 @@ int main(void)
 //戦闘・MAP関数呼び出し
     bool running = true;
     bool menu_open = false;
-    bool battle_mode = false;
-    bool magic_menu = false;
+    BattleMode battle_mode = MODE_FIELD;
 
     int battle_cursor = 0;
     int magic_cursor = 0;
@@ -160,7 +161,8 @@ int main(void)
                 running = false;
             }
 //プレイヤー操作
-            if(event.type == SDL_KEYDOWN && !battle_mode)
+            if(event.type == SDL_KEYDOWN &&
+                battle_mode == MODE_FIELD)
             {
                 int new_x = player.x;
                 int new_y = player.y;
@@ -196,13 +198,7 @@ int main(void)
 
                 char tile = get_tile(new_x, new_y);
 
-                if(get_tile(new_x, new_y) != 'M')
-                {
-                    player.x = new_x;
-                    player.y = new_y;
-                }
-
-                if(get_tile(new_x, new_y) != 'W')
+                if(tile != 'M' && tile != 'W')
                 {
                     player.x = new_x;
                     player.y = new_y;
@@ -270,7 +266,6 @@ int main(void)
                         new_y
                     );
                 }
-
                 else
                 {
                     printf(" \n");
@@ -278,10 +273,9 @@ int main(void)
 //敵情報セット段階
                 if(tile == 'E')
                 {
-                    battle_mode = true;
+                    battle_mode = MODE_BATTLE;
                     battle_cursor = 0;
                     magic_cursor = 0;
-                    magic_menu = false;
 
                     int enemy_type = rand() % 3;
 
@@ -352,10 +346,12 @@ int main(void)
                 }
             }
 //戦闘中コマンド処理
-            if(event.type == SDL_KEYDOWN && battle_mode)
+            if(event.type == SDL_KEYDOWN &&
+                (battle_mode == MODE_BATTLE ||
+                 battle_mode == MODE_MAGIC))
             {
 //魔法メニュー処理
-                if(magic_menu)
+                if(battle_mode == MODE_MAGIC)
                 {
                     if(event.key.keysym.sym == SDLK_UP)
                     {
@@ -375,7 +371,7 @@ int main(void)
 
                     if(event.key.keysym.sym == SDLK_ESCAPE)
                     {
-                        magic_menu = false;
+                        battle_mode = MODE_BATTLE;
                     }
 
                     if(event.key.keysym.sym == SDLK_RETURN)
@@ -385,9 +381,12 @@ int main(void)
                             case 0:
                                 if(battle_heal(&player, &enemy))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
-                                magic_menu = false;
+                                else
+                                {
+                                    battle_mode = MODE_BATTLE;
+                                }
                                 break;
 
                             case 1:
@@ -396,10 +395,12 @@ int main(void)
                                     &enemy,
                                     &fire_effect))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
-
-                                magic_menu = false;
+                                else
+                                {
+                                    battle_mode = MODE_BATTLE;
+                                }
                                 break;
 
                             case 2:
@@ -408,10 +409,12 @@ int main(void)
                                     &enemy,
                                     &ice_effect))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
-
-                                magic_menu = false;
+                                else
+                                {
+                                    battle_mode = MODE_BATTLE;
+                                }
                                 break;
 
                             case 3:
@@ -420,9 +423,12 @@ int main(void)
                                     &enemy,
                                     &thunder_effect))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
-                                magic_menu = false;
+                                else
+                                {
+                                    battle_mode = MODE_BATTLE;
+                                }
                                 break;
                         }
                     }
@@ -460,25 +466,25 @@ int main(void)
                                         &hit_effect,
                                         &slash_effect))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
                                 break;
 
                             case 1:
                                 if(battle_defend(&player, &enemy))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
                                 break;
 
                             case 2:
-                                magic_menu = true;
+                                battle_mode = MODE_MAGIC;
                                 break;
 
                             case 3:
                                 if(battle_item(&player, &enemy))
                                 {
-                                    battle_mode = false;
+                                    battle_mode = MODE_FIELD;
                                 }
                                 break;
                         }
@@ -493,6 +499,16 @@ int main(void)
         );
 
         SDL_RenderClear(renderer);
+
+        update_battle_effects(
+            &popup,
+            &hit_effect,
+            &slash_effect,
+            &fire_effect,
+            &ice_effect,
+            &thunder_effect,
+            &enemy_sprite
+        );
 
         if(in_town)
         {
@@ -528,240 +544,30 @@ int main(void)
                 &menu
             );
         }
-//戦闘特殊エフェクト描画
-        if(popup.active)
-        {
-            popup.y--;
-            popup.timer--;
-
-            if(popup.timer <= 0)
-            {
-                popup.active = false;
-            }
-        }
-
-        if(hit_effect.active)
-        {
-            hit_effect.timer--;
-
-            if(hit_effect.timer <= 0)
-            {
-                hit_effect.active = false;
-            }
-        }
-
-        if(slash_effect.active)
-        {
-            slash_effect.timer--;
-
-            if(slash_effect.timer <= 0)
-            {
-                slash_effect.active = false;
-            }
-        }
-
-        int enemy_draw_x = enemy_sprite.x;
-
-        if(enemy_sprite.shake_timer > 0)
-        {
-            if(enemy_sprite.shake_timer % 2 == 0)
-                enemy_draw_x += 5;
-            else
-                enemy_draw_x -= 5;
-
-            enemy_sprite.shake_timer--;
-        }
-
-        if(fire_effect.active)
-        {
-            fire_effect.timer--;
-
-            if(fire_effect.timer <= 0)
-            {
-                fire_effect.active = false;
-            }
-        }
-
-        if(ice_effect.active)
-        {
-            ice_effect.timer--;
-
-            if(ice_effect.timer <= 0)
-            {
-                ice_effect.active = false;
-            }
-        }
-
-        if(thunder_effect.active)
-        {
-            thunder_effect.timer--;
-
-            if(thunder_effect.timer <= 0)
-            {
-                thunder_effect.active = false;
-            }
-        }
-
 //戦闘描画
-        if(battle_mode)
+        if(battle_mode == MODE_BATTLE ||
+           battle_mode == MODE_MAGIC)
         {
-            SDL_Rect battle = {
-                80,
-                40,
-                552,
-                452
-            };
-//エネミー描画
-            char enemy_info[64];
+            draw_battle_background(renderer);
 
-            sprintf(
-                enemy_info,
-                "%s HP:%d/%d",
-                enemy.name,
-                enemy.hp,
-                enemy.max_hp
-            );
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                50,50,50,255
-            );
-
-            SDL_RenderFillRect(
-                renderer,
-                &battle
-            );
-
-            SDL_Rect command_box = {
-                80, //x
-                130, //y
-                130, //width
-                160  //height
-            };
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                0, 50, 250, 250
-            );
-
-            SDL_RenderFillRect(
-                renderer,
-                &command_box
-            );
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                255,255,255,255
-            );
-
-            SDL_RenderDrawRect(
-                renderer,
-                &command_box
-            );
-
-            SDL_Rect cursor_box = {
-                80,
-                135 + battle_cursor * 30,
-                120,
-                28
-            };
-
-            SDL_RenderDrawRect(
-                renderer,
-                &cursor_box
-            );
-
-            SDL_Rect status_box = {
-                80,
-                300,
-                130,
-                70
-            };
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                40,100,100,255
-            );
-
-            SDL_RenderFillRect(
-                renderer,
-                &status_box
-            );
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                255,255,255,255
-            );
-
-            SDL_RenderDrawRect(
-                renderer,
-                &status_box
-            );
-
-            SDL_Rect log_box = {
-                165,
-                390,
-                400,
-                100
-            };
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                40,40,80,220
-            );
-
-            SDL_RenderFillRect(
-                renderer,
-                &log_box
-            );
-
-            SDL_SetRenderDrawColor(
-                renderer,
-                255,255,255,255
-            );
-
-            SDL_RenderDrawRect(
-                renderer,
-                &log_box
-            );
-
-            draw_text(
+            draw_battle_ui(
                 renderer,
                 font,
-                "Battle!",
-                100,
-                50
-            );
-
-            draw_text(
-                renderer,
-                font,
-                enemy_info,
-                100,
-                80
-            );
-
-            draw_hp_bar(
-                renderer,
-                430,
-                90,
-                enemy.hp,
-                enemy.max_hp
-            );
-//敵スプライト
-            SDL_Rect enemy_rect = {
-                enemy_draw_x,
-                enemy_sprite.y,
-                96,
-                96
-            };
-
-            SDL_RenderCopy(
-                renderer,
+                &player,
+                &enemy,
+                &enemy_sprite,
                 current_enemy_texture,
-                NULL,
-                &enemy_rect
+                battle_cursor
             );
+//魔法メニュー表示
+            if(battle_mode == MODE_MAGIC)
+            {
+                draw_magic_menu(
+                    renderer,
+                    font,
+                    magic_cursor
+                );
+            }
 //呪文エフェクト描画
             if(fire_effect.active)
             {
@@ -870,7 +676,7 @@ int main(void)
                 );
 
                 SDL_Rect flash = {
-                    enemy_draw_x,
+                    enemy_sprite.x,
                     enemy_sprite.y,
                     96,
                     96
@@ -885,7 +691,7 @@ int main(void)
             if(hit_effect.active)
             {
                 SDL_Rect flash = {
-                    enemy_draw_x,
+                    enemy_sprite.x,
                     enemy_sprite.y,
                     96,
                     96
@@ -925,52 +731,7 @@ int main(void)
                     );
                 }
             }
-//プレイヤー描画
-            draw_text(renderer, font, "Attack", 90, 130);
-            draw_text(renderer, font, "Defend", 90, 160);
-            draw_text(renderer, font, "Magic", 90, 190);
-            draw_text(renderer, font, "Item", 90, 220);
-            char player_hp_info[64];
-            char player_mp_info[64];
-
-            sprintf(
-                player_hp_info,
-                "HP:%d/%d",
-                player.hp,
-                player.max_hp
-            );
-
-            sprintf(
-                player_mp_info,
-                "MP:%d/%d",
-                player.mp,
-                player.max_mp
-            );
-
-            draw_text(
-                renderer,
-                font,
-                player_hp_info,
-                90,
-                300
-            );
-
-             draw_text(
-                renderer,
-                font,
-                player_mp_info,
-                90,
-                325
-            );
-           
-            draw_hp_bar(
-                renderer,
-                430,
-                310,
-                player.hp,
-                player.max_hp
-            );
-
+//戦闘ログ描画
             for(int i = 0; i < LOG_LINES; i++)
             {
                 draw_text(
@@ -992,56 +753,9 @@ int main(void)
                     popup.y
                 );
             }
-//魔法メニュー表示
-            if(magic_menu)
-            {
-                SDL_Rect magic_box = {
-                    80, 130, 130, 160
-                };
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    0, 50, 150, 150
-                );
-
-                SDL_RenderFillRect(
-                    renderer,
-                    &magic_box
-                );
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    255,255,255,255
-                );
-
-                SDL_RenderDrawRect(
-                    renderer,
-                    &magic_box
-                );
-
-                SDL_Rect magic_cursor_box = {
-                    80,
-                    135 + magic_cursor * 30,
-                    120,
-                    28
-                };
-
-                SDL_RenderDrawRect(
-                    renderer,
-                    &magic_cursor_box
-                );
-
-                draw_text(renderer, font, "Heal", 90, 130);
-                draw_text(renderer, font, "Fire", 90, 160);
-                draw_text(renderer, font, "Ice", 90, 190);
-                draw_text(renderer, font, "Thunder", 90, 220);
-            }
         }
-
         SDL_RenderPresent(renderer);
-
         SDL_Delay(16);
-
     }
 
     TTF_CloseFont(font);

@@ -4,6 +4,33 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "player.h"
+#include "battle.h"
+
+void draw_battle_background(
+    SDL_Renderer *renderer
+);
+
+void draw_battle_ui(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    Enemy *enemy,
+    EnemySprite *enemy_sprite,
+    SDL_Texture *enemy_texture,
+    int battle_cursor
+);
+
+void update_battle_effects(
+    DamagePopup *popup,
+    HitEffect *hit_effect,
+    SlashEffect *slash_effect,
+    FireEffect *fire_effect,
+    IceEffect *ice_effect,
+    ThunderEffect *thunder_effect,
+    EnemySprite *enemy_sprite
+);
+
 void draw_map(
     SDL_Renderer *renderer
 );
@@ -32,6 +59,12 @@ void draw_hp_bar(
     int y,
     int current_hp,
     int max_hp
+);
+
+void draw_magic_menu(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    int magic_cursor
 );
 
 #endif
