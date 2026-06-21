@@ -21,6 +21,16 @@ void draw_battle_ui(
     int battle_cursor
 );
 
+void draw_battle_effects(
+    SDL_Renderer *renderer,
+    FireEffect *fire_effect,
+    IceEffect *ice_effect,
+    ThunderEffect *thunder_effect,
+    HitEffect *hit_effect,
+    SlashEffect *slash_effect,
+    EnemySprite *enemy_sprite
+);
+
 void update_battle_effects(
     DamagePopup *popup,
     HitEffect *hit_effect,
