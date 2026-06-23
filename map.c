@@ -125,6 +125,73 @@ void enemy_event(int x, int y)
     field_map[y][x] = 'G';
 }
 
+void handle_field_event(
+    char tile,
+    bool *in_town,
+    Player *player,
+    int new_x,
+    int new_y,
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *slime_texture,
+    SDL_Texture *goblin_texture,
+    SDL_Texture *orc_texture
+)
+{
+    if(tile == 'T')
+    {
+        town_event();
+
+        *in_town = true;
+
+        player->x = 6;
+        player->y = 1;
+    }
+
+    if(tile == 'N')
+    {
+        npc_event();
+    }
+
+    if(tile == 'I')
+    {
+        inn_event(player);
+    }
+
+    if(tile == 'Q')
+    {
+        equipment_shop_event(player);
+    }
+
+    if(tile == 'C')
+    {
+        chest_event(
+            player,
+            new_x,
+            new_y
+        );
+    }
+
+    if(tile == 'E')
+    {
+        start_battle(
+            battle_mode,
+            battle_cursor,
+            magic_cursor,
+            enemy,
+            current_enemy_texture,
+            slime_texture,
+            goblin_texture,
+            orc_texture,
+            player,
+            new_x,
+            new_y
+        );
+    }
+}
 char town_map[8][9] = {
 
     "MMMMMMM",

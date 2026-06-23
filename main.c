@@ -20,12 +20,6 @@ EnemyData enemy_table[] = {
     {"オーク", 20, 5, 3, 20, 15, 50, -50, 0}
 };
 
-typedef enum {
-    MODE_FIELD,
-    MODE_BATTLE,
-    MODE_MAGIC
-} BattleMode;
-
 int main(void)
 {
     srand(time(NULL));
@@ -218,277 +212,53 @@ int main(void)
                         new_y
                     );
                 }
-
-                if(tile == 'T')
-                {
-                    town_event();
-
-                    in_town = true;
-
-                    player.x = 3;
-                    player.y = 6;
-                }
-
-                if(in_town && tile == 'O')
-                {
-                    printf("町を出た！\n");
-
-                    in_town = false;
-
-                    player.x = 6;
-                    player.y = 1;
-                }
-
-                if(tile == 'N')
-                {
-                    npc_event();
-                }
-
-                if(tile == 'I')
-                {
-                    inn_event(
-                        &player
-                    );
-                }
-
-                if(tile == 'Q')
-                {
-                    equipment_shop_event(
-                        &player
-                    );
-                }
-
-                if(tile == 'C')
-                {
-                    chest_event(
+                    handle_field_event(
+                        tile,
+                        &in_town,
                         &player,
                         new_x,
-                        new_y
+                        new_y,
+                        &battle_mode,
+                        &battle_cursor,
+                        &magic_cursor,
+                        &enemy,
+                        &current_enemy_texture,
+                        slime_texture,
+                        goblin_texture,
+                        orc_texture
                     );
-                }
-                else
-                {
-                    printf(" \n");
-                }
-//敵情報セット段階
-                if(tile == 'E')
-                {
-                    battle_mode = MODE_BATTLE;
-                    battle_cursor = 0;
-                    magic_cursor = 0;
-
-                    int enemy_type = rand() % 3;
-
-                    if(enemy_type == 0)
-                    {
-                        current_enemy_texture = slime_texture;
-                    }
-
-                    else if(enemy_type == 1)
-                    {
-                        current_enemy_texture = goblin_texture;
-                    }
-
-                    else
-                    {
-                        current_enemy_texture = orc_texture;
-                    }
-
-                    strcpy(
-                        enemy.name,
-                        enemy_table[enemy_type].name
-                    );
-
-                    enemy.hp =
-                        enemy_table[enemy_type].hp;
-
-                    enemy.max_hp =
-                        enemy_table[enemy_type].hp;
-
-                    enemy.attack =
-                        enemy_table[enemy_type].attack;
-
-                    enemy.defense =
-                        enemy_table[enemy_type].defense;
-
-                    enemy.exp =
-                        enemy_table[enemy_type].exp;
-
-                    enemy.gold =
-                        enemy_table[enemy_type].gold;
-
-                    enemy.fire_resist =
-                        enemy_table[enemy_type].fire_resist;
-
-                    enemy.ice_resist =
-                        enemy_table[enemy_type].ice_resist;
-
-                    enemy.thunder_resist =
-                        enemy_table[enemy_type].thunder_resist;
-
-                    enemy.frozen = false;
-                    enemy.frozen_timer = 0;
-
-                        printf("プレイヤーHP:%d\n",
-                                player.hp);
-                        printf("プレイヤーMP:%d\n",
-                                player.mp);
-                        printf("プレイヤーLv:%d\n",
-                                player.level);
-                        printf("プレイヤーATK:%d\n",
-                                player.attack);
-                        printf("プレイヤーDEF:%d\n",
-                                player.defense);
-
-                        enemy_event(new_x, new_y);
-
-                        add_battle_log("敵が現れた！");
-                }
             }
 //戦闘中コマンド処理
-            if(event.type == SDL_KEYDOWN &&
-                (battle_mode == MODE_BATTLE ||
-                 battle_mode == MODE_MAGIC))
+            if(event.type == SDL_KEYDOWN)
             {
 //魔法メニュー処理
                 if(battle_mode == MODE_MAGIC)
                 {
-                    if(event.key.keysym.sym == SDLK_UP)
-                    {
-                        magic_cursor--;
-
-                        if(magic_cursor < 0)
-                            magic_cursor = 3;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_DOWN)
-                    {
-                        magic_cursor++;
-
-                        if(magic_cursor > 3)
-                            magic_cursor = 0;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_ESCAPE)
-                    {
-                        battle_mode = MODE_BATTLE;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_RETURN)
-                    {
-                        switch(magic_cursor)
-                        {
-                            case 0:
-                                if(battle_heal(&player, &enemy))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                else
-                                {
-                                    battle_mode = MODE_BATTLE;
-                                }
-                                break;
-
-                            case 1:
-                                if(battle_fire(
-                                    &player,
-                                    &enemy,
-                                    &fire_effect))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                else
-                                {
-                                    battle_mode = MODE_BATTLE;
-                                }
-                                break;
-
-                            case 2:
-                                if(battle_ice(
-                                    &player,
-                                    &enemy,
-                                    &ice_effect))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                else
-                                {
-                                    battle_mode = MODE_BATTLE;
-                                }
-                                break;
-
-                            case 3:
-                                if(battle_thunder(
-                                    &player,
-                                    &enemy,
-                                    &thunder_effect))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                else
-                                {
-                                    battle_mode = MODE_BATTLE;
-                                }
-                                break;
-                        }
-                    }
+                    handle_magic_input(
+                        &event,
+                        &battle_mode,
+                        &magic_cursor,
+                        &player,
+                        &enemy,
+                        &fire_effect,
+                        &ice_effect,
+                        &thunder_effect
+                    );
                 }
 //通常戦闘処理
-                else
+                else if(battle_mode == MODE_BATTLE)
                 {
-                    if(event.key.keysym.sym == SDLK_UP)
-                    {
-                        battle_cursor--;
-
-                        if(battle_cursor < 0)
-                            battle_cursor = 3;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_DOWN)
-                    {
-                        battle_cursor++;
-
-                        if(battle_cursor > 3)
-                            battle_cursor = 0;
-                    }
-
-                    if(event.key.keysym.sym == SDLK_RETURN)
-                    {
-                        switch(battle_cursor)
-                        {
-                            case 0:
-                                enemy_sprite.shake_timer = 12;
-
-                                if(battle_attack(
-                                        &player,
-                                        &enemy,
-                                        &popup,
-                                        &hit_effect,
-                                        &slash_effect))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                break;
-
-                            case 1:
-                                if(battle_defend(&player, &enemy))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                break;
-
-                            case 2:
-                                battle_mode = MODE_MAGIC;
-                                break;
-
-                            case 3:
-                                if(battle_item(&player, &enemy))
-                                {
-                                    battle_mode = MODE_FIELD;
-                                }
-                                break;
-                        }
-                    }
+                    handle_normal_battle_input(
+                        &event,
+                        &battle_mode,
+                        &battle_cursor,
+                        &player,
+                        &enemy,
+                        &popup,
+                        &hit_effect,
+                        &slash_effect,
+                        &enemy_sprite
+                    );
                 }
             }
         }
@@ -569,168 +339,15 @@ int main(void)
                 );
             }
 //呪文エフェクト描画
-            if(fire_effect.active)
-            {
-                SDL_SetRenderDrawBlendMode(
-                    renderer,
-                    SDL_BLENDMODE_BLEND
-                );
-
-                for(int i = 0; i < 6; i++)
-                {
-                    SDL_Rect flame = {
-                        440 + rand() % 40,
-                        120 + rand() % 60,
-                        20,
-                        20
-                    };
-
-                    SDL_SetRenderDrawColor(
-                        renderer,
-                        255,
-                        120 + rand() % 100,
-                        0,
-                        160
-                    );
-
-                    SDL_RenderFillRect(
-                        renderer,
-                        &flame
-                    );
-                }
-            }
-
-            if(ice_effect.active)
-            {
-                SDL_SetRenderDrawBlendMode(
-                    renderer,
-                    SDL_BLENDMODE_BLEND
-                );
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    100, 220, 255, 180
-                );
-
-                for(int i = 0; i < 4; i++)
-                {
-                    int x = 440 + i * 18;
-                    int y = 120 + rand() % 40;
-
-                    SDL_RenderDrawLine(
-                        renderer,
-                        x, y,
-                        x + 8, y + 20
-                    );
-
-                    SDL_RenderDrawLine(
-                        renderer,
-                        x + 8, y + 20,
-                        x + 16, y
-                    );
-                }
-            }
-
-            if(thunder_effect.active)
-            {
-                SDL_SetRenderDrawBlendMode(
-                    renderer,
-                    SDL_BLENDMODE_BLEND
-                );
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    255, 255, 200, 255
-                );
-
-                int start_x = 470;
-                int start_y = 80;
-
-                int x = start_x;
-                int y = start_y;
-
-                for(int i = 0; i < 6; i++)
-                {
-                    int next_x = x + (rand() % 21 - 10);
-                    int next_y = y + 20;
-
-                    SDL_RenderDrawLine(
-                        renderer,
-                        x, y,
-                        next_x, next_y
-                    );
-
-                    SDL_RenderDrawLine(
-                        renderer,
-                        x + 1, y,
-                        next_x + 1, next_y
-                    );
-
-                    x = next_x;
-                    y = next_y;
-                }
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    255,255,255,120
-                );
-
-                SDL_Rect flash = {
-                    enemy_sprite.x,
-                    enemy_sprite.y,
-                    96,
-                    96
-                };
-
-                SDL_RenderFillRect(
-                    renderer,
-                    &flash
-                );
-            }
-
-            if(hit_effect.active)
-            {
-                SDL_Rect flash = {
-                    enemy_sprite.x,
-                    enemy_sprite.y,
-                    96,
-                    96
-                };
-
-                SDL_SetRenderDrawBlendMode(
-                    renderer,
-                    SDL_BLENDMODE_BLEND
-                );
-
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    255,255,255,160
-                );
-
-                SDL_RenderFillRect(
-                    renderer,
-                    &flash
-                );
-            }
-
-            if(slash_effect.active)
-            {
-                SDL_SetRenderDrawColor(
-                    renderer,
-                    150,150,150,255
-                );
-
-                for(int i = 0; i < 5; i++)
-                {
-                    SDL_RenderDrawLine(
-                        renderer,
-                        450 + i * 8,
-                        140,
-                        490 + i * 8,
-                        180
-                    );
-                }
-            }
+            draw_battle_effects(
+                renderer,
+                &fire_effect,
+                &ice_effect,
+                &thunder_effect,
+                &hit_effect,
+                &slash_effect,
+                &enemy_sprite
+            );
 //戦闘ログ描画
             for(int i = 0; i < LOG_LINES; i++)
             {

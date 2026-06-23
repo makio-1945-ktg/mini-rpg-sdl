@@ -4,8 +4,7 @@
 #include <stdlib.h>
 
 #include "battle.h"
-
-#define LOG_LINES 3
+#include "map.h"
 
 int apply_element_resistance(
     int damage,
@@ -522,5 +521,208 @@ bool enemy_turn(
     }
 
     return false;
+}
+
+void handle_normal_battle_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    Player *player,
+    Enemy *enemy,
+    DamagePopup *popup,
+    HitEffect *hit_effect,
+    SlashEffect *slash_effect,
+    EnemySprite *enemy_sprite
+)
+{
+    if(event->key.keysym.sym == SDLK_UP)
+    {
+        (*battle_cursor)--;
+
+        if(*battle_cursor < 0)
+            *battle_cursor = 3;
+    }
+
+    if(event->key.keysym.sym == SDLK_DOWN)
+    {
+        (*battle_cursor)++;
+
+        if(*battle_cursor > 3)
+            *battle_cursor = 0;
+    }
+
+    if(event->key.keysym.sym == SDLK_RETURN)
+    {
+        switch(*battle_cursor)
+        {
+            case 0:
+                enemy_sprite->shake_timer = 12;
+
+                if(battle_attack(
+                    player,
+                    enemy,
+                    popup,
+                    hit_effect,
+                    slash_effect
+                ))
+                {
+                    *battle_mode = MODE_FIELD;
+                }
+                break;
+
+            case 1:
+                if(battle_defend(player, enemy))
+                {
+                    *battle_mode = MODE_FIELD;
+                }
+                break;
+
+            case 2:
+                *battle_mode = MODE_MAGIC;
+                break;
+
+            case 3:
+                if(battle_item(player, enemy))
+                {
+                    *battle_mode = MODE_FIELD;
+                }
+                break;
+        }
+    }
+}
+
+void handle_magic_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *magic_cursor,
+    Player *player,
+    Enemy *enemy,
+    FireEffect *fire_effect,
+    IceEffect *ice_effect,
+    ThunderEffect *thunder_effect
+)
+{
+    if(event->key.keysym.sym == SDLK_UP)
+    {
+        (*magic_cursor)--;
+
+        if(*magic_cursor < 0)
+            *magic_cursor = 3;
+    }
+
+    if(event->key.keysym.sym == SDLK_DOWN)
+    {
+        (*magic_cursor)++;
+
+        if(*magic_cursor > 3)
+            *magic_cursor = 0;
+    }
+
+    if(event->key.keysym.sym == SDLK_RETURN)
+    {
+        switch(*magic_cursor)
+        {
+            case 0:
+                if(battle_heal(player, enemy))
+                    *battle_mode = MODE_FIELD;
+                else
+                    *battle_mode = MODE_BATTLE;
+                break;
+
+            case 1:
+                if(battle_fire(player, enemy, fire_effect))
+                    *battle_mode = MODE_FIELD;
+                else
+                    *battle_mode = MODE_BATTLE;
+                break;
+
+            case 2:
+                if(battle_ice(player, enemy, ice_effect))
+                    *battle_mode = MODE_FIELD;
+                else
+                    *battle_mode = MODE_BATTLE;
+                break;
+
+            case 3:
+                if(battle_thunder(player, enemy, thunder_effect))
+                    *battle_mode = MODE_FIELD;
+                else
+                    *battle_mode = MODE_BATTLE;
+                break;
+        }
+    }
+}
+
+void start_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *slime_texture,
+    SDL_Texture *goblin_texture,
+    SDL_Texture *orc_texture,
+    Player *player,
+    int new_x,
+    int new_y
+)
+{
+    *battle_mode = MODE_BATTLE;
+    *battle_cursor = 0;
+    *magic_cursor = 0;
+
+    int enemy_type = rand() % 3;
+
+    if(enemy_type == 0)
+    {
+        *current_enemy_texture = slime_texture;
+    }
+    else if(enemy_type == 1)
+    {
+        *current_enemy_texture = goblin_texture;
+    }
+    else
+    {
+        *current_enemy_texture = orc_texture;
+    }
+
+    strcpy(
+        enemy->name,
+        enemy_table[enemy_type].name
+    );
+
+    enemy->hp =
+        enemy_table[enemy_type].hp;
+
+    enemy->max_hp =
+        enemy_table[enemy_type].hp;
+
+    enemy->attack =
+        enemy_table[enemy_type].attack;
+
+    enemy->defense =
+        enemy_table[enemy_type].defense;
+
+    enemy->exp =
+        enemy_table[enemy_type].exp;
+
+    enemy->gold =
+        enemy_table[enemy_type].gold;
+
+    enemy->fire_resist =
+        enemy_table[enemy_type].fire_resist;
+
+    enemy->ice_resist =
+        enemy_table[enemy_type].ice_resist;
+
+    enemy->thunder_resist =
+        enemy_table[enemy_type].thunder_resist;
+
+    enemy->frozen = false;
+    enemy->frozen_timer = 0;
+
+    enemy_event(new_x, new_y);
+
+    add_battle_log("敵が現れた！");
 }
 

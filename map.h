@@ -1,7 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <stdbool.h>
+#include <SDL2/SDL.h>
 #include "player.h"
+#include "battle.h"
 
 extern char field_map[15][21];
 
@@ -36,5 +39,21 @@ void open_chest(
 );
 
 void enemy_event(int x, int y);
+
+void handle_field_event(
+    char tile,
+    bool *in_town,
+    Player *player,
+    int new_x,
+    int new_y,
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *slime_texture,
+    SDL_Texture *goblin_texture,
+    SDL_Texture *orc_texture
+);
 
 #endif
