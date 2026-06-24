@@ -151,6 +151,14 @@ void handle_field_event(
         player->y = 1;
     }
 
+    if(tile == 'O')
+    {
+        *in_town = false;
+        player->x = 7;
+        player->y = 1;
+        printf("町を出た！\n");
+    }
+
     if(tile == 'N')
     {
         npc_event();

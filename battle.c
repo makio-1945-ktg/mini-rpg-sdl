@@ -43,6 +43,46 @@ void show_damage_popup(
     popup->active = true;
 }
 
+static bool enemy_defeat(
+    Player *player,
+    Enemy *enemy
+)
+{
+    printf("敵を倒した！\n");
+
+    player->exp += enemy->exp;
+    player->gold += enemy->gold;
+
+    printf("%d EXP獲得！\n", enemy->exp);
+    printf("%d GOLD獲得！\n", enemy->gold);
+
+    if(player->exp >= 30)
+    {
+        player->level++;
+        player->exp -= 30;
+
+        player->max_hp += 5;
+        player->hp = player->max_hp;
+
+        player->max_mp += 5;
+        player->mp = player->max_mp;
+
+        player->attack += 1;
+        player->defense += 1;
+
+        printf("レベルアップ！\n");
+        printf("Lv:%d\n", player->level);
+    }
+    return true;
+}
+
+    void end_battle(
+        BattleMode *battle_mode
+    )
+    {
+        *battle_mode = MODE_FIELD;
+    }
+
 bool battle_attack(
     Player *player,
     Enemy *enemy,
@@ -89,48 +129,8 @@ bool battle_attack(
 
         if(enemy->hp <= 0)
         {
-            printf("敵を倒した！\n");
-
-            player->exp += enemy->exp;
-
-            printf("%d EXP獲得！\n",
-                   enemy->exp);
-
-            printf("現在EXP:%d\n",
-                   player->exp);
-
-            player->gold += enemy->gold;
-
-            printf("%d GOLD獲得！\n",
-                    enemy->gold);
-
-            printf("所持金:%d G\n",
-                    player->gold);
-
-        if(player->exp >= 30)
-        {
-
-            player->level++;
-
-            player->exp -= 30;
-
-            player->max_hp += 5;
-            player->hp = player->max_hp;
-
-            player->max_mp += 2;
-            player->mp = player->max_mp;
-
-            player->attack += 1;
-            player->defense += 1;
-
-            printf("レベルアップ！\n");
-            printf("Lv:%d\n", player->level);
-            printf("HP:%d\n", player->hp);
-            printf("MP:%d\n", player->mp);
-            printf("ATK:%d\n", player->attack);
-            printf("DEF:%d\n", player->defense);
-        }
-            return true;
+            enemy->hp = 0;
+            return enemy_defeat(player, enemy);
         }
 
         return enemy_turn(
@@ -267,7 +267,7 @@ bool battle_fire(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return true;
+        return enemy_defeat(player, enemy);
     }
 
     return enemy_turn(
@@ -334,7 +334,7 @@ bool battle_ice(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return true;
+        return enemy_defeat(player, enemy);
     }
 
     if(rand() % 4 == 0)
@@ -429,7 +429,7 @@ bool battle_thunder(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return true;
+        return enemy_defeat(player, enemy);
     }
 
     return enemy_turn(
@@ -566,14 +566,14 @@ void handle_normal_battle_input(
                     slash_effect
                 ))
                 {
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 }
                 break;
 
             case 1:
                 if(battle_defend(player, enemy))
                 {
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 }
                 break;
 
@@ -584,7 +584,7 @@ void handle_normal_battle_input(
             case 3:
                 if(battle_item(player, enemy))
                 {
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 }
                 break;
         }
@@ -624,28 +624,28 @@ void handle_magic_input(
         {
             case 0:
                 if(battle_heal(player, enemy))
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 else
                     *battle_mode = MODE_BATTLE;
                 break;
 
             case 1:
                 if(battle_fire(player, enemy, fire_effect))
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 else
                     *battle_mode = MODE_BATTLE;
                 break;
 
             case 2:
                 if(battle_ice(player, enemy, ice_effect))
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 else
                     *battle_mode = MODE_BATTLE;
                 break;
 
             case 3:
                 if(battle_thunder(player, enemy, thunder_effect))
-                    *battle_mode = MODE_FIELD;
+                    end_battle(battle_mode);
                 else
                     *battle_mode = MODE_BATTLE;
                 break;

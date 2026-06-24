@@ -183,4 +183,8 @@ void start_battle(
     int new_y
 );
 
+void end_battle(
+    BattleMode *battle_mode
+);
+
 #endif
