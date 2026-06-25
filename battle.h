@@ -100,50 +100,58 @@ typedef struct {
 
 void battle_start(void);
 
-bool battle_attack(
+void battle_attack(
     Player *player,
     Enemy *enemy,
     DamagePopup *popup,
     HitEffect *hit_effect,
-    SlashEffect *slash_effect
+    SlashEffect *slash_effect,
+    BattleMode *battle_mode
 );
 
 bool battle_defend(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 );
 
 bool battle_heal(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 );
 
-bool battle_fire(
+void battle_fire(
     Player *player,
     Enemy *enemy,
-    FireEffect *fire_effect
+    FireEffect *fire_effect,
+    BattleMode *battle_mode
 );
 
-bool battle_ice(
+void battle_ice(
     Player *player,
     Enemy *enemy,
-    IceEffect *ice_effect
+    IceEffect *ice_effect,
+    BattleMode *battle_mode
 );
 
-bool battle_thunder(
+void battle_thunder(
     Player *player,
     Enemy *enemy,
-    ThunderEffect *thunder_effect
+    ThunderEffect *thunder_effect,
+    BattleMode *battle_mode
 );
 
 bool battle_item(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 );
 
 bool enemy_turn(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 );
 
 void handle_normal_battle_input(

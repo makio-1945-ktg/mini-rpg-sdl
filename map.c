@@ -8,7 +8,7 @@ char field_map[15][21] = {
     "MGGGGGGTGGGGGGGGGGGM",
     "MCGEGGGGEGGGGGGGGGGM",
     "MEGGGGEGGGGGGGGWWWGM",
-    "MMMMMMMMGGGGGGWWWGGM",
+    "MGGGGGGGGGGGGGWWWGGM",
     "MGGGGGGGGGGGGGGWWWGM",
     "MGGGGGGGGGGGGGGGGGGM",
     "MGGGGGGGGGGGGGGGGGGM",
@@ -147,8 +147,8 @@ void handle_field_event(
 
         *in_town = true;
 
-        player->x = 6;
-        player->y = 1;
+        player->x = 3;
+        player->y = 5;
     }
 
     if(tile == 'O')

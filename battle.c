@@ -45,7 +45,8 @@ void show_damage_popup(
 
 static bool enemy_defeat(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 )
 {
     printf("敵を倒した！\n");
@@ -73,22 +74,24 @@ static bool enemy_defeat(
         printf("レベルアップ！\n");
         printf("Lv:%d\n", player->level);
     }
+    end_battle(battle_mode);
     return true;
 }
 
-    void end_battle(
-        BattleMode *battle_mode
-    )
-    {
-        *battle_mode = MODE_FIELD;
-    }
+void end_battle(
+    BattleMode *battle_mode
+)
+{
+    *battle_mode = MODE_FIELD;
+}
 
-bool battle_attack(
+void battle_attack(
     Player *player,
     Enemy *enemy,
     DamagePopup *popup,
     HitEffect *hit_effect,
-    SlashEffect *slash_effect
+    SlashEffect *slash_effect,
+    BattleMode *battle_mode
     )
     {
     int player_damage =
@@ -130,18 +133,26 @@ bool battle_attack(
         if(enemy->hp <= 0)
         {
             enemy->hp = 0;
-            return enemy_defeat(player, enemy);
+            enemy_defeat(
+                player,
+                enemy,
+                battle_mode
+            );
+            return;
         }
 
-        return enemy_turn(
+        enemy_turn(
             player,
-            enemy
+            enemy,
+            battle_mode
         );
+        return;
     }
 
 bool battle_defend(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 )
 {
     printf("防御した！\n");
@@ -168,7 +179,7 @@ bool battle_defend(
     if(player->hp <= 0)
     {
         printf("ゲームオーバー！\n");
-
+        end_battle(battle_mode);
         return true;
     }
 
@@ -177,12 +188,14 @@ bool battle_defend(
 
 bool battle_heal(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 )
 {
     if(player->mp < 3)
     {
-        printf("MPが足りない！\n");
+        add_battle_log("MPが足りない！");
+        *battle_mode = MODE_BATTLE;
         return false;
     }
 
@@ -205,20 +218,23 @@ bool battle_heal(
 
     return enemy_turn(
         player,
-        enemy
+        enemy,
+        battle_mode
     );
 }
 
-bool battle_fire(
+void battle_fire(
     Player *player,
     Enemy *enemy,
-    FireEffect *fire_effect
+    FireEffect *fire_effect,
+    BattleMode *battle_mode
 )
 {
     if(player->mp < 4)
     {
         add_battle_log("MPが足りない！");
-        return false;
+        *battle_mode = MODE_BATTLE;
+        return;
     }
 
     player->mp -= 4;
@@ -267,25 +283,35 @@ bool battle_fire(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return enemy_defeat(player, enemy);
+
+        enemy_defeat(
+            player,
+            enemy,
+            battle_mode
+        );
+        return;
     }
 
-    return enemy_turn(
+    enemy_turn(
         player,
-        enemy
+        enemy,
+        battle_mode
     );
+    return;
 }
 
-bool battle_ice(
+void battle_ice(
     Player *player,
     Enemy *enemy,
-    IceEffect *ice_effect
+    IceEffect *ice_effect,
+    BattleMode *battle_mode
 )
 {
     if(player->mp < 4)
     {
         add_battle_log("MPが足りない！");
-        return false;
+        *battle_mode = MODE_BATTLE;
+        return;
     }
 
     player->mp -= 4;
@@ -334,7 +360,12 @@ bool battle_ice(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return enemy_defeat(player, enemy);
+        enemy_defeat(
+            player,
+            enemy,
+            battle_mode
+        );
+        return;
     }
 
     if(rand() % 4 == 0)
@@ -345,22 +376,26 @@ bool battle_ice(
         add_battle_log("敵が凍った！攻撃力低下！");
     }
 
-    return enemy_turn(
+    enemy_turn(
         player,
-        enemy
+        enemy,
+        battle_mode
     );
+    return;
 }
 
-bool battle_thunder(
+void battle_thunder(
     Player *player,
     Enemy *enemy,
-    ThunderEffect *thunder_effect
+    ThunderEffect *thunder_effect,
+    BattleMode *battle_mode
 )
 {
     if(player->mp < 5)
     {
         add_battle_log("MPが足りない！");
-        return false;
+        *battle_mode = MODE_BATTLE;
+        return;
     }
 
     player->mp -= 5;
@@ -429,18 +464,26 @@ bool battle_thunder(
     if(enemy->hp <= 0)
     {
         enemy->hp = 0;
-        return enemy_defeat(player, enemy);
+        enemy_defeat(
+            player,
+            enemy,
+            battle_mode
+        );
+        return;
     }
 
-    return enemy_turn(
+    enemy_turn(
         player,
-        enemy
+        enemy,
+        battle_mode
     );
+    return;
 }
 
 bool battle_item(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 )
 {
     if(player->potion <= 0)
@@ -457,6 +500,7 @@ bool battle_item(
     if(player->hp > player->max_hp)
     {
         player->hp = player->max_hp;
+
     }
 
     printf("ポーションを使った！\n");
@@ -469,12 +513,14 @@ bool battle_item(
 
     return enemy_turn(
         player,
-        enemy
+        enemy,
+        battle_mode
     );
 }
 bool enemy_turn(
     Player *player,
-    Enemy *enemy
+    Enemy *enemy,
+    BattleMode *battle_mode
 )
 {
     int enemy_attack = enemy->attack;
@@ -558,23 +604,22 @@ void handle_normal_battle_input(
             case 0:
                 enemy_sprite->shake_timer = 12;
 
-                if(battle_attack(
+                battle_attack(
                     player,
                     enemy,
                     popup,
                     hit_effect,
-                    slash_effect
-                ))
-                {
-                    end_battle(battle_mode);
-                }
+                    slash_effect,
+                    battle_mode
+                );
                 break;
 
             case 1:
-                if(battle_defend(player, enemy))
-                {
-                    end_battle(battle_mode);
-                }
+                battle_defend(
+                    player,
+                    enemy,
+                    battle_mode
+                );
                 break;
 
             case 2:
@@ -582,10 +627,11 @@ void handle_normal_battle_input(
                 break;
 
             case 3:
-                if(battle_item(player, enemy))
-                {
-                    end_battle(battle_mode);
-                }
+                battle_item(
+                    player,
+                    enemy,
+                    battle_mode
+                );
                 break;
         }
     }
@@ -618,36 +664,48 @@ void handle_magic_input(
             *magic_cursor = 0;
     }
 
+    if(event->key.keysym.sym == SDLK_ESCAPE)
+    {
+        *battle_mode = MODE_BATTLE;
+    }
+
     if(event->key.keysym.sym == SDLK_RETURN)
     {
         switch(*magic_cursor)
         {
             case 0:
-                if(battle_heal(player, enemy))
-                    end_battle(battle_mode);
-                else
-                    *battle_mode = MODE_BATTLE;
+                battle_heal(
+                    player,
+                    enemy,
+                    battle_mode
+                );
                 break;
 
             case 1:
-                if(battle_fire(player, enemy, fire_effect))
-                    end_battle(battle_mode);
-                else
-                    *battle_mode = MODE_BATTLE;
+                battle_fire(
+                    player,
+                    enemy,
+                    fire_effect,
+                    battle_mode
+                );
                 break;
 
             case 2:
-                if(battle_ice(player, enemy, ice_effect))
-                    end_battle(battle_mode);
-                else
-                    *battle_mode = MODE_BATTLE;
+                battle_ice(
+                    player,
+                    enemy,
+                    ice_effect,
+                    battle_mode
+                );
                 break;
 
             case 3:
-                if(battle_thunder(player, enemy, thunder_effect))
-                    end_battle(battle_mode);
-                else
-                    *battle_mode = MODE_BATTLE;
+                battle_thunder(
+                    player,
+                    enemy,
+                    thunder_effect,
+                    battle_mode
+                );
                 break;
         }
     }
