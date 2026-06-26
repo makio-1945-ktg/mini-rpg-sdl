@@ -109,13 +109,13 @@ void battle_attack(
     BattleMode *battle_mode
 );
 
-bool battle_defend(
+void battle_defend(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
 );
 
-bool battle_heal(
+void battle_heal(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -142,13 +142,13 @@ void battle_thunder(
     BattleMode *battle_mode
 );
 
-bool battle_item(
+void battle_item(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
 );
 
-bool enemy_turn(
+void enemy_turn(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode

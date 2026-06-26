@@ -43,7 +43,7 @@ void show_damage_popup(
     popup->active = true;
 }
 
-static bool enemy_defeat(
+static void enemy_defeat(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -75,7 +75,6 @@ static bool enemy_defeat(
         printf("Lv:%d\n", player->level);
     }
     end_battle(battle_mode);
-    return true;
 }
 
 void end_battle(
@@ -149,7 +148,7 @@ void battle_attack(
         return;
     }
 
-bool battle_defend(
+void battle_defend(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -180,13 +179,10 @@ bool battle_defend(
     {
         printf("ゲームオーバー！\n");
         end_battle(battle_mode);
-        return true;
     }
-
-    return false;
 }
 
-bool battle_heal(
+void battle_heal(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -196,7 +192,7 @@ bool battle_heal(
     {
         add_battle_log("MPが足りない！");
         *battle_mode = MODE_BATTLE;
-        return false;
+        return;
     }
 
     player->mp -= 3;
@@ -216,11 +212,12 @@ bool battle_heal(
     printf("MP:%d\n",
            player->mp);
 
-    return enemy_turn(
+    enemy_turn(
         player,
         enemy,
         battle_mode
     );
+    return;
 }
 
 void battle_fire(
@@ -480,7 +477,7 @@ void battle_thunder(
     return;
 }
 
-bool battle_item(
+void battle_item(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -489,8 +486,8 @@ bool battle_item(
     if(player->potion <= 0)
     {
         printf("ポーションが無い！\n");
-
-        return false;
+        *battle_mode = MODE_BATTLE;
+        return;
     }
 
     player->potion--;
@@ -511,13 +508,14 @@ bool battle_item(
     printf("残り:%d個\n",
            player->potion);
 
-    return enemy_turn(
+    enemy_turn(
         player,
         enemy,
         battle_mode
     );
+    return;
 }
-bool enemy_turn(
+void enemy_turn(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -551,8 +549,8 @@ bool enemy_turn(
     if(player->hp <= 0)
     {
         printf("ゲームオーバー！\n");
-
-        return true;
+        end_battle(battle_mode);
+        return;
     }
 
     if(enemy->frozen)
@@ -565,8 +563,6 @@ bool enemy_turn(
             add_battle_log("敵の凍結が溶けた！");
         }
     }
-
-    return false;
 }
 
 void handle_normal_battle_input(
