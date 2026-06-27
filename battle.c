@@ -5,13 +5,14 @@
 
 #include "battle.h"
 #include "map.h"
+#include "magic.h"
 
 int apply_element_resistance(
     int damage,
     int resist
 )
 {
-    return damage * resist / 100;
+    return damage * (100 - resist) / 100;
 }
 
 char battle_logs[LOG_LINES][128] = {
@@ -43,7 +44,7 @@ void show_damage_popup(
     popup->active = true;
 }
 
-static void enemy_defeat(
+void enemy_defeat(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -211,263 +212,6 @@ void battle_heal(
 
     printf("MP:%d\n",
            player->mp);
-
-    enemy_turn(
-        player,
-        enemy,
-        battle_mode
-    );
-    return;
-}
-
-void battle_fire(
-    Player *player,
-    Enemy *enemy,
-    FireEffect *fire_effect,
-    BattleMode *battle_mode
-)
-{
-    if(player->mp < 4)
-    {
-        add_battle_log("MPが足りない！");
-        *battle_mode = MODE_BATTLE;
-        return;
-    }
-
-    player->mp -= 4;
-
-    fire_effect->active = true;
-    fire_effect->timer = 20;
-
-    int fire_damage =
-        player->attack + 8
-        - enemy->defense / 2;
-
-    fire_damage = 
-        fire_damage *
-        (100 - enemy->fire_resist)
-        / 100;
-
-    if(enemy->fire_resist == 100)
-    {
-        add_battle_log("効果がない！");
-    }
-    else if(enemy->fire_resist >= 50)
-    {
-        add_battle_log("あまり効いてないようだ…");
-    }
-    else if(enemy->fire_resist < 0)
-    {
-        add_battle_log("弱点を突いた！");
-    }
-
-    if(fire_damage < 1)
-    {
-        fire_damage = 1;
-    }
-
-    enemy->hp -= fire_damage;
-
-    char msg[128];
-    sprintf(
-        msg,
-        "ファイアを唱えた！ %dダメージ！",
-        fire_damage
-    );
-
-    add_battle_log(msg);
-
-    if(enemy->hp <= 0)
-    {
-        enemy->hp = 0;
-
-        enemy_defeat(
-            player,
-            enemy,
-            battle_mode
-        );
-        return;
-    }
-
-    enemy_turn(
-        player,
-        enemy,
-        battle_mode
-    );
-    return;
-}
-
-void battle_ice(
-    Player *player,
-    Enemy *enemy,
-    IceEffect *ice_effect,
-    BattleMode *battle_mode
-)
-{
-    if(player->mp < 4)
-    {
-        add_battle_log("MPが足りない！");
-        *battle_mode = MODE_BATTLE;
-        return;
-    }
-
-    player->mp -= 4;
-
-    ice_effect->active = true;
-    ice_effect->timer = 20;
-
-    int ice_damage =
-        player->attack + 6
-        - enemy->defense;
-
-    ice_damage =
-        ice_damage *
-        (100 - enemy->ice_resist)
-        / 100;
-
-    if(enemy->ice_resist == 100)
-    {
-        add_battle_log("効果がない！");
-    }
-    else if(enemy->ice_resist >= 50)
-    {
-        add_battle_log("あまり効いてないようだ…");
-    }
-    else if(enemy->ice_resist < 0)
-    {
-        add_battle_log("弱点を突いた！");
-    }
-
-    if(ice_damage < 1)
-    {
-        ice_damage = 1;
-    }
-
-    enemy->hp -= ice_damage;
-
-    char msg[128];
-    sprintf(
-        msg,
-        "アイスを唱えた！ %dダメージ！",
-        ice_damage
-    );
-
-    add_battle_log(msg);
-
-    if(enemy->hp <= 0)
-    {
-        enemy->hp = 0;
-        enemy_defeat(
-            player,
-            enemy,
-            battle_mode
-        );
-        return;
-    }
-
-    if(rand() % 4 == 0)
-    {
-        enemy->frozen = true;
-        enemy->frozen_timer = 1;
-
-        add_battle_log("敵が凍った！攻撃力低下！");
-    }
-
-    enemy_turn(
-        player,
-        enemy,
-        battle_mode
-    );
-    return;
-}
-
-void battle_thunder(
-    Player *player,
-    Enemy *enemy,
-    ThunderEffect *thunder_effect,
-    BattleMode *battle_mode
-)
-{
-    if(player->mp < 5)
-    {
-        add_battle_log("MPが足りない！");
-        *battle_mode = MODE_BATTLE;
-        return;
-    }
-
-    player->mp -= 5;
-
-    thunder_effect->active = true;
-    thunder_effect->timer = 15;
-
-    int thunder_damage =
-        player->attack + 10
-        - enemy->defense / 2;
-
-    thunder_damage =
-        thunder_damage *
-        (100 - enemy->thunder_resist)
-        / 100;
-
-    if(enemy->thunder_resist == 100)
-    {
-        add_battle_log("効果がない！");
-    }
-    else if(enemy->thunder_resist >= 50)
-    {
-        add_battle_log("あまり効いてないようだ…");
-    }
-    else if(enemy->thunder_resist < 0)
-    {
-        add_battle_log("弱点を突いた！");
-    }
-
-    if(thunder_damage < 1)
-    {
-        thunder_damage = 1;
-    }
-
-    bool critical = false;
-
-    if(rand() % 4 == 0)
-    {
-        thunder_damage += 8;
-        critical = true;
-    }
-
-    enemy->hp -= thunder_damage;
-
-    char msg[128];
-
-    if(critical)
-    {
-        sprintf(
-            msg,
-            "唱えたサンダーが直撃した！ %dダメージ！",
-            thunder_damage
-        );
-    }
-    else
-    {
-        sprintf(
-            msg,
-            "サンダーを唱えた！ %dダメージ！",
-            thunder_damage
-        );
-    }
-
-    add_battle_log(msg);
-
-    if(enemy->hp <= 0)
-    {
-        enemy->hp = 0;
-        enemy_defeat(
-            player,
-            enemy,
-            battle_mode
-        );
-        return;
-    }
 
     enemy_turn(
         player,

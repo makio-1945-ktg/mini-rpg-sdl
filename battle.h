@@ -121,31 +121,21 @@ void battle_heal(
     BattleMode *battle_mode
 );
 
-void battle_fire(
-    Player *player,
-    Enemy *enemy,
-    FireEffect *fire_effect,
-    BattleMode *battle_mode
-);
-
-void battle_ice(
-    Player *player,
-    Enemy *enemy,
-    IceEffect *ice_effect,
-    BattleMode *battle_mode
-);
-
-void battle_thunder(
-    Player *player,
-    Enemy *enemy,
-    ThunderEffect *thunder_effect,
-    BattleMode *battle_mode
-);
-
 void battle_item(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
+);
+
+void enemy_defeat(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+);
+
+int apply_element_resistance(
+    int damage,
+    int resist
 );
 
 void enemy_turn(
