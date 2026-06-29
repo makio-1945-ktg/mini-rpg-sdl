@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "magic.h"
+#include "battle.h"
 
 typedef struct
 {
@@ -11,6 +12,15 @@ typedef struct
     int bonus_attack;
     int defense_divisor;
 } MagicConfig;
+
+static void start_magic_effect(
+    MagicEffect *effect,
+    int timer
+)
+{
+    effect->active = true;
+    effect->timer = timer;
+}
 
 static void show_element_message(int resist)
 {
@@ -115,6 +125,51 @@ static void finish_magic_attack(
     );
 }
 
+static void cast_magic(
+    Player *player,
+    Enemy *enemy,
+    MagicEffect *effect,
+    BattleMode *battle_mode,
+    MagicConfig config,
+    int resist,
+    const char *spell_name
+)
+{
+    if(!consume_mp(player, config.mp_cost, battle_mode))
+    {
+        return;
+    }
+
+    start_magic_effect(
+        effect,
+        config.effect_timer
+    );
+
+    int damage =
+        calculate_spell_damage(
+            player,
+            enemy,
+            config,
+            resist
+        );
+
+    char msg[128];
+    sprintf(
+        msg,
+        "%sを唱えた！ %dダメージ！",
+        spell_name,
+        damage
+    );
+
+    finish_magic_attack(
+        player,
+        enemy,
+        battle_mode,
+        damage,
+        msg
+    );
+}
+
 void battle_fire(
     Player *player,
     Enemy *enemy,
@@ -124,35 +179,14 @@ void battle_fire(
 {
     MagicConfig fire = {4, 20, 8, 2};
 
-    if(!consume_mp(player, fire.mp_cost, battle_mode))
-    {
-        return;
-    }
-
-    fire_effect->active = true;
-    fire_effect->timer = fire.effect_timer;
-
-    int fire_damage =
-        calculate_spell_damage(
-            player,
-            enemy,
-            fire,
-            enemy->fire_resist
-        );
-
-    char msg[128];
-    sprintf(
-        msg,
-        "ファイアを唱えた！ %dダメージ！",
-        fire_damage
-    );
-
-    finish_magic_attack(
+    cast_magic(
         player,
         enemy,
+        fire_effect,
         battle_mode,
-        fire_damage,
-        msg
+        fire,
+        enemy->fire_resist,
+        "ファイア"
     );
 }
 
@@ -163,15 +197,17 @@ void battle_ice(
     BattleMode *battle_mode
 )
 {
-    MagicConfig ice = {4, 20, 6, 2};
+    MagicConfig ice = {4, 20, 6, 1};
 
     if(!consume_mp(player, ice.mp_cost, battle_mode))
     {
         return;
     }
 
-    ice_effect->active = true;
-    ice_effect->timer = ice.effect_timer;
+    start_magic_effect(
+        ice_effect,
+        ice.effect_timer
+    );
 
     int ice_damage =
         calculate_spell_damage(
@@ -219,8 +255,10 @@ void battle_thunder(
         return;
     }
 
-    thunder_effect->active = true;
-    thunder_effect->timer = 15;
+    start_magic_effect(
+        thunder_effect,
+        thunder.effect_timer
+    );
 
     int thunder_damage =
         calculate_spell_damage(
@@ -237,7 +275,6 @@ void battle_thunder(
         thunder_damage += 8;
         critical = true;
     }
-
     char msg[128];
 
     if(critical)
@@ -265,4 +302,3 @@ void battle_thunder(
         msg
     );
 }
-

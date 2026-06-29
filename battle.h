@@ -86,17 +86,11 @@ typedef struct {
 typedef struct {
     int timer;
     bool active;
-} FireEffect;
+} MagicEffect;
 
-typedef struct {
-    int timer;
-    bool active;
-} IceEffect;
-
-typedef struct {
-    int timer;
-    bool active;
-} ThunderEffect;
+typedef MagicEffect FireEffect;
+typedef MagicEffect IceEffect;
+typedef MagicEffect ThunderEffect;
 
 void battle_start(void);
 
