@@ -5,13 +5,19 @@
 #include "magic.h"
 #include "battle.h"
 
-typedef struct
-{
+typedef struct {
+    const char *name;
     int mp_cost;
     int effect_timer;
     int bonus_attack;
     int defense_divisor;
 } MagicConfig;
+
+static const MagicConfig FIRE_CONFIG = {"ファイア", 4, 20, 8, 2};
+
+static const MagicConfig ICE_CONFIG = {"アイス", 4, 20, 6, 1};
+
+static const MagicConfig THUNDER_CONFIG = {"サンダー", 5, 15, 10, 2};
 
 static void start_magic_effect(
     MagicEffect *effect,
@@ -94,6 +100,20 @@ static bool consume_mp(
     return true;
 }
 
+static void build_spell_message(
+    char *buffer,
+    const char *spell_name,
+    int damage
+)
+{
+    sprintf(
+        buffer,
+        "%sを唱えた！ %dダメージ！",
+        spell_name,
+        damage
+    );
+}
+
 static void finish_magic_attack(
     Player *player,
     Enemy *enemy,
@@ -125,19 +145,18 @@ static void finish_magic_attack(
     );
 }
 
-static void cast_magic(
+static int cast_magic(
     Player *player,
     Enemy *enemy,
     MagicEffect *effect,
     BattleMode *battle_mode,
     MagicConfig config,
-    int resist,
-    const char *spell_name
+    int resist
 )
 {
     if(!consume_mp(player, config.mp_cost, battle_mode))
     {
-        return;
+        return -1;
     }
 
     start_magic_effect(
@@ -154,10 +173,9 @@ static void cast_magic(
         );
 
     char msg[128];
-    sprintf(
+    build_spell_message(
         msg,
-        "%sを唱えた！ %dダメージ！",
-        spell_name,
+        config.name,
         damage
     );
 
@@ -168,6 +186,7 @@ static void cast_magic(
         damage,
         msg
     );
+    return damage;
 }
 
 void battle_fire(
@@ -177,17 +196,28 @@ void battle_fire(
     BattleMode *battle_mode
 )
 {
-    MagicConfig fire = {4, 20, 8, 2};
+    int damage =
+        cast_magic(
+            player,
+            enemy,
+            fire_effect,
+            battle_mode,
+            FIRE_CONFIG,
+            enemy->fire_resist
+        );
 
-    cast_magic(
-        player,
-        enemy,
-        fire_effect,
-        battle_mode,
-        fire,
-        enemy->fire_resist,
-        "ファイア"
-    );
+    if(damage < 0)
+    {
+        return;
+    }
+
+    if(rand() % 100 < 30)
+    {
+        enemy->burning = true;
+        enemy->burn_timer = 3;
+
+        add_battle_log("敵は火傷を負った！");
+    }
 }
 
 void battle_ice(
@@ -197,48 +227,28 @@ void battle_ice(
     BattleMode *battle_mode
 )
 {
-    MagicConfig ice = {4, 20, 6, 1};
+    int damage =
+        cast_magic(
+            player,
+            enemy,
+            ice_effect,
+            battle_mode,
+            ICE_CONFIG,
+            enemy->ice_resist
+        );
 
-    if(!consume_mp(player, ice.mp_cost, battle_mode))
+    if(damage < 0)
     {
         return;
     }
 
-    start_magic_effect(
-        ice_effect,
-        ice.effect_timer
-    );
-
-    int ice_damage =
-        calculate_spell_damage(
-            player,
-            enemy,
-            ice,
-            enemy->ice_resist
-        );
-
-    char msg[128];
-    sprintf(
-        msg,
-        "アイスを唱えた！ %dダメージ！",
-        ice_damage
-    );
-
-    if(rand() % 4 == 0)
+    if(rand() % 100 < 25)
     {
         enemy->frozen = true;
         enemy->frozen_timer = 1;
 
-        add_battle_log("敵が凍った！攻撃力低下！");
+        add_battle_log("敵が凍った！");
     }
-
-    finish_magic_attack(
-        player,
-        enemy,
-        battle_mode,
-        ice_damage,
-        msg
-    );
 }
 
 void battle_thunder(
@@ -248,57 +258,26 @@ void battle_thunder(
     BattleMode *battle_mode
 )
 {
-    MagicConfig thunder = {5, 15, 10, 2};
+    int damage =
+        cast_magic(
+            player,
+            enemy,
+            thunder_effect,
+            battle_mode,
+            THUNDER_CONFIG,
+            enemy->thunder_resist
+        );
 
-    if(!consume_mp(player, thunder.mp_cost, battle_mode))
+    if(damage < 0)
     {
         return;
     }
 
-    start_magic_effect(
-        thunder_effect,
-        thunder.effect_timer
-    );
-
-    int thunder_damage =
-        calculate_spell_damage(
-            player,
-            enemy,
-            thunder,
-            enemy->thunder_resist
-        );
-
-    bool critical = false;
-
-    if(rand() % 4 == 0)
+    if(rand() % 100 < 20)
     {
-        thunder_damage += 8;
-        critical = true;
-    }
-    char msg[128];
+        enemy->stunned = true;
+        enemy->stun_timer = 1;
 
-    if(critical)
-    {
-        sprintf(
-            msg,
-            "唱えたサンダーが直撃した！ %dダメージ！",
-            thunder_damage
-        );
+        add_battle_log("敵は感電した！");
     }
-    else
-    {
-        sprintf(
-            msg,
-            "サンダーを唱えた！ %dダメージ！",
-            thunder_damage
-        );
-    }
-
-    finish_magic_attack(
-        player,
-        enemy,
-        battle_mode,
-        thunder_damage,
-        msg
-    );
 }

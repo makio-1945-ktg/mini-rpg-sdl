@@ -6,13 +6,64 @@
 #include "battle.h"
 #include "map.h"
 #include "magic.h"
-
+//属性魔法関連
 int apply_element_resistance(
     int damage,
     int resist
 )
 {
     return damage * (100 - resist) / 100;
+}
+
+static bool apply_burn_damage(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
+    if(!enemy->burning)
+    {
+        return false;
+    }
+
+    int burn_damage =
+        enemy->max_hp * 5 /100;
+
+    if(burn_damage < 1)
+    {
+        burn_damage = 1;
+    }
+
+    enemy->hp -= burn_damage;
+    enemy->burn_timer--;
+
+    char msg[128];
+    sprintf(
+        msg,
+        "火傷で%dダメージ！",
+        burn_damage
+    );
+    add_battle_log(msg);
+
+    if(enemy->hp <= 0)
+    {
+        enemy->hp = 0;
+        enemy->burning = false;
+
+        enemy_defeat(
+            player,
+            enemy,
+            battle_mode
+        );
+        return true;
+    }
+
+    if(enemy->burn_timer <=0)
+    {
+        enemy->burning = false;
+        add_battle_log("敵の火傷が治った！");
+    }
+    return false;
 }
 
 char battle_logs[LOG_LINES][128] = {
@@ -265,11 +316,46 @@ void enemy_turn(
     BattleMode *battle_mode
 )
 {
+    if(apply_burn_damage(
+        player,
+        enemy,
+        battle_mode
+    ))
+    {
+        return;
+    }
+
+    if(enemy->stunned)
+    {
+        add_battle_log("敵はスタンして動けない！");
+
+        enemy->stun_timer--;
+
+        if(enemy->stun_timer <= 0)
+        {
+            enemy->stunned = false;
+            add_battle_log("敵のスタンが解けた！");
+        }
+        return;
+    }
+
     int enemy_attack = enemy->attack;
 
     if(enemy->frozen)
     {
-            enemy_attack /= 2;
+        enemy_attack /= 2;
+
+        add_battle_log(
+            "凍結で敵の攻撃力が低下中！"
+        );
+
+        enemy->frozen_timer--;
+
+        if(enemy->frozen_timer <= 0)
+        {
+            enemy->frozen = false;
+            add_battle_log("敵の凍結が解けた！");
+        }
     }
 
     int enemy_damage =
@@ -295,17 +381,6 @@ void enemy_turn(
         printf("ゲームオーバー！\n");
         end_battle(battle_mode);
         return;
-    }
-
-    if(enemy->frozen)
-    {
-        enemy->frozen_timer--;
-
-        if(enemy->frozen_timer <= 0)
-        {
-            enemy->frozen = false;
-            add_battle_log("敵の凍結が溶けた！");
-        }
     }
 }
 

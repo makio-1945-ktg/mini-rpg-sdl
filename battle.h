@@ -47,6 +47,12 @@ typedef struct {
     bool frozen;
     int frozen_timer;
 
+    bool burning;
+    int burn_timer;
+
+    bool stunned;
+    int stun_timer;
+
 } Enemy;
 
 typedef struct {
