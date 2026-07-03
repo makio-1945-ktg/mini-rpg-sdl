@@ -278,14 +278,14 @@ void battle_item(
     BattleMode *battle_mode
 )
 {
-    if(player->potion <= 0)
+    if(player->inventory.potion <= 0)
     {
         printf("ポーションが無い！\n");
         *battle_mode = MODE_BATTLE;
         return;
     }
 
-    player->potion--;
+    player->inventory.potion--;
 
     player->hp += 20;
 
@@ -301,7 +301,7 @@ void battle_item(
            player->hp);
 
     printf("残り:%d個\n",
-           player->potion);
+           player->inventory.potion);
 
     enemy_turn(
         player,

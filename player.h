@@ -1,6 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "inventory.h"
+#include "equipment.h"
+
 typedef struct {
 //プレイヤー座標
     int x;
@@ -16,15 +19,14 @@ typedef struct {
     int defense;
 
     int level;
-
     int exp;
-
     int gold;
 //プレイヤーアイテム
-    int potion;
+    Inventory inventory;
 //プレイヤー装備
-    int sword;
-
+    Equipment equipment;
 } Player;
+
+Player create_player(void);
 
 #endif

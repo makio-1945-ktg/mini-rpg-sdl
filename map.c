@@ -1,11 +1,12 @@
 #include <stdio.h>
 
 #include "map.h"
+#include "chest.h"
 
 char field_map[15][21] = {
 
     "MMMMMMMMMMMMMMMMMMMM",
-    "MGGGGGGTGGGGGGGGGGGM",
+    "MVGGGGGTGGGGGGGGGGGM",
     "MCGEGGGGEGGGGGGGGGGM",
     "MEGGGGEGGGGGGGGWWWGM",
     "MGGGGGGGGGGGGGWWWGGM",
@@ -58,7 +59,7 @@ void inn_event(Player *player)
 
 void equipment_shop_event(Player *player)
 {
-    if(player->sword)
+    if(player->equipment.sword)
     {
         printf("既に剣を持っている！\n");
         return;
@@ -74,7 +75,7 @@ void equipment_shop_event(Player *player)
 
     player->attack++;
 
-    player->sword = 1;
+    player->equipment.sword = 1;
 
     printf("剣を購入した！\n");
 
@@ -90,34 +91,6 @@ void npc_event(void)
     printf("こんにちは！\n");
 }
 
-void chest_event(
-    Player *player,
-    int x,
-    int y
-)
-
-{
-    player->potion++;
-
-    printf("ポーションを入手した！\n");
-    printf("現在:%d個\n",
-           player->potion);
-
-    open_chest(
-        x,
-        y
-    );
-}
-
-void open_chest(
-    int x,
-    int y
-)
-
-{
-    field_map[y][x] = '.';
-}
-
 void enemy_event(int x, int y)
 {
     printf("敵が現れた！\n");
@@ -128,6 +101,7 @@ void enemy_event(int x, int y)
 void handle_field_event(
     char tile,
     bool *in_town,
+    bool *in_cave,
     Player *player,
     int new_x,
     int new_y,
@@ -157,6 +131,16 @@ void handle_field_event(
         player->x = 7;
         player->y = 1;
         printf("町を出た！\n");
+    }
+
+    if(tile == 'V')
+    {
+        *in_cave = true;
+
+        player->x = 1;
+        player->y = 1;
+
+        printf("洞窟に入った！\n");
     }
 
     if(tile == 'N')

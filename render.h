@@ -57,6 +57,10 @@ void draw_town_map(
     SDL_Renderer *renderer
 );
 
+void draw_cave_map(
+    SDL_Renderer *renderer
+);
+
 void draw_player(
     SDL_Renderer *renderer,
     int x,

@@ -12,6 +12,7 @@
 #include "battle.h"
 #include "player.h"
 #include "render.h"
+#include "cave.h"
 
 EnemyData enemy_table[] = {
 
@@ -24,28 +25,8 @@ int main(void)
 {
     srand(time(NULL));
 
-    Player player = {
-//プレイヤー初期位置
-        2,
-        2,
-//プレイヤーHP
-        30,
-        30,
-//プレイヤーMP
-        10,
-        10,
-//プレイヤー攻撃力・防御力
-        6,
-        2,
-//プレイヤーLV & EXP & GOLD
-        1,
-        0,
-        10,
-//プレイヤーアイテム
-        2,
-//プレイヤー装備
-        0
-    };
+    Player player = create_player();
+
     Enemy enemy = {"",0,0,0,0,0,0};
 
     DamagePopup popup = {"", 0, 0, 0, false};
@@ -129,7 +110,8 @@ int main(void)
     int battle_cursor = 0;
     int magic_cursor = 0;
 
-    bool in_town =false;
+    bool in_town = false;
+    bool in_cave = false;
 //フォント
     TTF_Font *font =
         TTF_OpenFont(
@@ -190,15 +172,16 @@ int main(void)
                         break;
                 }
 
-                char tile = get_tile(new_x, new_y);
+                char tile;
 
-                if(tile != 'M' && tile != 'W')
+                if(in_cave)
                 {
-                    player.x = new_x;
-                    player.y = new_y;
+                    tile = get_cave_tile(
+                        new_x,
+                        new_y
+                    );
                 }
-
-                if(in_town)
+                else if(in_town)
                 {
                     tile = get_town_tile(
                         new_x,
@@ -212,9 +195,36 @@ int main(void)
                         new_y
                     );
                 }
+
+                if(tile != 'M' && tile != 'W')
+                {
+                    player.x = new_x;
+                    player.y = new_y;
+                }
+
+//イベント分岐
+                if(in_cave)
+                {
+                    handle_cave_event(
+                        tile,
+                        &in_cave,
+                        &player,
+                        &battle_mode,
+                        &battle_cursor,
+                        &magic_cursor,
+                        &enemy,
+                        &current_enemy_texture,
+                        slime_texture,
+                        goblin_texture,
+                        orc_texture
+                    );
+                }
+                else
+                {
                     handle_field_event(
                         tile,
                         &in_town,
+                        &in_cave,
                         &player,
                         new_x,
                         new_y,
@@ -227,6 +237,7 @@ int main(void)
                         goblin_texture,
                         orc_texture
                     );
+                }
             }
 //戦闘中コマンド処理
             if(event.type == SDL_KEYDOWN)
@@ -280,7 +291,11 @@ int main(void)
             &enemy_sprite
         );
 
-        if(in_town)
+        if(in_cave)
+        {
+            draw_cave_map(renderer);
+        }
+        else if(in_town)
         {
             draw_town_map(renderer);
         }

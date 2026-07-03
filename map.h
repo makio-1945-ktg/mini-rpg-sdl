@@ -27,22 +27,12 @@ void equipment_shop_event(
     Player *player
 );
 
-void chest_event(
-    Player *player,
-    int x,
-    int y
-);
-
-void open_chest(
-    int x,
-    int y
-);
-
 void enemy_event(int x, int y);
 
 void handle_field_event(
     char tile,
     bool *in_town,
+    bool *in_cave,
     Player *player,
     int new_x,
     int new_y,
