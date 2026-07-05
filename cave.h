@@ -15,14 +15,16 @@ void handle_cave_event(
     char tile,
     bool *in_cave,
     Player *player,
+    int new_x,
+    int new_y,
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
-    SDL_Texture *slime_texture,
-    SDL_Texture *goblin_texture,
-    SDL_Texture *orc_texture
+    SDL_Texture *bat_texture,
+    SDL_Texture *skeleton_texture,
+    SDL_Texture *golem_texture
 );
 
 #endif

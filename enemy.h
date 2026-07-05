@@ -1,20 +1,25 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-typedef struct {
+#include <SDL2/SDL.h>
 
-    char name[20];
+#include "battle.h"
+#include "player.h"
 
-    int hp;
-    int max_hp;
+void setup_field_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *slime_texture,
+    SDL_Texture *goblin_texture,
+    SDL_Texture *orc_texture
+);
 
-    int attack;
-    int defense;
-
-    int exp;
-
-} Enemy;
-
-void init_enemy(Enemy *e);
+void setup_cave_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *bat_texture,
+    SDL_Texture *skeleton_texture,
+    SDL_Texture *golem_texture
+);
 
 #endif

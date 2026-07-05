@@ -5,11 +5,13 @@
 
 void chest_event(
     Player *player,
+    char map[15][21],
     int x,
     int y
 );
 
 void open_chest(
+    char map[15][21],
     int x,
     int y
 );

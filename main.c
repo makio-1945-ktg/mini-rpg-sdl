@@ -14,13 +14,6 @@
 #include "render.h"
 #include "cave.h"
 
-EnemyData enemy_table[] = {
-
-    {"スライム", 10, 2, 1, 5, 3, -50, 0, 50},
-    {"ゴブリン", 15, 3, 2, 10, 8, 0, 0, 0},
-    {"オーク", 20, 5, 3, 20, 15, 50, -50, 0}
-};
-
 int main(void)
 {
     srand(time(NULL));
@@ -94,6 +87,24 @@ int main(void)
         IMG_LoadTexture(
             renderer,
             "assets/orc.png"
+        );
+
+    SDL_Texture *bat_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/bat.png"
+        );
+
+    SDL_Texture *skeleton_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/skeleton.png"
+        );
+
+    SDL_Texture *golem_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/golem.png"
         );
 
     if(!slime_texture) {
@@ -209,14 +220,16 @@ int main(void)
                         tile,
                         &in_cave,
                         &player,
+                        new_x,
+                        new_y,
                         &battle_mode,
                         &battle_cursor,
                         &magic_cursor,
                         &enemy,
                         &current_enemy_texture,
-                        slime_texture,
-                        goblin_texture,
-                        orc_texture
+                        bat_texture,
+                        skeleton_texture,
+                        golem_texture
                     );
                 }
                 else
@@ -397,6 +410,9 @@ int main(void)
     SDL_DestroyTexture(slime_texture);
     SDL_DestroyTexture(goblin_texture);
     SDL_DestroyTexture(orc_texture);
+    SDL_DestroyTexture(bat_texture);
+    SDL_DestroyTexture(skeleton_texture);
+    SDL_DestroyTexture(golem_texture);
 
     TTF_Quit();
     SDL_Quit();

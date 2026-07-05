@@ -162,6 +162,7 @@ void handle_field_event(
     {
         chest_event(
             player,
+            field_map,
             new_x,
             new_y
         );

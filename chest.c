@@ -5,6 +5,7 @@
 
 void chest_event(
     Player *player,
+    char map[15][21],
     int x,
     int y
 )
@@ -17,13 +18,14 @@ void chest_event(
         player->inventory.potion
     );
 
-    open_chest(x, y);
+    open_chest(map, x, y);
 }
 
 void open_chest(
+    char map[15][21],
     int x,
     int y
 )
 {
-    field_map[y][x] = '.';
+    map[y][x] = '.';
 }

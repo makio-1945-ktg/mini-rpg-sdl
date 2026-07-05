@@ -73,6 +73,8 @@ typedef struct {
 
 extern EnemyData enemy_table[];
 
+extern EnemyData cave_enemy_table[];
+
 typedef struct {
     int x;
     int y;
@@ -176,6 +178,20 @@ void start_battle(
     SDL_Texture *slime_texture,
     SDL_Texture *goblin_texture,
     SDL_Texture *orc_texture,
+    Player *player,
+    int new_x,
+    int new_y
+);
+
+void start_cave_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *bat_texture,
+    SDL_Texture *skeleton_texture,
+    SDL_Texture *golem_texture,
     Player *player,
     int new_x,
     int new_y

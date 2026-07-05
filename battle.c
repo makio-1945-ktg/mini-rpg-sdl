@@ -6,6 +6,8 @@
 #include "battle.h"
 #include "map.h"
 #include "magic.h"
+#include "enemy.h"
+#include "cave.h"
 //属性魔法関連
 int apply_element_resistance(
     int damage,
@@ -544,55 +546,44 @@ void start_battle(
     *battle_cursor = 0;
     *magic_cursor = 0;
 
-    int enemy_type = rand() % 3;
-
-    if(enemy_type == 0)
-    {
-        *current_enemy_texture = slime_texture;
-    }
-    else if(enemy_type == 1)
-    {
-        *current_enemy_texture = goblin_texture;
-    }
-    else
-    {
-        *current_enemy_texture = orc_texture;
-    }
-
-    strcpy(
-        enemy->name,
-        enemy_table[enemy_type].name
+    setup_field_enemy(
+        enemy,
+        current_enemy_texture,
+        slime_texture,
+        goblin_texture,
+        orc_texture
     );
 
-    enemy->hp =
-        enemy_table[enemy_type].hp;
+    enemy_event(new_x, new_y);
 
-    enemy->max_hp =
-        enemy_table[enemy_type].hp;
+    add_battle_log("敵が現れた！");
+}
 
-    enemy->attack =
-        enemy_table[enemy_type].attack;
+void start_cave_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *bat_texture,
+    SDL_Texture *skeleton_texture,
+    SDL_Texture *golem_texture,
+    Player *player,
+    int new_x,
+    int new_y
+)
+{
+    *battle_mode = MODE_BATTLE;
+    *battle_cursor = 0;
+    *magic_cursor = 0;
 
-    enemy->defense =
-        enemy_table[enemy_type].defense;
-
-    enemy->exp =
-        enemy_table[enemy_type].exp;
-
-    enemy->gold =
-        enemy_table[enemy_type].gold;
-
-    enemy->fire_resist =
-        enemy_table[enemy_type].fire_resist;
-
-    enemy->ice_resist =
-        enemy_table[enemy_type].ice_resist;
-
-    enemy->thunder_resist =
-        enemy_table[enemy_type].thunder_resist;
-
-    enemy->frozen = false;
-    enemy->frozen_timer = 0;
+    setup_cave_enemy(
+        enemy,
+        current_enemy_texture,
+        bat_texture,
+        skeleton_texture,
+        golem_texture
+    );
 
     enemy_event(new_x, new_y);
 
