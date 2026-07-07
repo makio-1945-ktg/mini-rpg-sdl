@@ -311,6 +311,38 @@ void battle_item(
         battle_mode
     );
     return;
+
+    if(player->inventory.ether <= 0)
+    {
+        printf("エーテルが無い！\n");
+        *battle_mode = MODE_BATTLE;
+        return;
+    }
+
+    player->inventory.ether--;
+
+    player->mp += 10;
+
+    if(player->mp > player->max_mp)
+    {
+        player->mp = player->max_mp;
+
+    }
+
+    printf("エーテルを使った！\n");
+
+    printf("MP:%d\n",
+           player->mp);
+
+    printf("残り:%d個\n",
+           player->inventory.ether);
+
+    enemy_turn(
+        player,
+        enemy,
+        battle_mode
+    );
+    return;
 }
 void enemy_turn(
     Player *player,

@@ -4,7 +4,7 @@
 #include "inventory.h"
 #include "equipment.h"
 
-typedef struct {
+typedef struct Player {
 //プレイヤー座標
     int x;
     int y;
@@ -14,6 +14,9 @@ typedef struct {
 
     int mp;
     int max_mp;
+
+    int base_attack;
+    int base_defense;
 
     int attack;
     int defense;

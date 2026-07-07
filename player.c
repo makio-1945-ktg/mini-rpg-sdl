@@ -12,15 +12,19 @@ Player create_player(void)
         .mp = 10,
         .max_mp = 10,
 
-        .attack = 6,
-        .defense = 2,
+        player.base_attack = 6,
+        player.base_defense = 2,
+
+        player.attack = player.base_attack;
+        player.defense = player.base_defense;
 
         .level = 1,
         .exp = 0,
         .gold = 10,
 
         .inventory = {
-            .potion = 2
+            .potion = 2,
+            .ether = 0
         },
 
         .equipment = {

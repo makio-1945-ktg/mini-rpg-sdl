@@ -2,6 +2,7 @@
 
 #include "map.h"
 #include "chest.h"
+#include "equipment.h"
 
 char field_map[15][21] = {
 
@@ -52,35 +53,6 @@ void inn_event(Player *player)
 
     printf("MP:%d\n",
            player->mp);
-
-    printf("所持金:%dG\n",
-           player->gold);
-}
-
-void equipment_shop_event(Player *player)
-{
-    if(player->equipment.sword)
-    {
-        printf("既に剣を持っている！\n");
-        return;
-    }
-
-    if(player->gold < 20)
-    {
-        printf("お金が足りない！\n");
-        return;
-    }
-
-    player->gold -= 20;
-
-    player->attack++;
-
-    player->equipment.sword = 1;
-
-    printf("剣を購入した！\n");
-
-    printf("ATK:%d\n",
-           player->attack);
 
     printf("所持金:%dG\n",
            player->gold);
@@ -156,6 +128,7 @@ void handle_field_event(
     if(tile == 'Q')
     {
         equipment_shop_event(player);
+        break;
     }
 
     if(tile == 'C')
