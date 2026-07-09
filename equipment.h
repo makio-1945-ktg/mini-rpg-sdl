@@ -17,4 +17,12 @@ void equipment_shop_event(
     Player *player
 );
 
+void buy_sword(
+    Player *player
+);
+
+void buy_leather_armor(
+    Player *player
+);
+
 #endif

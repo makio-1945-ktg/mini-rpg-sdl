@@ -32,4 +32,8 @@ typedef struct Player {
 
 Player create_player(void);
 
+void calc_player_status(
+    Player *player
+);
+
 #endif

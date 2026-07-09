@@ -122,8 +122,10 @@ void enemy_defeat(
         player->max_mp += 5;
         player->mp = player->max_mp;
 
-        player->attack += 1;
-        player->defense += 1;
+        player->base_attack += 1;
+        player->base_defense += 1;
+
+        calc_player_status(player);
 
         printf("レベルアップ！\n");
         printf("Lv:%d\n", player->level);

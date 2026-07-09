@@ -29,3 +29,47 @@ void open_chest(
 {
     map[y][x] = '.';
 }
+
+void cave_chest_event(
+    Player *player,
+    char map[15][21],
+    int x,
+    int y
+)
+{
+    if(x == 18 && y == 5)
+    {
+        player->gold += 50;
+
+        printf("50Gを入手した！\n");
+        printf(
+            "所持金:%dG\n",
+            player->gold
+        );
+    }
+    else if(x == 1 && y == 8)
+    {
+        player->equipment.wooden_shield = 1;
+
+        calc_player_status(player);
+
+        printf("木の盾を入手した！\n");
+        printf(
+            "DEF:%d\n",
+            player->defense
+        );
+    }
+    else if(x == 3 && y == 8)
+    {
+        player->inventory.ether++;
+
+        printf("エーテルを入手した！\n");
+        printf(
+            "現在:%d個\n",
+            player->inventory.ether
+        );
+    }
+
+    open_chest(map, x, y);
+}
+

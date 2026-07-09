@@ -128,7 +128,6 @@ void handle_field_event(
     if(tile == 'Q')
     {
         equipment_shop_event(player);
-        break;
     }
 
     if(tile == 'C')
