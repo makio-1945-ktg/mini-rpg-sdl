@@ -118,6 +118,8 @@ int main(void)
     bool menu_open = false;
     BattleMode battle_mode = MODE_FIELD;
 
+    int menu_cursor = 0;
+    int item_cursor = 0;
     int battle_cursor = 0;
     int magic_cursor = 0;
 
@@ -154,14 +156,89 @@ int main(void)
                 int new_x = player.x;
                 int new_y = player.y;
 
+            if(menu_open &&
+                event.key.keysym.sym == SDLK_RETURN)
+            {
+                switch(menu_cursor)
+                {
+                    case 0:
+                        battle_mode = MODE_STATUS;
+                        menu_open = false;
+                        break;
+
+                    case 1:
+                        battle_mode = MODE_ITEM;
+                        menu_open = false;
+                        break;
+
+                    case 2:
+                        battle_mode = MODE_EQUIPMENT;
+                        menu_open = false;
+                        break;
+
+                    case 3:
+                        battle_mode = MODE_SAVE;
+                        menu_open = false;
+                        break;
+                }
+            }
+
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                 {
                     menu_open = !menu_open;
+
+                    if(menu_open)
+                    {
+                        menu_cursor = 0;
+                    }
                 }
 
                 if(menu_open)
                 {
-                    continue;
+                    if(event.key.keysym.sym == SDLK_UP)
+                    {
+                        menu_cursor--;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_DOWN)
+                    {
+                        menu_cursor++;
+                    }
+
+                    if(menu_cursor < 0)
+                    {
+                        menu_cursor = 3;
+                    }
+
+                    if(menu_cursor > 3)
+                    {
+                        menu_cursor = 0;
+                    }
+                        continue;
+                }
+
+                if(battle_mode == MODE_ITEM)
+                {
+                    if(event.key.keysym.sym == SDLK_UP)
+                    {
+                        item_cursor--;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_DOWN)
+                    {
+                        item_cursor++;
+                    }
+
+                    if(item_cursor < 0)
+                    {
+                        item_cursor = 1;
+                    }
+
+                    if(item_cursor > 1)
+                    {
+                        item_cursor = 0;
+                    }
+                        continue;
                 }
 
                 switch(event.key.keysym.sym)
@@ -252,9 +329,27 @@ int main(void)
                     );
                 }
             }
-//戦闘中コマンド処理
+
+//戦闘中＆フィールドメニュー処理
             if(event.type == SDL_KEYDOWN)
             {
+//フィールドメニュー処理
+                if(battle_mode == MODE_STATUS)
+                {
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        battle_mode = MODE_FIELD;
+                    }
+                }
+
+                if(battle_mode == MODE_ITEM)
+                {
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        battle_mode = MODE_FIELD;
+                    }
+                }
+
 //魔法メニュー処理
                 if(battle_mode == MODE_MAGIC)
                 {
@@ -337,11 +432,122 @@ int main(void)
                 50,50,50,255
             );
 
-            SDL_RenderFillRect(
+            SDL_RenderFillRect(renderer, &menu);
+
+            if(menu_cursor == 0)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    "▶　ステータス",
+                    110,
+                    180
+                );
+            }
+            else
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    " 　ステータス",
+                    110,
+                    180
+                );
+            }
+
+            if(menu_cursor == 1)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    "▶　アイテム",
+                    110,
+                    210
+                );
+            }
+            else
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    " 　アイテム",
+                    110,
+                    210
+                );
+            }
+
+            if(menu_cursor == 2)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    "▶　装備",
+                    110,
+                    240
+                );
+            }
+            else
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    " 　装備",
+                    110,
+                    240
+                );
+            }
+            if(menu_cursor == 3)
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    "▶　セーブ",
+                    110,
+                    270
+                );
+            }
+            else
+            {
+                draw_text(
+                    renderer,
+                    font,
+                    " 　セーブ",
+                    110,
+                    270
+                );
+            }
+        }
+
+        if(battle_mode == MODE_ITEM)
+        {
+            draw_item(
                 renderer,
-                &menu
+                font,
+                &player,
+                item_cursor
             );
         }
+
+//フィールドメニュー描画
+        if(battle_mode == MODE_STATUS)
+        {
+            draw_status(
+                renderer,
+                font,
+                &player
+            );
+        }
+
+        if(battle_mode == MODE_ITEM)
+        {
+            draw_item(
+                renderer,
+                font,
+                &player,
+                item_cursor
+            );
+        }
+
 //戦闘描画
         if(battle_mode == MODE_BATTLE ||
            battle_mode == MODE_MAGIC)

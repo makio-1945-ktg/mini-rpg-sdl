@@ -30,6 +30,277 @@ void draw_player(
     );
 }
 
+//文字メニュー
+void draw_text(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    const char *text,
+    int x,
+    int y
+)
+{
+    SDL_Color color = {255,255,255,255};
+
+    SDL_Surface *surface =
+        TTF_RenderUTF8_Blended(
+            font,
+            text,
+            color
+        );
+
+    if(surface == NULL)
+    {
+        return;
+    }
+
+    SDL_Texture *texture =
+        SDL_CreateTextureFromSurface(
+            renderer,
+            surface
+        );
+
+    if(texture == NULL)
+    {
+        SDL_FreeSurface(surface);
+        return;
+    }
+
+    SDL_Rect dst = {
+        x,
+        y,
+        surface->w,
+        surface->h
+    };
+
+    SDL_FreeSurface(surface);
+
+    SDL_RenderCopy(
+        renderer,
+        texture,
+        NULL,
+        &dst
+    );
+
+    SDL_DestroyTexture(texture);
+}
+
+//メニュー画面描画
+void draw_status(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player
+)
+{
+    SDL_Rect window = {
+        80,
+        100,
+        400,
+        280
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        40,
+        40,
+        40,
+        255
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &window
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "ステータス画面",
+        130,
+        110
+    );
+
+    char text[64];
+
+    sprintf(
+        text,
+        "LV : %d",
+        player->level
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        150
+    );
+
+    sprintf(
+        text,
+        "HP : %d / %d",
+        player->hp,
+        player->max_hp
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        180
+    );
+
+    sprintf(
+        text,
+        "MP : %d / %d",
+        player->mp,
+        player->max_mp
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        210
+    );
+
+    sprintf(
+        text,
+        "ATK : %d",
+        player->attack
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        240
+    );
+
+    sprintf(
+        text,
+        "DEF : %d",
+        player->defense
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        270
+    );
+
+    sprintf(
+        text,
+        "EXP : %d",
+        player->exp
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        300
+    );
+
+    sprintf(
+        text,
+        "GOLD : %d",
+        player->gold
+    );
+
+    draw_text(
+        renderer,
+        font,
+        text,
+        120,
+        330
+    );
+}
+
+void draw_item(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int item_cursor
+)
+{
+    SDL_Rect window = {
+        80,
+        100,
+        400,
+        280
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        40,
+        80,
+        40,
+        255
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &window
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "所持アイテム",
+        130,
+        110
+    );
+
+    if(item_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ポーション",
+            120,
+            150
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ポーション",
+            120,
+            150
+        );
+    }
+
+    if(item_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　エーテル",
+            120,
+            180
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　エーテル",
+            120,
+            180
+        );
+    }
+}
+
+//MAP描画
 void draw_map(SDL_Renderer *renderer)
 {
     for (int y = 0; y < 15; y++)
@@ -43,7 +314,6 @@ void draw_map(SDL_Renderer *renderer)
                 TILE_SIZE
             };
 
-//フィールド画面描画
             switch(field_map[y][x])
             {
                 case 'M':
@@ -102,60 +372,6 @@ void draw_map(SDL_Renderer *renderer)
             SDL_RenderFillRect(renderer, &rect);
         }
     }
-}
-//文字メニュー
-
-void draw_text(
-    SDL_Renderer *renderer,
-    TTF_Font *font,
-    const char *text,
-    int x,
-    int y
-)
-{
-    SDL_Color color = {255,255,255,255};
-
-    SDL_Surface *surface =
-        TTF_RenderUTF8_Blended(
-            font,
-            text,
-            color
-        );
-
-    if(surface == NULL)
-    {
-        return;
-    }
-
-    SDL_Texture *texture =
-        SDL_CreateTextureFromSurface(
-            renderer,
-            surface
-        );
-
-    if(texture == NULL)
-    {
-        SDL_FreeSurface(surface);
-        return;
-    }
-
-    SDL_Rect dst = {
-        x,
-        y,
-        surface->w,
-        surface->h
-    };
-
-    SDL_FreeSurface(surface);
-
-    SDL_RenderCopy(
-        renderer,
-        texture,
-        NULL,
-        &dst
-    );
-
-    SDL_DestroyTexture(texture);
 }
 
 void draw_town_map(
@@ -225,7 +441,7 @@ void draw_town_map(
         }
     }
 }
-//洞窟画面描画
+
 void draw_cave_map(SDL_Renderer *renderer)
 {
     int tile_size = 32;
@@ -302,7 +518,7 @@ void draw_cave_map(SDL_Renderer *renderer)
         }
     }
 }
-
+//戦闘画面描画
 void draw_hp_bar(
     SDL_Renderer *renderer,
     int x,
