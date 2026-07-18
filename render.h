@@ -94,4 +94,10 @@ void update_battle_effects(
     EnemySprite *enemy_sprite
 );
 
+void draw_message(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    const char *message
+);
+
 #endif

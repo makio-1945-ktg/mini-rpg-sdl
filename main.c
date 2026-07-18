@@ -118,6 +118,10 @@ int main(void)
     bool menu_open = false;
     BattleMode battle_mode = MODE_FIELD;
 
+    char message[128] = "";
+
+    Uint32 message_timer = 0;
+
     int menu_cursor = 0;
     int item_cursor = 0;
     int battle_cursor = 0;
@@ -149,76 +153,257 @@ int main(void)
             {
                 running = false;
             }
-//プレイヤー操作
-            if(event.type == SDL_KEYDOWN &&
-                battle_mode == MODE_FIELD)
+//フィールドイベント処理
+            if(event.type == SDL_KEYDOWN)
             {
-                int new_x = player.x;
-                int new_y = player.y;
-
-            if(menu_open &&
-                event.key.keysym.sym == SDLK_RETURN)
-            {
-                switch(menu_cursor)
+                if(battle_mode == MODE_FIELD)
                 {
-                    case 0:
-                        battle_mode = MODE_STATUS;
-                        menu_open = false;
-                        break;
+                    int new_x = player.x;
+                    int new_y = player.y;
 
-                    case 1:
-                        battle_mode = MODE_ITEM;
-                        menu_open = false;
-                        break;
+                    if(menu_open &&
+                        event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        switch(menu_cursor)
+                        {
+                            case 0:
+                                battle_mode = MODE_STATUS;
+                                menu_open = false;
+                                break;
 
-                    case 2:
-                        battle_mode = MODE_EQUIPMENT;
-                        menu_open = false;
-                        break;
+                            case 1:
+                                battle_mode = MODE_ITEM;
+                                menu_open = false;
+                                item_cursor = 0;
+                                break;
 
-                    case 3:
-                        battle_mode = MODE_SAVE;
-                        menu_open = false;
-                        break;
-                }
-            }
+                            case 2:
+                                battle_mode = MODE_EQUIPMENT;
+                                menu_open = false;
+                                break;
 
-                if(event.key.keysym.sym == SDLK_ESCAPE)
-                {
-                    menu_open = !menu_open;
+                            case 3:
+                                battle_mode = MODE_SAVE;
+                                menu_open = false;
+                                break;
+                        }
+                    }
+
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        menu_open = !menu_open;
+
+                        if(menu_open)
+                        {
+                            menu_cursor = 0;
+                        }
+                    }
 
                     if(menu_open)
                     {
-                        menu_cursor = 0;
+                        if(event.key.keysym.sym == SDLK_UP)
+                        {
+                            menu_cursor--;
+                        }
+
+                        if(event.key.keysym.sym == SDLK_DOWN)
+                        {
+                            menu_cursor++;
+                        }
+
+                        if(menu_cursor < 0)
+                        {
+                            menu_cursor = 3;
+                        }
+
+                        if(menu_cursor > 3)
+                        {
+                            menu_cursor = 0;
+                        }
+                            continue;
+                    }
+
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_UP:
+                            new_y--;
+                            break;
+
+                        case SDLK_DOWN:
+                            new_y++;
+                            break;
+
+                        case SDLK_LEFT:
+                            new_x--;
+                            break;
+
+                        case SDLK_RIGHT:
+                            new_x++;
+                            break;
+                    }
+
+                    char tile;
+
+                    if(in_cave)
+                    {
+                        tile = get_cave_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+                    else if(in_town)
+                    {
+                        tile = get_town_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+                    else
+                    {
+                        tile = get_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+
+                    if(tile != 'M' && tile != 'W')
+                    {
+                        player.x = new_x;
+                        player.y = new_y;
+                    }
+
+                    if(in_cave)
+                    {
+                        handle_cave_event(
+                            tile,
+                            &in_cave,
+                            &player,
+                            new_x,
+                            new_y,
+                            &battle_mode,
+                            &battle_cursor,
+                            &magic_cursor,
+                            &enemy,
+                            &current_enemy_texture,
+                            bat_texture,
+                            skeleton_texture,
+                            golem_texture
+                        );
+                    }
+                    else
+                    {
+                        handle_field_event(
+                            tile,
+                            &in_town,
+                            &in_cave,
+                            &player,
+                            new_x,
+                            new_y,
+                            &battle_mode,
+                            &battle_cursor,
+                            &magic_cursor,
+                            &enemy,
+                            &current_enemy_texture,
+                            slime_texture,
+                            goblin_texture,
+                            orc_texture
+                        );
                     }
                 }
-
-                if(menu_open)
+//ステータス処理
+                else if(battle_mode == MODE_STATUS)
                 {
-                    if(event.key.keysym.sym == SDLK_UP)
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
                     {
-                        menu_cursor--;
+                        battle_mode = MODE_FIELD;
                     }
-
-                    if(event.key.keysym.sym == SDLK_DOWN)
-                    {
-                        menu_cursor++;
-                    }
-
-                    if(menu_cursor < 0)
-                    {
-                        menu_cursor = 3;
-                    }
-
-                    if(menu_cursor > 3)
-                    {
-                        menu_cursor = 0;
-                    }
-                        continue;
                 }
-
-                if(battle_mode == MODE_ITEM)
+//アイテム処理
+                else if(battle_mode == MODE_ITEM)
                 {
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        battle_mode = MODE_FIELD;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        switch(item_cursor)
+                        {
+                        case 0:
+                            if(player.inventory.potion > 0)
+                            {
+                                player.inventory.potion--;
+
+                                player.hp += 20;
+
+                                if(player.hp > player.max_hp)
+                                {
+                                    player.hp = player.max_hp;
+                                }
+
+                                sprintf(
+                                    message,
+                                    "ポーションを使った！"
+                                );
+
+                                message_timer = SDL_GetTicks();
+
+                                printf("HP:%d\n",
+                                       player.hp);
+
+                                printf("残り:%d個\n",
+                                       player.inventory.potion);
+                            }
+                            else
+                            {
+                                sprintf(
+                                    message,
+                                    "ポーションが無い！"
+                                );
+
+                                message_timer = SDL_GetTicks();
+                            }
+                            break;
+
+                            case 1:
+                            if(player.inventory.ether > 0)
+                            {
+                                player.inventory.ether--;
+
+                                player.mp += 10;
+
+                                if(player.mp > player.max_mp)
+                                {
+                                    player.mp = player.max_mp;
+                                }
+
+                                sprintf(
+                                    message,
+                                    "エーテルを使った！"
+                                );
+
+                                message_timer = SDL_GetTicks();
+
+                                printf("MP:%d\n",
+                                       player.mp);
+
+                                printf("残り:%d個\n",
+                                       player.inventory.ether);
+                            }
+                            else
+                            {
+                                sprintf(
+                                    message,
+                                    "エーテルが無い！"
+                                );
+
+                                message_timer = SDL_GetTicks();
+                            }
+                            break;
+                        }
+                    }
+
                     if(event.key.keysym.sym == SDLK_UP)
                     {
                         item_cursor--;
@@ -238,131 +423,6 @@ int main(void)
                     {
                         item_cursor = 0;
                     }
-                        continue;
-                }
-
-                switch(event.key.keysym.sym)
-                {
-                    case SDLK_UP:
-                        new_y--;
-                        break;
-
-                    case SDLK_DOWN:
-                        new_y++;
-                        break;
-
-                    case SDLK_LEFT:
-                        new_x--;
-                        break;
-
-                    case SDLK_RIGHT:
-                        new_x++;
-                        break;
-                }
-
-                char tile;
-
-                if(in_cave)
-                {
-                    tile = get_cave_tile(
-                        new_x,
-                        new_y
-                    );
-                }
-                else if(in_town)
-                {
-                    tile = get_town_tile(
-                        new_x,
-                        new_y
-                    );
-                }
-                else
-                {
-                    tile = get_tile(
-                        new_x,
-                        new_y
-                    );
-                }
-
-                if(tile != 'M' && tile != 'W')
-                {
-                    player.x = new_x;
-                    player.y = new_y;
-                }
-
-//イベント分岐
-                if(in_cave)
-                {
-                    handle_cave_event(
-                        tile,
-                        &in_cave,
-                        &player,
-                        new_x,
-                        new_y,
-                        &battle_mode,
-                        &battle_cursor,
-                        &magic_cursor,
-                        &enemy,
-                        &current_enemy_texture,
-                        bat_texture,
-                        skeleton_texture,
-                        golem_texture
-                    );
-                }
-                else
-                {
-                    handle_field_event(
-                        tile,
-                        &in_town,
-                        &in_cave,
-                        &player,
-                        new_x,
-                        new_y,
-                        &battle_mode,
-                        &battle_cursor,
-                        &magic_cursor,
-                        &enemy,
-                        &current_enemy_texture,
-                        slime_texture,
-                        goblin_texture,
-                        orc_texture
-                    );
-                }
-            }
-
-//戦闘中＆フィールドメニュー処理
-            if(event.type == SDL_KEYDOWN)
-            {
-//フィールドメニュー処理
-                if(battle_mode == MODE_STATUS)
-                {
-                    if(event.key.keysym.sym == SDLK_ESCAPE)
-                    {
-                        battle_mode = MODE_FIELD;
-                    }
-                }
-
-                if(battle_mode == MODE_ITEM)
-                {
-                    if(event.key.keysym.sym == SDLK_ESCAPE)
-                    {
-                        battle_mode = MODE_FIELD;
-                    }
-                }
-
-//魔法メニュー処理
-                if(battle_mode == MODE_MAGIC)
-                {
-                    handle_magic_input(
-                        &event,
-                        &battle_mode,
-                        &magic_cursor,
-                        &player,
-                        &enemy,
-                        &fire_effect,
-                        &ice_effect,
-                        &thunder_effect
-                    );
                 }
 //通常戦闘処理
                 else if(battle_mode == MODE_BATTLE)
@@ -377,6 +437,20 @@ int main(void)
                         &hit_effect,
                         &slash_effect,
                         &enemy_sprite
+                    );
+                }
+//魔法メニュー処理
+                else if(battle_mode == MODE_MAGIC)
+                {
+                    handle_magic_input(
+                        &event,
+                        &battle_mode,
+                        &magic_cursor,
+                        &player,
+                        &enemy,
+                        &fire_effect,
+                        &ice_effect,
+                        &thunder_effect
                     );
                 }
             }
@@ -604,6 +678,23 @@ int main(void)
                     popup.y
                 );
             }
+        }
+
+        if(message[0] != '\0')
+        {
+            if(SDL_GetTicks() - message_timer > 2000)
+            {
+                message[0] = '\0';
+            }
+        }
+
+        if(message[0] != '\0')
+        {
+            draw_message(
+                renderer,
+                font,
+                message
+            );
         }
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
