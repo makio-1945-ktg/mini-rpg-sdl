@@ -300,6 +300,308 @@ void draw_item(
     }
 }
 
+void draw_equipment(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int equipment_cursor
+)
+{
+    SDL_Rect window = {
+        100,
+        30,
+        400,
+        480
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        40,
+        80,
+        40,
+        255
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &window
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "装備一覧",
+        220,
+        40
+    );
+
+    if(equipment_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　剣",
+            120,
+            80
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　剣",
+            120,
+            80
+        );
+    }
+
+    if(player->equipment.sword)
+    {
+        if(player->equipment.sword_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                280,
+                80
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                280,
+                80
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            280,
+            80
+        );
+    }
+
+    if(equipment_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　革の鎧",
+            120,
+            110
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　革の鎧",
+            120,
+            110
+        );
+    }
+
+    if(player->equipment.leather_armor)
+    {
+        if(player->equipment.leather_armor_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                280,
+                110
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                280,
+                110
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            280,
+            110
+        );
+    }
+
+    if(equipment_cursor == 2)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　木の盾",
+            120,
+            140
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　木の盾",
+            120,
+            140
+        );
+    }
+
+    if(player->equipment.wooden_shield)
+    {
+        if(player->equipment.wooden_shield_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                280,
+                140
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                280,
+                140
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            280,
+            140
+        );
+    }
+
+    draw_text(
+        renderer,
+        font,
+        "ATK:",
+        120,
+        330
+    );
+
+    char status[32];
+
+    sprintf(
+        status,
+        "%d",
+        player->attack
+    );
+
+    draw_text(
+        renderer,
+        font,
+        status,
+        190,
+        330
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "DEF:",
+        120,
+        360
+    );
+
+    sprintf(
+        status,
+        "%d",
+        player->defense
+    );
+
+    draw_text(
+        renderer,
+        font,
+        status,
+        190,
+        360
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "===装備説明===",
+        120,
+        400
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "ENTER：装備/解除",
+        290,
+        430
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "ESC：戻る",
+        290,
+        460
+    );
+
+    if(equipment_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "攻撃力 +2",
+            120,
+            430
+        );
+    }
+    else if(equipment_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "防御力 +4",
+            120,
+            430
+        );
+    }
+    else if(equipment_cursor == 2)
+    {
+        draw_text(
+            renderer,
+            font,
+            "防御力 +2",
+            120,
+            430
+        );
+    }
+}
+
 //MAP描画
 void draw_map(SDL_Renderer *renderer)
 {

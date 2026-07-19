@@ -20,15 +20,22 @@ Player create_player(void)
 
         .level = 1,
         .exp = 0,
-        .gold = 10,
+        .gold = 20,
 
         .inventory = {
             .potion = 2,
             .ether = 0
         },
-
+//この部分は　equipment = {0}　でも動作可能
         .equipment = {
-            .sword = 0
+            .sword = false,
+            .sword_equipped = false,
+
+            .leather_armor = false,
+            .leather_armor_equipped = false,
+
+            .wooden_shield = false,
+            .wooden_shield_equipped = false
         }
     };
 
@@ -42,17 +49,17 @@ void calc_player_status(Player *player)
     player->attack = player->base_attack;
     player->defense = player->base_defense;
 
-    if(player->equipment.sword)
+    if(player->equipment.sword_equipped)
     {
         player->attack += 2;
     }
 
-    if(player->equipment.leather_armor)
+    if(player->equipment.leather_armor_equipped)
     {
         player->defense += 4;
     }
 
-    if(player->equipment.wooden_shield)
+    if(player->equipment.wooden_shield_equipped)
     {
         player->defense += 2;
     }

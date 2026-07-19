@@ -20,7 +20,7 @@ void buy_sword(Player *player)
 
     player->gold -= 20;
 
-    player->equipment.sword = 1;
+    player->equipment.sword = true;
 
     calc_player_status(player);
 
@@ -49,7 +49,7 @@ void buy_leather_armor(Player *player)
 
     player->gold -= 30;
 
-    player->equipment.leather_armor = 1;
+    player->equipment.leather_armor = true;
 
     calc_player_status(player);
 

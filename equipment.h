@@ -1,15 +1,20 @@
 #ifndef EQUIPMENT_H
 #define EQUIPMENT_H
 
+#include <stdbool.h>
+
 typedef struct Player Player;
 
 typedef struct {
 
-    int sword;
+    bool sword;
+    bool sword_equipped;
 
-    int leather_armor;
+    bool leather_armor;
+    bool leather_armor_equipped;
 
-    int wooden_shield;
+    bool wooden_shield;
+    bool wooden_shield_equipped;
 
 } Equipment;
 

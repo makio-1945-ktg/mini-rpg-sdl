@@ -34,6 +34,13 @@ void draw_item(
     int item_cursor
 );
 
+void draw_equipment(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int equipment_cursor
+);
+
 void draw_map(
     SDL_Renderer *renderer
 );

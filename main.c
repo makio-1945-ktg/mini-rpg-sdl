@@ -124,6 +124,7 @@ int main(void)
 
     int menu_cursor = 0;
     int item_cursor = 0;
+    int equipment_cursor = 0;
     int battle_cursor = 0;
     int magic_cursor = 0;
 
@@ -424,6 +425,113 @@ int main(void)
                         item_cursor = 0;
                     }
                 }
+//装備処理
+                else if(battle_mode == MODE_EQUIPMENT)
+                {
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        battle_mode = MODE_FIELD;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        switch(equipment_cursor)
+                        {
+                        case 0:
+                            if(player.equipment.sword)
+                            {
+                                player.equipment.sword_equipped =
+                                    !player.equipment.sword_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.sword_equipped)
+                                {
+                                    sprintf(message, "剣を装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "剣を外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "剣を持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
+
+                        case 1:
+                            if(player.equipment.leather_armor)
+                            {
+                                player.equipment.leather_armor_equipped =
+                                    !player.equipment.leather_armor_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.leather_armor_equipped)
+                                {
+                                    sprintf(message, "革の鎧を装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "革の鎧を外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "革の鎧を持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
+
+                        case 2:
+                            if(player.equipment.wooden_shield)
+                            {
+                                player.equipment.wooden_shield_equipped =
+                                    !player.equipment.wooden_shield_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.wooden_shield_equipped)
+                                {
+                                    sprintf(message, "木の盾を装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "木の盾を外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "木の盾を持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
+                        }
+                    }
+
+                    if(event.key.keysym.sym == SDLK_UP)
+                    {
+                        equipment_cursor--;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_DOWN)
+                    {
+                        equipment_cursor++;
+                    }
+
+                    if(equipment_cursor < 0)
+                    {
+                        equipment_cursor = 2;
+                    }
+
+                    if(equipment_cursor > 2)
+                    {
+                        equipment_cursor = 0;
+                    }
+                }
+
 //通常戦闘処理
                 else if(battle_mode == MODE_BATTLE)
                 {
@@ -591,17 +699,6 @@ int main(void)
                 );
             }
         }
-
-        if(battle_mode == MODE_ITEM)
-        {
-            draw_item(
-                renderer,
-                font,
-                &player,
-                item_cursor
-            );
-        }
-
 //フィールドメニュー描画
         if(battle_mode == MODE_STATUS)
         {
@@ -622,6 +719,15 @@ int main(void)
             );
         }
 
+        if(battle_mode == MODE_EQUIPMENT)
+        {
+            draw_equipment(
+                renderer,
+                font,
+                &player,
+                equipment_cursor
+            );
+        }
 //戦闘描画
         if(battle_mode == MODE_BATTLE ||
            battle_mode == MODE_MAGIC)
