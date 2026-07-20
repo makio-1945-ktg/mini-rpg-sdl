@@ -13,6 +13,7 @@
 #include "player.h"
 #include "render.h"
 #include "cave.h"
+#include "save.h"
 
 int main(void)
 {
@@ -125,6 +126,7 @@ int main(void)
     int menu_cursor = 0;
     int item_cursor = 0;
     int equipment_cursor = 0;
+    int save_cursor = 0;
     int battle_cursor = 0;
     int magic_cursor = 0;
 
@@ -532,6 +534,64 @@ int main(void)
                     }
                 }
 
+//セーブ管理処理
+                else if(battle_mode == MODE_SAVE)
+                {
+                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        battle_mode = MODE_FIELD;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        switch(save_cursor)
+                        {
+                        case 0:
+                            if(save_game(&player))
+                            {
+                                sprintf(message, "セーブしました！");
+                            }
+                            else
+                            {
+                                sprintf(message, "セーブに失敗しました");
+                            }
+                            message_timer = SDL_GetTicks();
+                            break;
+
+                        case 1:
+                            if(load_game(&player))
+                            {
+                                sprintf(message, "ロードしました！");
+                            }
+                            else
+                            {
+                                sprintf(message, "ロードに失敗しました");
+                            }
+                            message_timer = SDL_GetTicks();
+                            break;
+                        }
+                    }
+
+                    if(event.key.keysym.sym == SDLK_UP)
+                    {
+                        save_cursor--;
+                    }
+
+                    if(event.key.keysym.sym == SDLK_DOWN)
+                    {
+                        save_cursor++;
+                    }
+
+                    if(save_cursor < 0)
+                    {
+                        save_cursor = 1;
+                    }
+
+                    if(save_cursor > 1)
+                    {
+                        save_cursor = 0;
+                    }
+                }
 //通常戦闘処理
                 else if(battle_mode == MODE_BATTLE)
                 {
@@ -683,7 +743,7 @@ int main(void)
                 draw_text(
                     renderer,
                     font,
-                    "▶　セーブ",
+                    "▶　セーブ＆ロード",
                     110,
                     270
                 );
@@ -693,7 +753,7 @@ int main(void)
                 draw_text(
                     renderer,
                     font,
-                    " 　セーブ",
+                    " 　セーブ＆ロード",
                     110,
                     270
                 );
@@ -728,6 +788,17 @@ int main(void)
                 equipment_cursor
             );
         }
+
+        if(battle_mode == MODE_SAVE)
+        {
+            draw_save(
+                renderer,
+                font,
+                &player,
+                save_cursor
+            );
+        }
+
 //戦闘描画
         if(battle_mode == MODE_BATTLE ||
            battle_mode == MODE_MAGIC)

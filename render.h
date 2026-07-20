@@ -41,6 +41,13 @@ void draw_equipment(
     int equipment_cursor
 );
 
+void draw_save(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int save_cursor
+);
+
 void draw_map(
     SDL_Renderer *renderer
 );

@@ -602,6 +602,83 @@ void draw_equipment(
     }
 }
 
+void draw_save(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int save_cursor
+)
+{
+    SDL_Rect window = {
+        80,
+        100,
+        400,
+        280
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        40,
+        80,
+        80,
+        255
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &window
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "セーブ管理",
+        130,
+        110
+    );
+
+    if(save_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶ セーブ",
+            120,
+            150
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "　セーブ",
+            120,
+            150
+        );
+    }
+
+    if(save_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶ ロード",
+            120,
+            180
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "　ロード",
+            120,
+            180
+        );
+    }
+}
 //MAP描画
 void draw_map(SDL_Renderer *renderer)
 {
