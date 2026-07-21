@@ -14,6 +14,12 @@ EnemyData cave_enemy_table[] = {
     {"ゴーレム", 50, 10, 8, 40, 25, 50, 50, -50}
 };
 
+EnemyData cave_b1_enemy_table[] = {
+
+    {"スコルピオ", 40, 8, 8, 30, 20, 0, -50, 50},
+    {"ラッキーフェアリー", 30, 30, 4, 80, 25, 50, 50, 50},
+    {"まどうし", 60, 6, 4, 50, 30, 50, 50, 50}
+};
 
 void setup_field_enemy(
     Enemy *enemy,
@@ -128,6 +134,65 @@ void setup_cave_enemy(
 
     enemy->thunder_resist =
         cave_enemy_table[enemy_type].thunder_resist;
+
+    enemy->frozen = false;
+    enemy->frozen_timer = 0;
+}
+
+void setup_cave_b1_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *scorpion_texture,
+    SDL_Texture *luckyfairy_texture,
+    SDL_Texture *wizard_texture
+)
+{
+    int enemy_type = rand() % 3;
+
+    if(enemy_type == 0)
+    {
+        *current_enemy_texture = scorpion_texture;
+    }
+    else if(enemy_type == 1)
+    {
+        *current_enemy_texture = luckyfairy_texture;
+    }
+    else
+    {
+        *current_enemy_texture = wizard_texture;
+    }
+
+    strcpy(
+        enemy->name,
+        cave_b1_enemy_table[enemy_type].name
+    );
+
+    enemy->hp =
+        cave_b1_enemy_table[enemy_type].hp;
+
+    enemy->max_hp =
+        cave_b1_enemy_table[enemy_type].hp;
+
+    enemy->attack =
+        cave_b1_enemy_table[enemy_type].attack;
+
+    enemy->defense =
+        cave_b1_enemy_table[enemy_type].defense;
+
+    enemy->exp =
+        cave_b1_enemy_table[enemy_type].exp;
+
+    enemy->gold =
+        cave_b1_enemy_table[enemy_type].gold;
+
+    enemy->fire_resist =
+        cave_b1_enemy_table[enemy_type].fire_resist;
+
+    enemy->ice_resist =
+        cave_b1_enemy_table[enemy_type].ice_resist;
+
+    enemy->thunder_resist =
+        cave_b1_enemy_table[enemy_type].thunder_resist;
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;

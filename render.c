@@ -1,6 +1,7 @@
 #include "render.h"
 #include "map.h"
 #include "cave.h"
+#include "cave_b1.h"
 
 #include <SDL2/SDL_ttf.h>
 
@@ -897,6 +898,84 @@ void draw_cave_map(SDL_Renderer *renderer)
         }
     }
 }
+
+void draw_cave_b1_map(SDL_Renderer *renderer)
+{
+    int tile_size = 32;
+
+    for(int y = 0; y < 15; y++)
+    {
+        for(int x = 0; x < 20; x++)
+        {
+            SDL_Rect tile = {
+                x * tile_size,
+                y * tile_size,
+                tile_size,
+                tile_size
+            };
+
+            char c = cave_b1_map[y][x];
+
+            switch(c)
+            {
+                case 'M':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        100, 100, 100, 255
+                    );
+                    break;
+
+                case 'F':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        30, 30, 30, 255
+                    );
+                    break;
+
+                case 'U':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0, 200, 0, 255
+                    );
+                    break;
+
+                case 'D':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        200, 0, 0, 255
+                    );
+                    break;
+
+                case 'C':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        150, 75, 0, 255
+                    );
+                    break;
+
+                case 'W':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0, 100, 255, 255
+                    );
+                    break;
+
+                default:
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255, 0, 255, 255
+                    );
+                    break;
+            }
+
+            SDL_RenderFillRect(
+                renderer,
+                &tile
+            );
+        }
+    }
+}
+
 //戦闘画面描画
 void draw_hp_bar(
     SDL_Renderer *renderer,

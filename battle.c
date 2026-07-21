@@ -624,3 +624,34 @@ void start_cave_battle(
     add_battle_log("敵が現れた！");
 }
 
+void start_cave_b1_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *scorpion_texture,
+    SDL_Texture *luckyfairy_texture,
+    SDL_Texture *wizard_texture,
+    Player *player,
+    int new_x,
+    int new_y
+)
+{
+    *battle_mode = MODE_BATTLE;
+    *battle_cursor = 0;
+    *magic_cursor = 0;
+
+    setup_cave_b1_enemy(
+        enemy,
+        current_enemy_texture,
+        scorpion_texture,
+        luckyfairy_texture,
+        wizard_texture
+    );
+
+    enemy_event(new_x, new_y);
+
+    add_battle_log("敵が現れた！");
+}
+

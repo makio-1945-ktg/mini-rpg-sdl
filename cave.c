@@ -33,6 +33,7 @@ char get_cave_tile(int x, int y)
 void handle_cave_event(
     char tile,
     bool *in_cave,
+    bool *in_cave_b1,
     Player *player,
     int new_x,
     int new_y,
@@ -55,7 +56,15 @@ void handle_cave_event(
 
         printf("洞窟を出た！");
     }
+    if(tile == 'D')
+    {
+        *in_cave_b1 = true;
 
+        player->x = 18;
+        player->y = 13;
+
+        printf("地下１階へ降りた！");
+    }
     if(tile == 'C')
     {
         cave_chest_event(

@@ -73,3 +73,25 @@ void cave_chest_event(
     open_chest(map, x, y);
 }
 
+void cave_b1_chest_event(
+    Player *player,
+    char map[15][21],
+    int x,
+    int y
+)
+{
+    if(x == 5 && y == 5)
+    {
+        printf("次回実装予定3\n");
+    }
+    else if(x == 11 && y == 5)
+    {
+        printf("次回実装予定2\n");
+    }
+    else if(x == 17 && y == 11)
+    {
+        printf("次回実装予定1\n");
+    }
+
+    open_chest(map, x, y);
+}

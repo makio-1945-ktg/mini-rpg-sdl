@@ -22,4 +22,12 @@ void setup_cave_enemy(
     SDL_Texture *golem_texture
 );
 
+void setup_cave_b1_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *scorpion_texture,
+    SDL_Texture *luckyfairy_texture,
+    SDL_Texture *wizard_texture
+);
+
 #endif

@@ -13,6 +13,7 @@
 #include "player.h"
 #include "render.h"
 #include "cave.h"
+#include "cave_b1.h"
 #include "save.h"
 
 int main(void)
@@ -107,6 +108,23 @@ int main(void)
             renderer,
             "assets/golem.png"
         );
+    SDL_Texture *scorpion_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/scorpion.png"
+        );
+
+    SDL_Texture *luckyfairy_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/luckyfairy.png"
+        );
+
+    SDL_Texture *wizard_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/wizard.png"
+        );
 
     if(!slime_texture) {
         printf("%s\n", IMG_GetError());
@@ -132,6 +150,7 @@ int main(void)
 
     bool in_town = false;
     bool in_cave = false;
+    bool in_cave_b1 = false;
 //フォント
     TTF_Font *font =
         TTF_OpenFont(
@@ -247,7 +266,14 @@ int main(void)
 
                     char tile;
 
-                    if(in_cave)
+                    if(in_cave_b1)
+                    {
+                        tile = get_cave_b1_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+                    else if(in_cave)
                     {
                         tile = get_cave_tile(
                             new_x,
@@ -275,11 +301,31 @@ int main(void)
                         player.y = new_y;
                     }
 
-                    if(in_cave)
+                    if(in_cave_b1)
+                    {
+                        handle_cave_b1_event(
+                            tile,
+                            &in_cave,
+                            &in_cave_b1,
+                            &player,
+                            new_x,
+                            new_y,
+                            &battle_mode,
+                            &battle_cursor,
+                            &magic_cursor,
+                            &enemy,
+                            &current_enemy_texture,
+                            scorpion_texture,
+                            luckyfairy_texture,
+                            wizard_texture
+                        );
+                    }
+                    else if(in_cave)
                     {
                         handle_cave_event(
                             tile,
                             &in_cave,
+                            &in_cave_b1,
                             &player,
                             new_x,
                             new_y,
@@ -641,7 +687,11 @@ int main(void)
             &enemy_sprite
         );
 
-        if(in_cave)
+        if(in_cave_b1)
+        {
+            draw_cave_b1_map(renderer);
+        }
+        else if(in_cave)
         {
             draw_cave_map(renderer);
         }
@@ -887,6 +937,9 @@ int main(void)
     SDL_DestroyTexture(bat_texture);
     SDL_DestroyTexture(skeleton_texture);
     SDL_DestroyTexture(golem_texture);
+    SDL_DestroyTexture(scorpion_texture);
+    SDL_DestroyTexture(luckyfairy_texture);
+    SDL_DestroyTexture(wizard_texture);
 
     TTF_Quit();
     SDL_Quit();

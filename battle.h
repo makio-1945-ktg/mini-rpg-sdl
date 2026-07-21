@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
 
-    char name[20];
+    char name[40];
 
     int hp;
     int max_hp;
@@ -63,7 +63,7 @@ typedef struct {
 
 typedef struct {
 
-    char name[20];
+    char name[40];
 
     int hp;
     int attack;
@@ -198,6 +198,20 @@ void start_cave_battle(
     SDL_Texture *bat_texture,
     SDL_Texture *skeleton_texture,
     SDL_Texture *golem_texture,
+    Player *player,
+    int new_x,
+    int new_y
+);
+
+void start_cave_b1_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *scorpion_texture,
+    SDL_Texture *luckyfairy_texture,
+    SDL_Texture *wizard_texture,
     Player *player,
     int new_x,
     int new_y
