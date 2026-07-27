@@ -82,7 +82,11 @@ void cave_b1_chest_event(
 {
     if(x == 5 && y == 5)
     {
-        printf("次回実装予定3\n");
+        player->equipment.broad_sword = 1;
+
+        calc_player_status(player);
+
+        printf("ブロードソードを入手した！\n");
     }
     else if(x == 11 && y == 5)
     {

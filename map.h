@@ -27,7 +27,11 @@ void equipment_shop_event(
     Player *player
 );
 
-void enemy_event(int x, int y);
+void enemy_event(
+    char map[15][21],
+    int x,
+    int y
+);
 
 void handle_field_event(
     char tile,

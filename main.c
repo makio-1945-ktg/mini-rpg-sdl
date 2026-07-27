@@ -556,6 +556,30 @@ int main(void)
                             }
                                 message_timer = SDL_GetTicks();
                                 break;
+
+                        case 3:
+                            if(player.equipment.broad_sword)
+                            {
+                                player.equipment.broad_sword_equipped =
+                                    !player.equipment.broad_sword_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.broad_sword_equipped)
+                                {
+                                    sprintf(message, "ブロードソードを装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "ブロードソードを外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "ブロードソードを持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
                         }
                     }
 
@@ -571,10 +595,10 @@ int main(void)
 
                     if(equipment_cursor < 0)
                     {
-                        equipment_cursor = 2;
+                        equipment_cursor = 3;
                     }
 
-                    if(equipment_cursor > 2)
+                    if(equipment_cursor > 3)
                     {
                         equipment_cursor = 0;
                     }

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include "player.h"
+#include "enemy.h"
 
 typedef enum {
     MODE_FIELD,
@@ -33,53 +34,11 @@ typedef struct {
 
 } DamagePopup;
 
-typedef struct {
-
-    char name[40];
-
-    int hp;
-    int max_hp;
-
-    int attack;
-    int defense;
-
-    int exp;
-    int gold;
-
-    int fire_resist;
-    int ice_resist;
-    int thunder_resist;
-
-    bool frozen;
-    int frozen_timer;
-
-    bool burning;
-    int burn_timer;
-
-    bool stunned;
-    int stun_timer;
-
-} Enemy;
-
-typedef struct {
-
-    char name[40];
-
-    int hp;
-    int attack;
-    int defense;
-
-    int exp;
-    int gold;
-
-    int fire_resist;
-    int ice_resist;
-    int thunder_resist;
-} EnemyData;
-
-extern EnemyData enemy_table[];
+extern EnemyData field_enemy_table[];
 
 extern EnemyData cave_enemy_table[];
+
+extern EnemyData cave_b1_enemy_table[];
 
 typedef struct {
     int x;

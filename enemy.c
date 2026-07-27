@@ -2,23 +2,23 @@
 
 EnemyData field_enemy_table[] = {
 
-    {"スライム", 10, 2, 1, 5, 3, -50, 0, 50},
-    {"ゴブリン", 15, 3, 2, 10, 8, 0, 0, 0},
-    {"オーク", 20, 5, 3, 20, 15, 50, -50, 0}
+    {ENEMY_SLIME, "スライム", 10, 2, 1, 5, 3, -50, 0, 50},
+    {ENEMY_GOBLIN, "ゴブリン", 15, 3, 2, 10, 8, 0, 0, 0},
+    {ENEMY_ORC, "オーク", 20, 5, 3, 20, 15, 50, -50, 0}
 };
 
 EnemyData cave_enemy_table[] = {
 
-    {"こうもり", 30, 4, 2, 15, 10, 0, 0, -50},
-    {"スケルトン", 35, 6, 4, 25, 15, -50, 0, 0},
-    {"ゴーレム", 50, 10, 8, 40, 25, 50, 50, -50}
+    {ENEMY_BAT, "こうもり", 30, 4, 2, 15, 10, 0, 0, -50},
+    {ENEMY_SKELETON, "スケルトン", 35, 6, 4, 25, 15, -50, 0, 0},
+    {ENEMY_GOLEM, "ゴーレム", 50, 10, 8, 40, 25, 50, 50, -50}
 };
 
 EnemyData cave_b1_enemy_table[] = {
 
-    {"スコルピオ", 40, 8, 8, 30, 20, 0, -50, 50},
-    {"ラッキーフェアリー", 30, 30, 4, 80, 25, 50, 50, 50},
-    {"まどうし", 60, 6, 4, 50, 30, 50, 50, 50}
+    {ENEMY_SCORPION, "スコルピオ", 40, 8, 8, 30, 20, 0, -50, 50},
+    {ENEMY_LUCKY_FAIRY, "ラッキーフェアリー", 30, 30, 4, 80, 25, 50, 50, 50},
+    {ENEMY_WIZARD, "まどうし", 60, 6, 4, 50, 30, 50, 50, 50}
 };
 
 void setup_field_enemy(
@@ -49,6 +49,9 @@ void setup_field_enemy(
         field_enemy_table[enemy_type].name
     );
 
+    enemy->type =
+        field_enemy_table[enemy_type].type;
+
     enemy->hp =
         field_enemy_table[enemy_type].hp;
 
@@ -78,6 +81,12 @@ void setup_field_enemy(
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;
+
+    enemy->burning = false;
+    enemy->burn_timer = 0;
+
+    enemy->stunned = false;
+    enemy->stun_timer = 0;
 }
 
 void setup_cave_enemy(
@@ -108,6 +117,9 @@ void setup_cave_enemy(
         cave_enemy_table[enemy_type].name
     );
 
+    enemy->type =
+        cave_enemy_table[enemy_type].type;
+
     enemy->hp =
         cave_enemy_table[enemy_type].hp;
 
@@ -137,6 +149,13 @@ void setup_cave_enemy(
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;
+
+    enemy->burning = false;
+    enemy->burn_timer = 0;
+
+    enemy->stunned = false;
+    enemy->stun_timer = 0;
+
 }
 
 void setup_cave_b1_enemy(
@@ -167,6 +186,9 @@ void setup_cave_b1_enemy(
         cave_b1_enemy_table[enemy_type].name
     );
 
+    enemy->type =
+        cave_b1_enemy_table[enemy_type].type;
+
     enemy->hp =
         cave_b1_enemy_table[enemy_type].hp;
 
@@ -196,4 +218,11 @@ void setup_cave_b1_enemy(
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;
+
+    enemy->burning = false;
+    enemy->burn_timer = 0;
+
+    enemy->stunned = false;
+    enemy->stun_timer = 0;
+
 }

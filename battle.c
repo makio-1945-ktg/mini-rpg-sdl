@@ -4,10 +4,11 @@
 #include <stdlib.h>
 
 #include "battle.h"
+#include "enemy_skill.h"
 #include "map.h"
 #include "magic.h"
-#include "enemy.h"
 #include "cave.h"
+#include "cave_b1.h"
 //属性魔法関連
 int apply_element_resistance(
     int damage,
@@ -210,32 +211,16 @@ void battle_defend(
     BattleMode *battle_mode
 )
 {
-    printf("防御した！\n");
+    player->defending = true;
 
-    int enemy_damage =
-        enemy->attack
-        - player->defense;
+    add_battle_log("防御した！");
 
-    enemy_damage /= 2;
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
-
-    char msg[128];
-    sprintf(msg,"防御！%dダメージ！", enemy_damage);
-    add_battle_log(msg);
-    printf("プレイヤーHP:%d\n",
-           player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    enemy_turn(
+        player,
+        enemy,
+        battle_mode
+    );
+    return;
 }
 
 void battle_heal(
@@ -393,31 +378,15 @@ void enemy_turn(
             add_battle_log("敵の凍結が解けた！");
         }
     }
+//敵の攻撃行動
+    enemy_action(
+        player,
+        enemy,
+        enemy_attack,
+        battle_mode
+    );
 
-    int enemy_damage =
-        enemy_attack
-        - player->defense;
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
-
-    char msg[128];
-    sprintf(msg,"敵の攻撃！%dダメージ！", enemy_damage);
-    add_battle_log(msg);
-
-    printf("プレイヤーHP:%d\n",
-           player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-        return;
-    }
+    player->defending = false;
 }
 
 void handle_normal_battle_input(
@@ -588,7 +557,7 @@ void start_battle(
         orc_texture
     );
 
-    enemy_event(new_x, new_y);
+    enemy_event(field_map, new_x, new_y);
 
     add_battle_log("敵が現れた！");
 }
@@ -619,7 +588,7 @@ void start_cave_battle(
         golem_texture
     );
 
-    enemy_event(new_x, new_y);
+    enemy_event(cave_map, new_x, new_y);
 
     add_battle_log("敵が現れた！");
 }
@@ -650,7 +619,7 @@ void start_cave_b1_battle(
         wizard_texture
     );
 
-    enemy_event(new_x, new_y);
+    enemy_event(cave_b1_map, new_x, new_y);
 
     add_battle_log("敵が現れた！");
 }

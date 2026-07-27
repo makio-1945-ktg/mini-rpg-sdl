@@ -16,6 +16,9 @@ typedef struct {
     bool wooden_shield;
     bool wooden_shield_equipped;
 
+    bool broad_sword;
+    bool broad_sword_equipped;
+
 } Equipment;
 
 void equipment_shop_event(

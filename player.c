@@ -35,7 +35,10 @@ Player create_player(void)
             .leather_armor_equipped = false,
 
             .wooden_shield = false,
-            .wooden_shield_equipped = false
+            .wooden_shield_equipped = false,
+
+            .broad_sword = false,
+            .broad_sword_equipped = false
         }
     };
 
@@ -62,6 +65,11 @@ void calc_player_status(Player *player)
     if(player->equipment.wooden_shield_equipped)
     {
         player->defense += 2;
+    }
+
+    if(player->equipment.broad_sword_equipped)
+    {
+        player->attack += 5;
     }
 }
 

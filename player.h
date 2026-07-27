@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <stdbool.h>
+
 #include "inventory.h"
 #include "equipment.h"
 
@@ -28,6 +30,9 @@ typedef struct Player {
     Inventory inventory;
 //プレイヤー装備
     Equipment equipment;
+//防御関数
+    bool defending;
+
 } Player;
 
 Player create_player(void);

@@ -63,11 +63,15 @@ void npc_event(void)
     printf("こんにちは！\n");
 }
 
-void enemy_event(int x, int y)
+void enemy_event(
+    char map[15][21],
+    int x,
+    int y
+)
 {
     printf("敵が現れた！\n");
 
-    field_map[y][x] = 'G';
+    map[y][x] = '.';
 }
 
 void handle_field_event(

@@ -501,6 +501,61 @@ void draw_equipment(
         );
     }
 
+    if(equipment_cursor == 3)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ブロードソード",
+            120,
+            170
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ブロードソード",
+            120,
+            170
+        );
+    }
+
+    if(player->equipment.broad_sword)
+    {
+        if(player->equipment.broad_sword_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                280,
+                170
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                280,
+                170
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            280,
+            170
+        );
+    }
+
     draw_text(
         renderer,
         font,
@@ -601,6 +656,17 @@ void draw_equipment(
             430
         );
     }
+    else if(equipment_cursor == 3)
+    {
+        draw_text(
+            renderer,
+            font,
+            "攻撃力 +5",
+            120,
+            430
+        );
+    }
+
 }
 
 void draw_save(
