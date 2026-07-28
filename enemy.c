@@ -156,6 +156,7 @@ void setup_cave_enemy(
     enemy->stunned = false;
     enemy->stun_timer = 0;
 
+    enemy->charging = false;
 }
 
 void setup_cave_b1_enemy(

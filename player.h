@@ -32,6 +32,12 @@ typedef struct Player {
     Equipment equipment;
 //防御関数
     bool defending;
+//プレイヤー状態異常
+    bool stunned;
+    int stun_timer;
+
+    bool poisoned;
+    int poison_timer;
 
 } Player;
 

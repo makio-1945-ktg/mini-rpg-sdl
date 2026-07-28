@@ -386,6 +386,29 @@ void enemy_turn(
         battle_mode
     );
 
+    if(player->poisoned)
+    {
+        add_battle_log("毒のダメージを受けている！");
+
+        player->hp -= 3;
+
+        printf("プレイヤーHP:%d\n",
+               player->hp);
+
+        if(player->hp <= 0)
+        {
+            printf("ゲームオーバー！\n");
+            end_battle(battle_mode);
+        }
+
+        player->poison_timer--;
+
+        if(player->poison_timer <= 0)
+        {
+            player->poisoned = false;
+            add_battle_log("体の毒が中和された！");
+        }
+    }
     player->defending = false;
 }
 
@@ -401,6 +424,25 @@ void handle_normal_battle_input(
     EnemySprite *enemy_sprite
 )
 {
+    if(player->stunned)
+    {
+        add_battle_log("スタンで身動きが取れない！");
+
+        player->stun_timer--;
+
+        if(player->stun_timer <= 0)
+        {
+            player->stunned = false;
+        }
+
+        enemy_turn(
+            player,
+            enemy,
+            battle_mode
+        );
+        return;
+    }
+
     if(event->key.keysym.sym == SDLK_UP)
     {
         (*battle_cursor)--;

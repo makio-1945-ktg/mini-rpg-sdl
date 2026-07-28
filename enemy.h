@@ -47,6 +47,8 @@ typedef struct {
     bool stunned;
     int stun_timer;
 
+    bool charging;
+
     EnemyType type;
 
 } Enemy;
