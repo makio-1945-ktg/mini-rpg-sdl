@@ -284,6 +284,129 @@ static void lucky_fairy_special_move(
     end_battle(battle_mode);
 }
 
+static void wizard_magic_fire(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("まどうしはファイアを唱えた！");
+
+    int enemy_damage = attack * 2;
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+
+    if(rand() % 5 == 0)
+    {
+        player->burning = true;
+        player->burn_timer = 3;
+
+        add_battle_log("火傷を負った！");
+    }
+}
+
+static void wizard_magic_ice(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("まどうしはアイスを唱えた！");
+
+    int enemy_damage = attack;
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+
+    if(rand() % 5 == 0)
+    {
+        player->frozen = true;
+        player->frozen_timer = 1;
+
+        add_battle_log("凍結状態になった！");
+    }
+}
+
+static void wizard_magic_thunder(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("まどうしはサンダーを唱えた！");
+
+    int enemy_damage = attack * 2;
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+
+    if(rand() % 5 == 0)
+    {
+        player->stunned = true;
+        player->stun_timer = 1;
+
+        add_battle_log("スタン状態になった！");
+    }
+}
+
+static void wizard_magic_heal(
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("まどうしはヒールを唱えた！");
+
+    enemy->hp += 15;
+
+    if(enemy->hp > enemy->max_hp)
+    {
+        enemy->hp = enemy->max_hp;
+    }
+}
+
 void enemy_action(
     Player *player,
     Enemy *enemy,
@@ -293,6 +416,26 @@ void enemy_action(
 {
     switch(enemy->type)
     {
+        case ENEMY_SLIME:
+
+            normal_enemy_attack(
+                player,
+                enemy,
+                attack,
+                battle_mode
+            );
+        break;
+
+        case ENEMY_GOBLIN:
+
+            normal_enemy_attack(
+                player,
+                enemy,
+                attack,
+                battle_mode
+            );
+        break;
+
         case ENEMY_ORC:
 
             if(rand() % 4 == 0)
@@ -412,14 +555,69 @@ void enemy_action(
             }
             break;
 
-        default:
+        case ENEMY_WIZARD:
+        {
 
-            normal_enemy_attack(
-                player,
-                enemy,
-                attack,
-                battle_mode
-            );
+            int magic = rand() % 5;
+
+            switch(magic)
+            {
+                case 0:
+                    wizard_magic_fire(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 1:
+                    wizard_magic_ice(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 2:
+                     wizard_magic_thunder(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 3:
+                    if(enemy->hp <= 30)
+                    {
+                        wizard_magic_heal(
+                            enemy,
+                            battle_mode
+                        );
+                    }
+                    else
+                    {
+                        normal_enemy_attack(
+                            player,
+                            enemy,
+                            attack,
+                            battle_mode
+                        );
+                    }
+                    break;
+
+                default:
+                    normal_enemy_attack(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+            }
             break;
+        }
     }
 }

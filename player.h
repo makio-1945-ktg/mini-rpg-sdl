@@ -33,6 +33,12 @@ typedef struct Player {
 //防御関数
     bool defending;
 //プレイヤー状態異常
+    bool frozen;
+    int frozen_timer;
+
+    bool burning;
+    int burn_timer;
+
     bool stunned;
     int stun_timer;
 

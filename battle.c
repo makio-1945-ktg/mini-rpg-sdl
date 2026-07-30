@@ -150,8 +150,19 @@ void battle_attack(
     BattleMode *battle_mode
     )
     {
+    int player_attack = player->attack;
+
+    if(player->frozen)
+    {
+        player_attack /= 2;
+
+        add_battle_log(
+            "凍結で攻撃力が低下中！"
+        );
+    }
+
     int player_damage =
-        player->attack - enemy->defense;
+        player_attack - enemy->defense;
 
     if(player_damage < 1)
     {
@@ -337,6 +348,17 @@ void enemy_turn(
     BattleMode *battle_mode
 )
 {
+    if(player->frozen)
+    {
+        player->frozen_timer--;
+
+        if(player->frozen_timer <= 0)
+        {
+            player->frozen = false;
+            add_battle_log("凍結が解けた！");
+        }
+    }
+
     if(apply_burn_damage(
         player,
         enemy,
@@ -409,6 +431,31 @@ void enemy_turn(
             add_battle_log("体の毒が中和された！");
         }
     }
+
+    if(player->burning)
+    {
+        add_battle_log("火傷ダメージを受けている！");
+
+        player->hp -= 5;
+
+        printf("プレイヤーHP:%d\n",
+               player->hp);
+
+        if(player->hp <= 0)
+        {
+            printf("ゲームオーバー！\n");
+            end_battle(battle_mode);
+        }
+
+        player->burn_timer--;
+
+        if(player->burn_timer <= 0)
+        {
+            player->burning = false;
+            add_battle_log("火傷が治った！");
+        }
+    }
+
     player->defending = false;
 }
 
