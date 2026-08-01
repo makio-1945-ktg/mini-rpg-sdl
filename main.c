@@ -14,6 +14,7 @@
 #include "render.h"
 #include "cave.h"
 #include "cave_b1.h"
+#include "cave_b2.h"
 #include "save.h"
 
 int main(void)
@@ -147,10 +148,12 @@ int main(void)
     int save_cursor = 0;
     int battle_cursor = 0;
     int magic_cursor = 0;
+    int use_item_cursor = 0;
 
     bool in_town = false;
     bool in_cave = false;
     bool in_cave_b1 = false;
+    bool in_cave_b2 = false;
 //フォント
     TTF_Font *font =
         TTF_OpenFont(
@@ -266,7 +269,14 @@ int main(void)
 
                     char tile;
 
-                    if(in_cave_b1)
+                    if(in_cave_b2)
+                    {
+                        tile = get_cave_b2_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+                    else if(in_cave_b1)
                     {
                         tile = get_cave_b1_tile(
                             new_x,
@@ -301,18 +311,36 @@ int main(void)
                         player.y = new_y;
                     }
 
-                    if(in_cave_b1)
+                    if(in_cave_b2)
                     {
-                        handle_cave_b1_event(
+                        handle_cave_b2_event(
                             tile,
-                            &in_cave,
                             &in_cave_b1,
+                            &in_cave_b2,
                             &player,
                             new_x,
                             new_y,
                             &battle_mode,
                             &battle_cursor,
                             &magic_cursor,
+                            &use_item_cursor,
+                            &enemy
+                        );
+                    }
+                    else if(in_cave_b1)
+                    {
+                        handle_cave_b1_event(
+                            tile,
+                            &in_cave,
+                            &in_cave_b1,
+                            &in_cave_b2,
+                            &player,
+                            new_x,
+                            new_y,
+                            &battle_mode,
+                            &battle_cursor,
+                            &magic_cursor,
+                            &use_item_cursor,
                             &enemy,
                             &current_enemy_texture,
                             scorpion_texture,
@@ -332,6 +360,7 @@ int main(void)
                             &battle_mode,
                             &battle_cursor,
                             &magic_cursor,
+                            &use_item_cursor,
                             &enemy,
                             &current_enemy_texture,
                             bat_texture,
@@ -351,6 +380,7 @@ int main(void)
                             &battle_mode,
                             &battle_cursor,
                             &magic_cursor,
+                            &use_item_cursor,
                             &enemy,
                             &current_enemy_texture,
                             slime_texture,
@@ -450,6 +480,12 @@ int main(void)
                                 message_timer = SDL_GetTicks();
                             }
                             break;
+
+                            case 2:
+                                sprintf(message, "戦闘中に使おう！");
+
+                                message_timer = SDL_GetTicks();
+                            break;
                         }
                     }
 
@@ -465,10 +501,10 @@ int main(void)
 
                     if(item_cursor < 0)
                     {
-                        item_cursor = 1;
+                        item_cursor = 2;
                     }
 
-                    if(item_cursor > 1)
+                    if(item_cursor > 2)
                     {
                         item_cursor = 0;
                     }
@@ -580,6 +616,78 @@ int main(void)
                             }
                                 message_timer = SDL_GetTicks();
                                 break;
+
+                        case 4:
+                            if(player.equipment.rune_sword)
+                            {
+                                player.equipment.rune_sword_equipped =
+                                    !player.equipment.rune_sword_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.rune_sword_equipped)
+                                {
+                                    sprintf(message, "ルーンソードを装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "ルーンソードを外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "ルーンソードを持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
+
+                        case 5:
+                            if(player.equipment.rune_armor)
+                            {
+                                player.equipment.rune_armor_equipped =
+                                    !player.equipment.rune_armor_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.rune_armor_equipped)
+                                {
+                                    sprintf(message, "ルーンアーマーを装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "ルーンアーマーを外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "ルーンアーマーを持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
+
+                        case 6:
+                            if(player.equipment.rune_shield)
+                            {
+                                player.equipment.rune_shield_equipped =
+                                    !player.equipment.rune_shield_equipped;
+
+                                calc_player_status(&player);
+
+                                if(player.equipment.rune_shield_equipped)
+                                {
+                                    sprintf(message, "ルーンシールドを装備した！");
+                                }
+                                else
+                                {
+                                    sprintf(message, "ルーンシールドを外した！");
+                                }
+                            }
+                            else
+                            {
+                                sprintf(message, "ルーンシールドを持ってない！");
+                            }
+                                message_timer = SDL_GetTicks();
+                                break;
                         }
                     }
 
@@ -595,10 +703,10 @@ int main(void)
 
                     if(equipment_cursor < 0)
                     {
-                        equipment_cursor = 3;
+                        equipment_cursor = 6;
                     }
 
-                    if(equipment_cursor > 3)
+                    if(equipment_cursor > 6)
                     {
                         equipment_cursor = 0;
                     }
@@ -691,6 +799,17 @@ int main(void)
                         &thunder_effect
                     );
                 }
+//アイテム使用処理
+                else if(battle_mode == MODE_USE_ITEM)
+                {
+                    handle_item_input(
+                        &event,
+                        &battle_mode,
+                        &use_item_cursor,
+                        &player,
+                        &enemy
+                    );
+                }
             }
         }
 //プレイヤー表示
@@ -711,7 +830,11 @@ int main(void)
             &enemy_sprite
         );
 
-        if(in_cave_b1)
+        if(in_cave_b2)
+        {
+            draw_cave_b2_map(renderer);
+        }
+        else if(in_cave_b1)
         {
             draw_cave_b1_map(renderer);
         }
@@ -875,7 +998,8 @@ int main(void)
 
 //戦闘描画
         if(battle_mode == MODE_BATTLE ||
-           battle_mode == MODE_MAGIC)
+           battle_mode == MODE_MAGIC ||
+           battle_mode == MODE_USE_ITEM)
         {
             draw_battle_background(renderer);
 
@@ -895,6 +1019,15 @@ int main(void)
                     renderer,
                     font,
                     magic_cursor
+                );
+            }
+//アイテムメニュー表示
+            if(battle_mode == MODE_USE_ITEM)
+            {
+                draw_item_menu(
+                    renderer,
+                    font,
+                    use_item_cursor
                 );
             }
 //呪文エフェクト描画

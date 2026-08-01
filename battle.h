@@ -10,6 +10,7 @@ typedef enum {
     MODE_FIELD,
     MODE_BATTLE,
     MODE_MAGIC,
+    MODE_USE_ITEM,
 
     MODE_STATUS,
     MODE_ITEM,
@@ -88,7 +89,19 @@ void battle_heal(
     BattleMode *battle_mode
 );
 
-void battle_item(
+void battle_potion(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+);
+
+void battle_ether(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+);
+
+void battle_bomb(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -134,10 +147,19 @@ void handle_magic_input(
     ThunderEffect *thunder_effect
 );
 
+void handle_item_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *use_item_cursor,
+    Player *player,
+    Enemy *enemy
+);
+
 void start_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,
@@ -152,6 +174,7 @@ void start_cave_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *bat_texture,
@@ -166,6 +189,7 @@ void start_cave_b1_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *scorpion_texture,

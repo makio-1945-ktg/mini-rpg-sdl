@@ -64,6 +64,10 @@ void draw_cave_b1_map(
     SDL_Renderer *renderer
 );
 
+void draw_cave_b2_map(
+    SDL_Renderer *renderer
+);
+
 void draw_battle_background(
     SDL_Renderer *renderer
 );
@@ -90,6 +94,12 @@ void draw_magic_menu(
     SDL_Renderer *renderer,
     TTF_Font *font,
     int magic_cursor
+);
+
+void draw_item_menu(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    int use_item_cursor
 );
 
 void draw_battle_effects(

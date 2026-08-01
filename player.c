@@ -24,7 +24,8 @@ Player create_player(void)
 
         .inventory = {
             .potion = 2,
-            .ether = 0
+            .ether = 0,
+            .bomb = 0
         },
 //この部分は　equipment = {0}　でも動作可能
         .equipment = {
@@ -38,7 +39,17 @@ Player create_player(void)
             .wooden_shield_equipped = false,
 
             .broad_sword = false,
-            .broad_sword_equipped = false
+            .broad_sword_equipped = false,
+
+            .rune_sword = false,
+            .rune_sword_equipped = false,
+
+            .rune_armor = false,
+            .rune_armor_equipped = false,
+
+            .rune_shield = false,
+            .rune_shield_equipped = false
+
         }
     };
 
@@ -70,6 +81,21 @@ void calc_player_status(Player *player)
     if(player->equipment.broad_sword_equipped)
     {
         player->attack += 5;
+    }
+
+    if(player->equipment.rune_sword_equipped)
+    {
+        player->attack += 9;
+    }
+
+    if(player->equipment.rune_armor_equipped)
+    {
+        player->defense += 8;
+    }
+
+    if(player->equipment.rune_shield_equipped)
+    {
+        player->defense += 5;
     }
 }
 

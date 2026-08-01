@@ -19,6 +19,15 @@ typedef struct {
     bool broad_sword;
     bool broad_sword_equipped;
 
+    bool rune_sword;
+    bool rune_sword_equipped;
+
+    bool rune_armor;
+    bool rune_armor_equipped;
+
+    bool rune_shield;
+    bool rune_shield_equipped;
+
 } Equipment;
 
 void equipment_shop_event(

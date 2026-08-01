@@ -7,10 +7,10 @@
 char field_map[15][21] = {
 
     "MMMMMMMMMMMMMMMMMMMM",
-    "MVGGGGGTGGGGGGGGGGGM",
+    "MGGGGGGTGGGGGGGGGGGM",
     "MCGEGGGGEGGGGGGGGGGM",
     "MEGGGGEGGGGGGGGWWWGM",
-    "MGGGGGGGGGGGGGWWWGGM",
+    "MGGGGGGGGGGGGGWWWVGM",
     "MGGGGGGGGGGGGGGWWWGM",
     "MGGGGGGGGGGGGGGGGGGM",
     "MGGGGGGGGGGGGGGGGGGM",
@@ -84,6 +84,7 @@ void handle_field_event(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,
@@ -150,6 +151,7 @@ void handle_field_event(
             battle_mode,
             battle_cursor,
             magic_cursor,
+            use_item_cursor,
             enemy,
             current_enemy_texture,
             slime_texture,

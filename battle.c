@@ -272,7 +272,7 @@ void battle_heal(
     return;
 }
 
-void battle_item(
+void battle_potion(
     Player *player,
     Enemy *enemy,
     BattleMode *battle_mode
@@ -280,7 +280,7 @@ void battle_item(
 {
     if(player->inventory.potion <= 0)
     {
-        printf("ポーションが無い！\n");
+        add_battle_log("ポーションが無い！");
         *battle_mode = MODE_BATTLE;
         return;
     }
@@ -295,7 +295,7 @@ void battle_item(
 
     }
 
-    printf("ポーションを使った！\n");
+    add_battle_log("ポーションを使った！");
 
     printf("HP:%d\n",
            player->hp);
@@ -309,10 +309,17 @@ void battle_item(
         battle_mode
     );
     return;
+}
 
+void battle_ether(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
     if(player->inventory.ether <= 0)
     {
-        printf("エーテルが無い！\n");
+        add_battle_log("エーテルが無い！");
         *battle_mode = MODE_BATTLE;
         return;
     }
@@ -327,7 +334,7 @@ void battle_item(
 
     }
 
-    printf("エーテルを使った！\n");
+    add_battle_log("エーテルを使った！");
 
     printf("MP:%d\n",
            player->mp);
@@ -342,6 +349,61 @@ void battle_item(
     );
     return;
 }
+
+void battle_bomb(
+    Player *player,
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
+    if(player->inventory.bomb <= 0)
+    {
+        add_battle_log("爆薬が無い！");
+        *battle_mode = MODE_BATTLE;
+        return;
+    }
+
+    player->inventory.bomb--;
+
+    int damage = 40;
+
+    enemy->hp -= damage;
+
+    char msg[64];
+    sprintf(msg,
+            "爆薬を使った！%dダメージ！",
+            damage);
+
+    add_battle_log(msg);
+
+    if(enemy->hp < 0)
+        enemy->hp = 0;
+
+    printf("%s HP:%d\n",
+           enemy->name,
+           enemy->hp);
+
+    if(enemy->hp <= 0)
+    {
+        enemy_defeat(
+            player,
+            enemy,
+            battle_mode
+        );
+        return;
+    }
+
+    printf("残り:%d個\n",
+           player->inventory.bomb);
+
+    enemy_turn(
+        player,
+        enemy,
+        battle_mode
+    );
+    return;
+}
+
 void enemy_turn(
     Player *player,
     Enemy *enemy,
@@ -536,11 +598,7 @@ void handle_normal_battle_input(
                 break;
 
             case 3:
-                battle_item(
-                    player,
-                    enemy,
-                    battle_mode
-                );
+                *battle_mode = MODE_USE_ITEM;
                 break;
         }
     }
@@ -620,10 +678,71 @@ void handle_magic_input(
     }
 }
 
+void handle_item_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *use_item_cursor,
+    Player *player,
+    Enemy *enemy
+)
+{
+    if(event->key.keysym.sym == SDLK_UP)
+    {
+        (*use_item_cursor)--;
+
+        if(*use_item_cursor < 0)
+            *use_item_cursor = 2;
+    }
+
+    if(event->key.keysym.sym == SDLK_DOWN)
+    {
+        (*use_item_cursor)++;
+
+        if(*use_item_cursor > 2)
+            *use_item_cursor = 0;
+    }
+
+    if(event->key.keysym.sym == SDLK_ESCAPE)
+    {
+        *battle_mode = MODE_BATTLE;
+    }
+
+    if(event->key.keysym.sym == SDLK_RETURN)
+    {
+        switch(*use_item_cursor)
+        {
+            case 0:
+                battle_potion(
+                    player,
+                    enemy,
+                    battle_mode
+                );
+                break;
+
+            case 1:
+                battle_ether(
+                    player,
+                    enemy,
+                    battle_mode
+                );
+                break;
+
+            case 2:
+                battle_bomb(
+                    player,
+                    enemy,
+                    battle_mode
+                );
+                break;
+        }
+    }
+}
+
 void start_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,
@@ -637,6 +756,7 @@ void start_battle(
     *battle_mode = MODE_BATTLE;
     *battle_cursor = 0;
     *magic_cursor = 0;
+    *use_item_cursor = 0;
 
     setup_field_enemy(
         enemy,
@@ -655,6 +775,7 @@ void start_cave_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *bat_texture,
@@ -668,6 +789,7 @@ void start_cave_battle(
     *battle_mode = MODE_BATTLE;
     *battle_cursor = 0;
     *magic_cursor = 0;
+    *use_item_cursor = 0;
 
     setup_cave_enemy(
         enemy,
@@ -686,6 +808,7 @@ void start_cave_b1_battle(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *scorpion_texture,
@@ -699,6 +822,7 @@ void start_cave_b1_battle(
     *battle_mode = MODE_BATTLE;
     *battle_cursor = 0;
     *magic_cursor = 0;
+    *use_item_cursor = 0;
 
     setup_cave_b1_enemy(
         enemy,

@@ -40,6 +40,7 @@ void handle_cave_event(
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *bat_texture,
@@ -51,8 +52,8 @@ void handle_cave_event(
     {
         *in_cave = false;
 
-        player->x = 1;
-        player->y = 1;
+        player->x = 18;
+        player->y = 4;
 
         printf("洞窟を出た！");
     }
@@ -80,6 +81,7 @@ void handle_cave_event(
             battle_mode,
             battle_cursor,
             magic_cursor,
+            use_item_cursor,
             enemy,
             current_enemy_texture,
             bat_texture,

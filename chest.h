@@ -24,6 +24,13 @@ void cave_b1_chest_event(
     int y
 );
 
+void cave_b2_chest_event(
+    Player *player,
+    char map[15][21],
+    int x,
+    int y
+);
+
 void open_chest(
     char map[15][21],
     int x,

@@ -4,6 +4,7 @@
 typedef struct {
     int potion;
     int ether;
+    int bomb;
 } Inventory;
 
 #endif

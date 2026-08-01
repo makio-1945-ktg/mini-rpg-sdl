@@ -2,6 +2,7 @@
 #include "map.h"
 #include "cave.h"
 #include "cave_b1.h"
+#include "cave_b2.h"
 
 #include <SDL2/SDL_ttf.h>
 
@@ -299,6 +300,28 @@ void draw_item(
             180
         );
     }
+
+    if(item_cursor == 2)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　爆薬",
+            120,
+            210
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　爆薬",
+            120,
+            210
+        );
+    }
+
 }
 
 void draw_equipment(
@@ -365,7 +388,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【装備中】",
-                280,
+                350,
                 80
             );
         }
@@ -375,7 +398,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【未装備】",
-                280,
+                350,
                 80
             );
         }
@@ -386,7 +409,7 @@ void draw_equipment(
             renderer,
             font,
             "【未所持】",
-            280,
+            350,
             80
         );
     }
@@ -420,7 +443,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【装備中】",
-                280,
+                350,
                 110
             );
         }
@@ -430,7 +453,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【未装備】",
-                280,
+                350,
                 110
             );
         }
@@ -441,7 +464,7 @@ void draw_equipment(
             renderer,
             font,
             "【未所持】",
-            280,
+            350,
             110
         );
     }
@@ -475,7 +498,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【装備中】",
-                280,
+                350,
                 140
             );
         }
@@ -485,7 +508,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【未装備】",
-                280,
+                350,
                 140
             );
         }
@@ -496,7 +519,7 @@ void draw_equipment(
             renderer,
             font,
             "【未所持】",
-            280,
+            350,
             140
         );
     }
@@ -530,7 +553,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【装備中】",
-                280,
+                350,
                 170
             );
         }
@@ -540,7 +563,7 @@ void draw_equipment(
                 renderer,
                 font,
                 "【未装備】",
-                280,
+                350,
                 170
             );
         }
@@ -551,8 +574,173 @@ void draw_equipment(
             renderer,
             font,
             "【未所持】",
-            280,
+            350,
             170
+        );
+    }
+
+    if(equipment_cursor == 4)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ルーンソード",
+            120,
+            200
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ルーンソード",
+            120,
+            200
+        );
+    }
+
+    if(player->equipment.rune_sword)
+    {
+        if(player->equipment.rune_sword_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                350,
+                200
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                350,
+                200
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            350,
+            200
+        );
+    }
+
+    if(equipment_cursor == 5)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ルーンアーマー",
+            120,
+            230
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ルーンアーマー",
+            120,
+            230
+        );
+    }
+
+    if(player->equipment.rune_armor)
+    {
+        if(player->equipment.rune_armor_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                350,
+                230
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                350,
+                230
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            350,
+            230
+        );
+    }
+
+    if(equipment_cursor == 6)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ルーンシールド",
+            120,
+            260
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ルーンシールド",
+            120,
+            260
+        );
+    }
+
+    if(player->equipment.rune_shield)
+    {
+        if(player->equipment.rune_shield_equipped)
+        {
+            draw_text(
+                renderer,
+                font,
+                "【装備中】",
+                350,
+                260
+            );
+        }
+        else
+        {
+            draw_text(
+                renderer,
+                font,
+                "【未装備】",
+                350,
+                260
+            );
+        }
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            "【未所持】",
+            350,
+            260
         );
     }
 
@@ -662,6 +850,36 @@ void draw_equipment(
             renderer,
             font,
             "攻撃力 +5",
+            120,
+            430
+        );
+    }
+    else if(equipment_cursor == 4)
+    {
+        draw_text(
+            renderer,
+            font,
+            "攻撃力 +9",
+            120,
+            430
+        );
+    }
+    else if(equipment_cursor == 5)
+    {
+        draw_text(
+            renderer,
+            font,
+            "防御力 +8",
+            120,
+            430
+        );
+    }
+    else if(equipment_cursor == 6)
+    {
+        draw_text(
+            renderer,
+            font,
+            "防御力 +5",
             120,
             430
         );
@@ -791,11 +1009,11 @@ void draw_map(SDL_Renderer *renderer)
                     );
                     break;
 
-                case 'N':
+                case 'V':
 
                     SDL_SetRenderDrawColor(
                         renderer,
-                        255,0,255,0
+                        200,200,200,255
                     );
                     break;
 
@@ -1012,6 +1230,90 @@ void draw_cave_b1_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case 'O':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0, 0, 200, 255
+                    );
+                    break;
+
+                case 'C':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        150, 75, 0, 255
+                    );
+                    break;
+
+                case 'W':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0, 100, 255, 255
+                    );
+                    break;
+
+                default:
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255, 0, 255, 255
+                    );
+                    break;
+            }
+
+            SDL_RenderFillRect(
+                renderer,
+                &tile
+            );
+        }
+    }
+}
+
+void draw_cave_b2_map(SDL_Renderer *renderer)
+{
+    int tile_size = 32;
+
+    for(int y = 0; y < 15; y++)
+    {
+        for(int x = 0; x < 20; x++)
+        {
+            SDL_Rect tile = {
+                x * tile_size,
+                y * tile_size,
+                tile_size,
+                tile_size
+            };
+
+            char c = cave_b2_map[y][x];
+
+            switch(c)
+            {
+                case 'M':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        100, 100, 100, 255
+                    );
+                    break;
+
+                case 'F':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        30, 30, 30, 255
+                    );
+                    break;
+
+                case 'U':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        200, 0, 0, 255
+                    );
+                    break;
+
+                case 'P':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0, 0, 200, 255
+                    );
+                    break;
+
                 case 'C':
                     SDL_SetRenderDrawColor(
                         renderer,
@@ -1170,6 +1472,53 @@ void draw_magic_menu(
     draw_text(renderer, font, "Fire", 90, 160);
     draw_text(renderer, font, "Ice", 90, 190);
     draw_text(renderer, font, "Thunder", 90, 220);
+}
+
+void draw_item_menu(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    int use_item_cursor
+)
+{
+    SDL_Rect item_box = {
+        80, 130, 130, 160
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        0, 50, 150, 150
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &item_box
+    );
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        255,255,255,255
+    );
+
+    SDL_RenderDrawRect(
+        renderer,
+        &item_box
+    );
+
+    SDL_Rect use_item_cursor_box = {
+        80,
+        135 + use_item_cursor * 30,
+        120,
+        28
+    };
+
+    SDL_RenderDrawRect(
+        renderer,
+        &use_item_cursor_box
+    );
+
+    draw_text(renderer, font, "ポーション", 90, 130);
+    draw_text(renderer, font, "エーテル", 90, 160);
+    draw_text(renderer, font, "爆薬", 90, 190);
 }
 
 void draw_battle_ui(

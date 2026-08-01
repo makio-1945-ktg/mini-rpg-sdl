@@ -13,7 +13,7 @@ char cave_b1_map[15][21] = {
     "MFMMMMMMMMMMMMMMMMFM",
     "MFMFFFFFMFFFFMFFFMFM",
     "MFMEMMMFMFMFFMFMFMFM",
-    "MFMFFCMEFFMCDMDMFMFM",
+    "MFMFFCMEFFMCDMOMFMFM",
     "MFMMMMMFMMMMMMMMFMFM",
     "MFFFFFMFFFFFFFMMFFFM",
     "MMMMMFMMMMMMMFMMMMMM",
@@ -34,12 +34,14 @@ void handle_cave_b1_event(
     char tile,
     bool *in_cave,
     bool *in_cave_b1,
+    bool *in_cave_b2,
     Player *player,
     int new_x,
     int new_y,
     BattleMode *battle_mode,
     int *battle_cursor,
     int *magic_cursor,
+    int *use_item_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *scorpion_texture,
@@ -58,6 +60,26 @@ void handle_cave_b1_event(
         printf("洞窟１階へ戻った！");
     }
 
+    if(tile == 'D')
+    {
+        *in_cave_b2 = true;
+
+        player->x = 11;
+        player->y = 5;
+
+        printf("洞窟地下２階へ潜った！");
+    }
+
+    if(tile == 'O')
+    {
+        *in_cave_b2 = true;
+
+        player->x = 14;
+        player->y = 4;
+
+        printf("洞窟地下２階へ潜った！");
+    }
+
     if(tile == 'C')
     {
         cave_b1_chest_event(
@@ -73,6 +95,7 @@ void handle_cave_b1_event(
             battle_mode,
             battle_cursor,
             magic_cursor,
+            use_item_cursor,
             enemy,
             current_enemy_texture,
             scorpion_texture,
