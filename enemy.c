@@ -21,6 +21,13 @@ EnemyData cave_b1_enemy_table[] = {
     {ENEMY_WIZARD, "まどうし", 60, 6, 4, 50, 30, 50, 50, 50}
 };
 
+EnemyData cave_b2_enemy_table[] = {
+
+    {ENEMY_KOBOLD, "コボルト", 80, 12, 10, 40, 30, 0, 0, 0},
+    {ENEMY_WISP, "ウィスプ", 70, 8, 12, 45, 25, 100, -100, 0},
+    {ENEMY_LAMIA, "ラミア", 90, 10, 10, 60, 50, 0, 100, 0}
+};
+
 void setup_field_enemy(
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
@@ -227,3 +234,73 @@ void setup_cave_b1_enemy(
     enemy->stun_timer = 0;
 
 }
+
+void setup_cave_b2_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture
+)
+{
+    int enemy_type = rand() % 3;
+
+    if(enemy_type == 0)
+    {
+        *current_enemy_texture = kobold_texture;
+    }
+    else if(enemy_type == 1)
+    {
+        *current_enemy_texture = wisp_texture;
+    }
+    else
+    {
+        *current_enemy_texture = lamia_texture;
+    }
+
+    strcpy(
+        enemy->name,
+        cave_b2_enemy_table[enemy_type].name
+    );
+
+    enemy->type =
+        cave_b2_enemy_table[enemy_type].type;
+
+    enemy->hp =
+        cave_b2_enemy_table[enemy_type].hp;
+
+    enemy->max_hp =
+        cave_b2_enemy_table[enemy_type].hp;
+
+    enemy->attack =
+        cave_b2_enemy_table[enemy_type].attack;
+
+    enemy->defense =
+        cave_b2_enemy_table[enemy_type].defense;
+
+    enemy->exp =
+        cave_b2_enemy_table[enemy_type].exp;
+
+    enemy->gold =
+        cave_b2_enemy_table[enemy_type].gold;
+
+    enemy->fire_resist =
+        cave_b2_enemy_table[enemy_type].fire_resist;
+
+    enemy->ice_resist =
+        cave_b2_enemy_table[enemy_type].ice_resist;
+
+    enemy->thunder_resist =
+        cave_b2_enemy_table[enemy_type].thunder_resist;
+
+    enemy->frozen = false;
+    enemy->frozen_timer = 0;
+
+    enemy->burning = false;
+    enemy->burn_timer = 0;
+
+    enemy->stunned = false;
+    enemy->stun_timer = 0;
+
+}
+

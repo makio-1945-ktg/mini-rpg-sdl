@@ -322,6 +322,26 @@ void draw_item(
         );
     }
 
+    if(item_cursor == 3)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　ドラゴンの宝玉",
+            120,
+            240
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　ドラゴンの宝玉",
+            120,
+            240
+        );
+    }
 }
 
 void draw_equipment(

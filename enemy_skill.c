@@ -407,6 +407,179 @@ static void wizard_magic_heal(
     }
 }
 
+static void kobold_special_move(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("コボルトの短剣が赤く光った！");
+    int enemy_damage =
+        attack * 2 - player->defense;
+
+    if(player->defending)
+    {
+        enemy_damage /= 2;
+    }
+
+    if(enemy_damage < 1)
+    {
+        enemy_damage = 1;
+    }
+
+    player->hp -= enemy_damage;
+
+    enemy->hp += enemy_damage;
+
+    char msg[128];
+    sprintf(msg,
+            "HPを%d吸収された！！",
+            enemy_damage
+    );
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+}
+
+static void wisp_special_move(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    if(enemy->charging)
+    {
+        add_battle_log("ウィスプは自爆した！");
+
+        enemy->charging = false;
+
+        int enemy_damage = attack * 3;
+
+        player->hp -= enemy_damage;
+
+        char msg[128];
+        sprintf(msg,
+                "%dダメージ！",
+                enemy_damage
+        );
+
+        add_battle_log(msg);
+
+        printf("プレイヤーHP:%d\n",
+            player->hp);
+
+        if(player->hp <= 0)
+        {
+            printf("ゲームオーバー！\n");
+            end_battle(battle_mode);
+        }
+        return;
+    }
+
+    if(rand() % 3 == 0)
+    {
+        enemy->charging = true;
+
+        add_battle_log("ウィスプは様子を見ている…");
+
+        return;
+    }
+
+    normal_enemy_attack(
+        player,
+        enemy,
+        attack,
+        battle_mode
+    );
+}
+
+static void lamia_magic_ice(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("ラミアはアイスを唱えた！");
+
+    int enemy_damage = attack;
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+
+    if(rand() % 5 == 0)
+    {
+        player->frozen = true;
+        player->frozen_timer = 1;
+
+        add_battle_log("凍結状態になった！");
+    }
+}
+
+static void lamia_special_move(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("ラミアは胴体でしめつけてきた！！");
+    int enemy_damage =
+        attack - player->defense;
+
+    if(player->defending)
+    {
+        enemy_damage /= 2;
+    }
+
+    if(enemy_damage < 1)
+    {
+        enemy_damage = 1;
+    }
+
+    player->hp -= enemy_damage;
+
+    player->stunned = true;
+    player->stun_timer = 1;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+}
+
 void enemy_action(
     Player *player,
     Enemy *enemy,
@@ -618,6 +791,92 @@ void enemy_action(
                     break;
             }
             break;
+        }
+
+        case ENEMY_KOBOLD:
+
+            if(rand() % 4 == 0)
+            {
+                kobold_special_move(
+                    player,
+                    enemy,
+                    attack,
+                    battle_mode
+                );
+            }
+            else
+            {
+                normal_enemy_attack(
+                    player,
+                    enemy,
+                    attack,
+                    battle_mode
+                );
+            }
+            break;
+
+        case ENEMY_WISP:
+
+            wisp_special_move(
+                player,
+                enemy,
+                attack,
+                battle_mode
+            );
+            break;
+
+        case ENEMY_LAMIA:
+        {
+
+            int special_move = rand() % 5;
+
+            switch(special_move)
+            {
+                case 0:
+                    normal_enemy_attack(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 1:
+                    lamia_magic_ice(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 2:
+                    lamia_special_move(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 3:
+                    lamia_magic_ice(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+
+                case 4:
+                    normal_enemy_attack(
+                        player,
+                        enemy,
+                        attack,
+                        battle_mode
+                    );
+                    break;
+            }
         }
     }
 }

@@ -17,8 +17,11 @@ typedef enum
 
     ENEMY_SCORPION,
     ENEMY_LUCKY_FAIRY,
-    ENEMY_WIZARD
+    ENEMY_WIZARD,
 
+    ENEMY_KOBOLD,
+    ENEMY_WISP,
+    ENEMY_LAMIA
 } EnemyType;
 
 typedef struct {
@@ -94,6 +97,14 @@ void setup_cave_b1_enemy(
     SDL_Texture *scorpion_texture,
     SDL_Texture *luckyfairy_texture,
     SDL_Texture *wizard_texture
+);
+
+void setup_cave_b2_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture
 );
 
 #endif

@@ -200,6 +200,21 @@ void start_cave_b1_battle(
     int new_y
 );
 
+void start_cave_b2_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    int *use_item_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture,
+    Player *player,
+    int new_x,
+    int new_y
+);
+
 void end_battle(
     BattleMode *battle_mode
 );

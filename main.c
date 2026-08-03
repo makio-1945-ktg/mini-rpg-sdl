@@ -109,6 +109,7 @@ int main(void)
             renderer,
             "assets/golem.png"
         );
+
     SDL_Texture *scorpion_texture =
         IMG_LoadTexture(
             renderer,
@@ -125,6 +126,24 @@ int main(void)
         IMG_LoadTexture(
             renderer,
             "assets/wizard.png"
+        );
+
+    SDL_Texture *kobold_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/kobold.png"
+        );
+
+    SDL_Texture *wisp_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/wisp.png"
+        );
+
+    SDL_Texture *lamia_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/lamia.png"
         );
 
     if(!slime_texture) {
@@ -324,7 +343,11 @@ int main(void)
                             &battle_cursor,
                             &magic_cursor,
                             &use_item_cursor,
-                            &enemy
+                            &enemy,
+                            &current_enemy_texture,
+                            kobold_texture,
+                            wisp_texture,
+                            lamia_texture
                         );
                     }
                     else if(in_cave_b1)
@@ -486,6 +509,12 @@ int main(void)
 
                                 message_timer = SDL_GetTicks();
                             break;
+
+                            case 3:
+                                sprintf(message, "？？？？？");
+
+                                message_timer = SDL_GetTicks();
+                            break;
                         }
                     }
 
@@ -501,10 +530,10 @@ int main(void)
 
                     if(item_cursor < 0)
                     {
-                        item_cursor = 2;
+                        item_cursor = 4;
                     }
 
-                    if(item_cursor > 2)
+                    if(item_cursor > 4)
                     {
                         item_cursor = 0;
                     }
@@ -1097,6 +1126,9 @@ int main(void)
     SDL_DestroyTexture(scorpion_texture);
     SDL_DestroyTexture(luckyfairy_texture);
     SDL_DestroyTexture(wizard_texture);
+    SDL_DestroyTexture(kobold_texture);
+    SDL_DestroyTexture(wisp_texture);
+    SDL_DestroyTexture(lamia_texture);
 
     TTF_Quit();
     SDL_Quit();

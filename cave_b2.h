@@ -22,7 +22,11 @@ void handle_cave_b2_event(
     int *battle_cursor,
     int *magic_cursor,
     int *use_item_cursor,
-    Enemy *enemy
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture
 );
 
 #endif

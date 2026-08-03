@@ -9,6 +9,8 @@
 #include "magic.h"
 #include "cave.h"
 #include "cave_b1.h"
+#include "cave_b2.h"
+
 //属性魔法関連
 int apply_element_resistance(
     int damage,
@@ -833,6 +835,39 @@ void start_cave_b1_battle(
     );
 
     enemy_event(cave_b1_map, new_x, new_y);
+
+    add_battle_log("敵が現れた！");
+}
+
+void start_cave_b2_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    int *use_item_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture,
+    Player *player,
+    int new_x,
+    int new_y
+)
+{
+    *battle_mode = MODE_BATTLE;
+    *battle_cursor = 0;
+    *magic_cursor = 0;
+    *use_item_cursor = 0;
+
+    setup_cave_b2_enemy(
+        enemy,
+        current_enemy_texture,
+        kobold_texture,
+        wisp_texture,
+        lamia_texture
+    );
+
+    enemy_event(cave_b2_map, new_x, new_y);
 
     add_battle_log("敵が現れた！");
 }

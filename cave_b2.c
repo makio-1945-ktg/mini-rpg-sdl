@@ -9,19 +9,19 @@
 char cave_b2_map[15][21] = {
 
     "MMMMMMMMMMMMMMMMMMMM",
-    "MFFFFFFFFFFFFFFMFFFM",
+    "MFFFFFFFFFFFFFEMFFEM",
     "MFMMMMMMMMMMMMFMFMFM",
-    "MFMCFFFFFMCFFMFMFMFM",
+    "MFMCEFFFFMCFFMFMFMFM",
     "MFMMMMMMFMFFFMFMFMFM",
     "MFFFFFFFFMFFUMPFFMFM",
     "MMMMMMMMMMMMMMMMMMFM",
-    "MFFFFFFMFFFFCMFFFFFM",
+    "MFFFFFFMFFFECMFFFFFM",
     "MFMMMMMMFMMMMMFMFMMM",
-    "MFFFFFFFFMFFFMFMFMFM",
+    "MFFEFFFFFMFFFMFMFMFM",
     "MMMFMMMMMMFMFMFMFMFM",
     "MFMFFFFFFFFMFMFMFFFM",
     "MFMMMMMMMMFMFMFMMMMM",
-    "MFFFFFFFFFFMFFFFFFCM",
+    "MEFFFFFFFFEMFFFFFECM",
     "MMMMMMMMMMMMMMMMMMMM",
 };
 
@@ -41,7 +41,11 @@ void handle_cave_b2_event(
     int *battle_cursor,
     int *magic_cursor,
     int *use_item_cursor,
-    Enemy *enemy
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *kobold_texture,
+    SDL_Texture *wisp_texture,
+    SDL_Texture *lamia_texture
 )
 {
     if(tile == 'U')
@@ -69,6 +73,24 @@ void handle_cave_b2_event(
         cave_b2_chest_event(
             player,
             cave_b2_map,
+            new_x,
+            new_y
+        );
+    }
+
+    if(tile == 'E')
+    {
+        start_cave_b2_battle(
+            battle_mode,
+            battle_cursor,
+            magic_cursor,
+            use_item_cursor,
+            enemy,
+            current_enemy_texture,
+            kobold_texture,
+            wisp_texture,
+            lamia_texture,
+            player,
             new_x,
             new_y
         );

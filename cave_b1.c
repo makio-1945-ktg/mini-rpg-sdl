@@ -75,7 +75,7 @@ void handle_cave_b1_event(
         *in_cave_b2 = true;
 
         player->x = 14;
-        player->y = 4;
+        player->y = 5;
 
         printf("洞窟地下２階へ潜った！");
     }

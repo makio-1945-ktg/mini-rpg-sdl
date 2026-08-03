@@ -139,10 +139,16 @@ void cave_b2_chest_event(
 
     if(x == 12 && y == 7)
     {
-        printf("ドラゴンオーブ実装予定です\n");
+        player->inventory.dragon_jewel++;
+
+        printf("ドラゴンオーブを入手した！\n");
+        printf(
+            "現在:%d個\n",
+            player->inventory.dragon_jewel
+        );
     }
 
-    if(x == 13 && y == 18)
+    if(x == 18 && y == 13)
     {
         player->equipment.rune_shield = 1;
 

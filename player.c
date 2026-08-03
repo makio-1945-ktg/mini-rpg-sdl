@@ -25,7 +25,8 @@ Player create_player(void)
         .inventory = {
             .potion = 2,
             .ether = 0,
-            .bomb = 0
+            .bomb = 0,
+            .dragon_jewel = 0
         },
 //この部分は　equipment = {0}　でも動作可能
         .equipment = {
