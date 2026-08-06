@@ -17,7 +17,7 @@ char field_map[15][21] = {
     "MGGGGGGGGGGGGGGGGGGM",
     "MGGGGWWWGGGGGGGGGGGM",
     "MGGGGGWWWGGGGGGGGGGM",
-    "MGGGGGGGGGGGGGGGGGGM",
+    "MGGGSGGGGGGGGGGGGGGM",
     "MGGGGGGGGGGGGGGGGGGM",
     "MGGGGGGGGGGGGGGGGGGM",
     "MMMMMMMMMMMMMMMMMMMM"
@@ -78,6 +78,7 @@ void handle_field_event(
     char tile,
     bool *in_town,
     bool *in_cave,
+    bool *in_temple,
     Player *player,
     int new_x,
     int new_y,
@@ -143,6 +144,16 @@ void handle_field_event(
             new_x,
             new_y
         );
+    }
+
+    if(tile == 'S')
+    {
+        *in_temple = true;
+
+        player->x = 4;
+        player->y = 8;
+
+        printf("謎の神殿に入った！\n");
     }
 
     if(tile == 'E')

@@ -1,17 +1,19 @@
-//#ifndef TEMPLE_H
-//#define TEMPLE_H
+#ifndef TEMPLE_H
+#define TEMPLE_H
 
-//#include <stdbool.h>
-//#include <SDL2/SDL.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
 
-//#include "player.h"
-//#include "battle.h"
+#include "player.h"
+#include "battle.h"
 
-extern char temple_map[10][11];
+extern char temple_map[11][10];
 
-char get_cave_tile(int x, int y);
+char get_temple_tile(int x, int y);
 
-void handle_cave_event(
+void npc_event(void);
+
+void handle_temple_event(
     char tile,
     bool *in_temple,
     Player *player,
@@ -21,7 +23,9 @@ void handle_cave_event(
     int *battle_cursor,
     int *magic_cursor,
     int *use_item_cursor,
-    Enemy *enemy
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *dragon_texture
 );
 
 #endif

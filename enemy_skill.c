@@ -580,6 +580,112 @@ static void lamia_special_move(
     }
 }
 
+static void dragon_smash(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("竜神は鋭い爪で襲いかかった！");
+
+    int enemy_damage =
+        attack * 2 - player->defense;
+
+    if(player->defending)
+    {
+        enemy_damage /= 2;
+    }
+
+    if(enemy_damage < 1)
+    {
+        enemy_damage = 1;
+    }
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg,
+            "%dダメージ！",
+            enemy_damage
+    );
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+           player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+}
+
+static void dragon_breath(
+    Player *player,
+    Enemy *enemy,
+    int attack,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("竜神のブレス攻撃！");
+
+    int enemy_damage = attack * 2;
+
+    player->hp -= enemy_damage;
+
+    char msg[128];
+    sprintf(msg, "%dダメージ！", enemy_damage);
+
+    add_battle_log(msg);
+
+    printf("プレイヤーHP:%d\n",
+            player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+    }
+
+    if(rand() % 4 == 0)
+    {
+        player->burning = true;
+        player->burn_timer = 3;
+
+        add_battle_log("火傷を負った！");
+    }
+}
+
+static void dragon_heal(
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
+    add_battle_log("竜神は目を閉じて傷を癒やした！");
+
+    enemy->hp += 30;
+
+    if(enemy->hp > enemy->max_hp)
+    {
+       enemy->hp = enemy->max_hp;
+    }
+
+}
+
+static void dragon_charge_breath(
+    Enemy *enemy,
+    BattleMode *battle_mode
+)
+{
+    enemy->charging = true;
+
+    add_battle_log("竜神は大きく息を吸い込んだ！");
+
+    return;
+}
+
 void enemy_action(
     Player *player,
     Enemy *enemy,
@@ -876,6 +982,110 @@ void enemy_action(
                         battle_mode
                     );
                     break;
+            }
+        }
+
+        case ENEMY_DRAGON:
+        {
+            if(enemy->charging)
+            {
+                add_battle_log("岩をも溶かす灼熱の息を吐いた！");
+
+                enemy->charging = false;
+
+                int enemy_damage = attack * 3;
+
+                player->hp -= enemy_damage;
+
+                char msg[128];
+                sprintf(msg,
+                        "%dダメージ！",
+                        enemy_damage
+                );
+
+                add_battle_log(msg);
+
+                printf("プレイヤーHP:%d\n",
+                    player->hp);
+
+                if(player->hp <= 0)
+                {
+                    printf("ゲームオーバー！\n");
+                    end_battle(battle_mode);
+                }
+                return;
+            }
+            else
+            {
+                int boss_move = rand() % 5;
+
+                switch(boss_move)
+                {
+                    case 0:
+                        normal_enemy_attack(
+                            player,
+                            enemy,
+                            attack,
+                            battle_mode
+                        );
+                        break;
+
+                    case 1:
+                        dragon_smash(
+                            player,
+                            enemy,
+                            attack,
+                            battle_mode
+                        );
+                        break;
+
+                    case 2:
+                        dragon_breath(
+                            player,
+                            enemy,
+                            attack,
+                            battle_mode
+                        );
+                        break;
+
+                    case 3:
+                        if(enemy->hp <= 50)
+                        {
+                            dragon_heal(
+                                enemy,
+                                battle_mode
+                            );
+                        }
+                        else
+                        {
+                            normal_enemy_attack(
+                                player,
+                                enemy,
+                                attack,
+                                battle_mode
+                            );
+                        }
+                        break;
+
+                    case 4:
+                        if(enemy->hp <= 70)
+                        {
+                            dragon_charge_breath(
+                                enemy,
+                                battle_mode
+                            );
+                        }
+                        else
+                        {
+                            normal_enemy_attack(
+                                player,
+                                enemy,
+                                attack,
+                                battle_mode
+                            );
+                        }
+                        break;
+                }
             }
         }
     }

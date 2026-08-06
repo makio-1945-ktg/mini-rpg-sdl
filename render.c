@@ -3,6 +3,7 @@
 #include "cave.h"
 #include "cave_b1.h"
 #include "cave_b2.h"
+#include "temple.h"
 
 #include <SDL2/SDL_ttf.h>
 
@@ -1037,6 +1038,14 @@ void draw_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case 'S':
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        100,100,0,255
+                    );
+                    break;
+
                 case 'C':
 
                     SDL_SetRenderDrawColor(
@@ -1360,6 +1369,68 @@ void draw_cave_b2_map(SDL_Renderer *renderer)
                 renderer,
                 &tile
             );
+        }
+    }
+}
+
+void draw_temple_map(SDL_Renderer *renderer)
+{
+    int tile_size = 32;
+
+    for (int y = 0; y < 11; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            SDL_Rect rect = {
+                x * TILE_SIZE,
+                y * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            };
+
+            char c = temple_map[y][x];
+
+            switch(temple_map[y][x])
+            {
+                case 'M':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        100,100,100,255
+                    );
+                    break;
+
+                case 'G':
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        0,255,0,255
+                    );
+                    break;
+
+                case 'N':
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255,0,255,255
+                    );
+                    break;
+
+                case 'D':
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255,100,0,255
+                    );
+                    break;
+
+                case 'O':
+
+                    SDL_SetRenderDrawColor(
+                        renderer,
+                        255,255,255,255
+                    );
+                    break;
+            }
+            SDL_RenderFillRect(renderer, &rect);
         }
     }
 }

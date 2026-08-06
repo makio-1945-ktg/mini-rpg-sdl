@@ -41,6 +41,8 @@ extern EnemyData cave_enemy_table[];
 
 extern EnemyData cave_b1_enemy_table[];
 
+extern EnemyData cave_b2_enemy_table[];
+
 typedef struct {
     int x;
     int y;
@@ -215,6 +217,19 @@ void start_cave_b2_battle(
     int new_y
 );
 
+void start_boss_battle(
+    BattleMode *battle_mode,
+    int *battle_cursor,
+    int *magic_cursor,
+    int *use_item_cursor,
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *dragon_texture,
+    Player *player,
+    int new_x,
+    int new_y
+);
+ 
 void end_battle(
     BattleMode *battle_mode
 );

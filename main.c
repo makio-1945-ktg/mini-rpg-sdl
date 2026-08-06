@@ -15,6 +15,7 @@
 #include "cave.h"
 #include "cave_b1.h"
 #include "cave_b2.h"
+#include "temple.h"
 #include "save.h"
 
 int main(void)
@@ -146,6 +147,12 @@ int main(void)
             "assets/lamia.png"
         );
 
+    SDL_Texture *dragon_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/dragon.png"
+        );
+
     if(!slime_texture) {
         printf("%s\n", IMG_GetError());
     }
@@ -173,6 +180,7 @@ int main(void)
     bool in_cave = false;
     bool in_cave_b1 = false;
     bool in_cave_b2 = false;
+    bool in_temple = false;
 //フォント
     TTF_Font *font =
         TTF_OpenFont(
@@ -330,7 +338,25 @@ int main(void)
                         player.y = new_y;
                     }
 
-                    if(in_cave_b2)
+                    if(in_temple)
+                    {
+                        handle_temple_event(
+                            tile,
+                            &in_temple,
+                            &player,
+                            new_x,
+                            new_y,
+                            &battle_mode,
+                            &battle_cursor,
+                            &magic_cursor,
+                            &use_item_cursor,
+                            &enemy,
+                            &current_enemy_texture,
+                            dragon_texture
+                        );
+                    }
+ 
+                    else if(in_cave_b2)
                     {
                         handle_cave_b2_event(
                             tile,
@@ -397,6 +423,7 @@ int main(void)
                             tile,
                             &in_town,
                             &in_cave,
+                            &in_temple,
                             &player,
                             new_x,
                             new_y,
@@ -859,7 +886,11 @@ int main(void)
             &enemy_sprite
         );
 
-        if(in_cave_b2)
+        if(in_temple)
+        {
+            draw_temple_map(renderer);
+        }
+        else if(in_cave_b2)
         {
             draw_cave_b2_map(renderer);
         }
@@ -1129,6 +1160,7 @@ int main(void)
     SDL_DestroyTexture(kobold_texture);
     SDL_DestroyTexture(wisp_texture);
     SDL_DestroyTexture(lamia_texture);
+    SDL_DestroyTexture(dragon_texture);
 
     TTF_Quit();
     SDL_Quit();

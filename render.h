@@ -68,6 +68,10 @@ void draw_cave_b2_map(
     SDL_Renderer *renderer
 );
 
+void draw_temple_map(
+    SDL_Renderer *renderer
+);
+
 void draw_battle_background(
     SDL_Renderer *renderer
 );

@@ -28,6 +28,11 @@ EnemyData cave_b2_enemy_table[] = {
     {ENEMY_LAMIA, "ラミア", 90, 10, 10, 60, 50, 0, 100, 0}
 };
 
+EnemyData temple_enemy_table[] = {
+
+    {ENEMY_DRAGON, "", 200, 14, 14, 0, 0, 100, 0, 50}
+};
+
 void setup_field_enemy(
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
@@ -304,3 +309,50 @@ void setup_cave_b2_enemy(
 
 }
 
+void setup_temple_enemy(
+    Enemy *enemy,
+    SDL_Texture **current_enemy_texture,
+    SDL_Texture *dragon_texture
+)
+{
+    int enemy_type = ENEMY_DRAGON;
+
+    enemy->type =
+        temple_enemy_table[enemy_type].type;
+
+    enemy->hp =
+        temple_enemy_table[enemy_type].hp;
+
+    enemy->max_hp =
+        temple_enemy_table[enemy_type].hp;
+
+    enemy->attack =
+        temple_enemy_table[enemy_type].attack;
+
+    enemy->defense =
+        temple_enemy_table[enemy_type].defense;
+
+    enemy->exp =
+        temple_enemy_table[enemy_type].exp;
+
+    enemy->gold =
+        temple_enemy_table[enemy_type].gold;
+
+    enemy->fire_resist =
+        temple_enemy_table[enemy_type].fire_resist;
+
+    enemy->ice_resist =
+        temple_enemy_table[enemy_type].ice_resist;
+
+    enemy->thunder_resist =
+        temple_enemy_table[enemy_type].thunder_resist;
+
+    enemy->frozen = false;
+    enemy->frozen_timer = 0;
+
+    enemy->burning = false;
+    enemy->burn_timer = 0;
+
+    enemy->stunned = false;
+    enemy->stun_timer = 0;
+}

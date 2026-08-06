@@ -37,6 +37,7 @@ void handle_field_event(
     char tile,
     bool *in_town,
     bool *in_cave,
+    bool *in_temple,
     Player *player,
     int new_x,
     int new_y,
