@@ -296,7 +296,14 @@ int main(void)
 
                     char tile;
 
-                    if(in_cave_b2)
+                    if(in_temple)
+                    {
+                        tile = get_temple_tile(
+                            new_x,
+                            new_y
+                        );
+                    }
+                    else if(in_cave_b2)
                     {
                         tile = get_cave_b2_tile(
                             new_x,

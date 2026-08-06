@@ -44,6 +44,8 @@ typedef struct Player {
 
     bool poisoned;
     int poison_timer;
+//ボス撃破フラグ
+    bool dragon_defeated;
 
 } Player;
 

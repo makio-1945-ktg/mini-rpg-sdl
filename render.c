@@ -1375,8 +1375,6 @@ void draw_cave_b2_map(SDL_Renderer *renderer)
 
 void draw_temple_map(SDL_Renderer *renderer)
 {
-    int tile_size = 32;
-
     for (int y = 0; y < 11; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -1390,7 +1388,7 @@ void draw_temple_map(SDL_Renderer *renderer)
 
             char c = temple_map[y][x];
 
-            switch(temple_map[y][x])
+            switch(c)
             {
                 case 'M':
                     SDL_SetRenderDrawColor(

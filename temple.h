@@ -11,7 +11,7 @@ extern char temple_map[11][10];
 
 char get_temple_tile(int x, int y);
 
-void npc_event(void);
+void temple_npc_event(void);
 
 void handle_temple_event(
     char tile,

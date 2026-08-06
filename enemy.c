@@ -30,7 +30,7 @@ EnemyData cave_b2_enemy_table[] = {
 
 EnemyData temple_enemy_table[] = {
 
-    {ENEMY_DRAGON, "", 200, 14, 14, 0, 0, 100, 0, 50}
+    {ENEMY_DRAGON, "竜神", 200, 14, 14, 0, 0, 100, 0, 50}
 };
 
 void setup_field_enemy(
@@ -315,7 +315,14 @@ void setup_temple_enemy(
     SDL_Texture *dragon_texture
 )
 {
-    int enemy_type = ENEMY_DRAGON;
+    int enemy_type = 0;
+
+    *current_enemy_texture = dragon_texture;
+
+    strcpy(
+        enemy->name,
+        temple_enemy_table[0].name
+    );
 
     enemy->type =
         temple_enemy_table[enemy_type].type;

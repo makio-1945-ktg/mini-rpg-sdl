@@ -897,7 +897,7 @@ void start_boss_battle(
         dragon_texture
     );
 
-    enemy_event(temple_map, new_x, new_y);
+    temple_map[new_y][new_x] = 'G';
 
     add_battle_log("石像の封印が解かれて竜神が姿を現した！");
 }

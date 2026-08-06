@@ -43,6 +43,8 @@ extern EnemyData cave_b1_enemy_table[];
 
 extern EnemyData cave_b2_enemy_table[];
 
+extern EnemyData temple_enemy_table[];
+
 typedef struct {
     int x;
     int y;

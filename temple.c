@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "temple.h"
 #include "battle.h"
@@ -25,7 +26,7 @@ char get_temple_tile(int x, int y)
     return temple_map[y][x];
 }
 
-void npc_event(void)
+void temple_npc_event(void)
 {
     printf("龍神様はドラゴンの宝玉を持つものにのみ姿を表すという…\n");
 }
@@ -57,12 +58,16 @@ void handle_temple_event(
 
     if(tile == 'N')
     {
-        npc_event();
+        temple_npc_event();
     }
 
     if(tile == 'D')
     {
-        if(player->inventory.dragon_jewel > 0)
+        if(player->dragon_defeated)
+        {
+            printf("竜神はどこかへ去ったようだ。\n");
+        }
+        else if(player->inventory.dragon_jewel > 0)
         {
             start_boss_battle(
                 battle_mode,
