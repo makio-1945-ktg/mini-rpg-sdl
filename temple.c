@@ -5,6 +5,7 @@
 #include "battle.h"
 #include "magic.h"
 #include "enemy.h"
+#include "message_ui.h"
 
 char temple_map[11][10] = {
 
@@ -28,7 +29,7 @@ char get_temple_tile(int x, int y)
 
 void temple_npc_event(void)
 {
-    printf("龍神様はドラゴンの宝玉を持つものにのみ姿を表すという…\n");
+    show_message("龍神様は宝玉を持つ者に姿を表すという…\n");
 }
 
 void handle_temple_event(

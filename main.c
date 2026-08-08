@@ -7,7 +7,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-
 #include "map.h"
 #include "battle.h"
 #include "player.h"
@@ -16,6 +15,7 @@
 #include "cave_b1.h"
 #include "cave_b2.h"
 #include "temple.h"
+#include "message_ui.h"
 #include "save.h"
 
 int main(void)
@@ -163,10 +163,6 @@ int main(void)
     bool running = true;
     bool menu_open = false;
     BattleMode battle_mode = MODE_FIELD;
-
-    char message[128] = "";
-
-    Uint32 message_timer = 0;
 
     int menu_cursor = 0;
     int item_cursor = 0;
@@ -478,27 +474,11 @@ int main(void)
                                     player.hp = player.max_hp;
                                 }
 
-                                sprintf(
-                                    message,
-                                    "ポーションを使った！"
-                                );
-
-                                message_timer = SDL_GetTicks();
-
-                                printf("HP:%d\n",
-                                       player.hp);
-
-                                printf("残り:%d個\n",
-                                       player.inventory.potion);
+                                show_message("ポーションを使った！");
                             }
                             else
                             {
-                                sprintf(
-                                    message,
-                                    "ポーションが無い！"
-                                );
-
-                                message_timer = SDL_GetTicks();
+                                show_message("ポーションがない！");
                             }
                             break;
 
@@ -514,40 +494,20 @@ int main(void)
                                     player.mp = player.max_mp;
                                 }
 
-                                sprintf(
-                                    message,
-                                    "エーテルを使った！"
-                                );
-
-                                message_timer = SDL_GetTicks();
-
-                                printf("MP:%d\n",
-                                       player.mp);
-
-                                printf("残り:%d個\n",
-                                       player.inventory.ether);
+                                show_message("エーテルを使った！");
                             }
                             else
                             {
-                                sprintf(
-                                    message,
-                                    "エーテルが無い！"
-                                );
-
-                                message_timer = SDL_GetTicks();
+                                show_message("エーテルがない！");
                             }
                             break;
 
                             case 2:
-                                sprintf(message, "戦闘中に使おう！");
-
-                                message_timer = SDL_GetTicks();
+                                show_message("戦闘中に使おう！");
                             break;
 
                             case 3:
-                                sprintf(message, "？？？？？");
-
-                                message_timer = SDL_GetTicks();
+                                show_message("？？？？？？");
                             break;
                         }
                     }
@@ -594,19 +554,18 @@ int main(void)
 
                                 if(player.equipment.sword_equipped)
                                 {
-                                    sprintf(message, "剣を装備した！");
+                                    show_message("剣を装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "剣を外した！");
+                                    show_message("剣を外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "剣を持ってない！");
+                                show_message("剣を持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 1:
                             if(player.equipment.leather_armor)
@@ -618,19 +577,18 @@ int main(void)
 
                                 if(player.equipment.leather_armor_equipped)
                                 {
-                                    sprintf(message, "革の鎧を装備した！");
+                                    show_message("革の鎧を装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "革の鎧を外した！");
+                                    show_message("革の鎧を外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "革の鎧を持ってない！");
+                                show_message("革の鎧を持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 2:
                             if(player.equipment.wooden_shield)
@@ -642,19 +600,18 @@ int main(void)
 
                                 if(player.equipment.wooden_shield_equipped)
                                 {
-                                    sprintf(message, "木の盾を装備した！");
+                                    show_message("木の盾を装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "木の盾を外した！");
+                                    show_message("木の盾を外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "木の盾を持ってない！");
+                                show_message("木の盾を持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 3:
                             if(player.equipment.broad_sword)
@@ -666,19 +623,18 @@ int main(void)
 
                                 if(player.equipment.broad_sword_equipped)
                                 {
-                                    sprintf(message, "ブロードソードを装備した！");
+                                    show_message("ブロードソードを装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "ブロードソードを外した！");
+                                    show_message("ブロードソードを外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "ブロードソードを持ってない！");
+                                show_message("ブロードソードを持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 4:
                             if(player.equipment.rune_sword)
@@ -690,19 +646,18 @@ int main(void)
 
                                 if(player.equipment.rune_sword_equipped)
                                 {
-                                    sprintf(message, "ルーンソードを装備した！");
+                                    show_message("ルーンソードを装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "ルーンソードを外した！");
+                                    show_message("ルーンソードを外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "ルーンソードを持ってない！");
+                                show_message("ルーンソードを持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 5:
                             if(player.equipment.rune_armor)
@@ -714,19 +669,18 @@ int main(void)
 
                                 if(player.equipment.rune_armor_equipped)
                                 {
-                                    sprintf(message, "ルーンアーマーを装備した！");
+                                    show_message("ルーンアーマーを装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "ルーンアーマーを外した！");
+                                    show_message("ルーンアーマーを外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "ルーンアーマーを持ってない！");
+                                show_message("ルーンアーマーを持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
 
                         case 6:
                             if(player.equipment.rune_shield)
@@ -738,19 +692,18 @@ int main(void)
 
                                 if(player.equipment.rune_shield_equipped)
                                 {
-                                    sprintf(message, "ルーンシールドを装備した！");
+                                    show_message("ルーンシールドを装備した！");
                                 }
                                 else
                                 {
-                                    sprintf(message, "ルーンシールドを外した！");
+                                    show_message("ルーンシールドを外した！");
                                 }
                             }
                             else
                             {
-                                sprintf(message, "ルーンシールドを持ってない！");
+                                show_message("ルーンシールドを持ってない！");
                             }
-                                message_timer = SDL_GetTicks();
-                                break;
+                            break;
                         }
                     }
 
@@ -790,25 +743,23 @@ int main(void)
                         case 0:
                             if(save_game(&player))
                             {
-                                sprintf(message, "セーブしました！");
+                                show_message("セーブしました！");
                             }
                             else
                             {
-                                sprintf(message, "セーブに失敗しました");
+                                show_message("セーブに失敗しました");
                             }
-                            message_timer = SDL_GetTicks();
                             break;
 
                         case 1:
                             if(load_game(&player))
                             {
-                                sprintf(message, "ロードしました！");
+                                show_message("ロードしました！");
                             }
                             else
                             {
-                                sprintf(message, "ロードに失敗しました");
+                                show_message("ロードに失敗しました");
                             }
-                            message_timer = SDL_GetTicks();
                             break;
                         }
                     }
@@ -1131,20 +1082,14 @@ int main(void)
             }
         }
 
-        if(message[0] != '\0')
-        {
-            if(SDL_GetTicks() - message_timer > 2000)
-            {
-                message[0] = '\0';
-            }
-        }
+        update_message();
 
-        if(message[0] != '\0')
+        if(get_message()[0] != '\0')
         {
             draw_message(
                 renderer,
                 font,
-                message
+                get_message()
             );
         }
         SDL_RenderPresent(renderer);

@@ -3,18 +3,19 @@
 
 #include "player.h"
 #include "equipment.h"
+#include "message_ui.h"
 
 void buy_sword(Player *player)
 {
     if(player->equipment.sword)
     {
-        printf("すでに装備している！\n");
+        show_message("すでに装備している！\n");
         return;
     }
 
     if(player->gold < 20)
     {
-        printf("お金が足りない！\n");
+        show_message("お金が足りない！\n");
         return;
     }
 
@@ -24,26 +25,20 @@ void buy_sword(Player *player)
 
     calc_player_status(player);
 
-    printf("剣を購入した！\n");
-
-    printf("ATK:%d\n",
-            player->attack);
-
-    printf("所持金:%dG\n",
-            player->gold);
+    show_message("剣を購入した！\n");
 }
 
 void buy_leather_armor(Player *player)
 {
     if(player->equipment.leather_armor)
     {
-        printf("すでに装備している！\n");
+        show_message("すでに装備している！\n");
         return;
     }
 
     if(player->gold < 30)
     {
-        printf("お金が足りない！\n");
+        show_message("お金が足りない！\n");
         return;
     }
 
@@ -53,13 +48,7 @@ void buy_leather_armor(Player *player)
 
     calc_player_status(player);
 
-    printf("皮の鎧を購入した！\n");
-
-    printf("DEF:%d\n",
-            player->defense);
-
-    printf("所持金:%dG\n",
-            player->gold);
+    show_message("皮の鎧を購入した！\n");
 }
 
 void equipment_shop_event(Player *player)

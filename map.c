@@ -3,6 +3,7 @@
 #include "map.h"
 #include "chest.h"
 #include "equipment.h"
+#include "message_ui.h"
 
 char field_map[15][21] = {
 
@@ -30,14 +31,14 @@ char get_tile(int x, int y)
 
 void town_event(void)
 {
-    printf("町に到着しました！\n");
+    show_message("町に到着しました！");
 }
 
 void inn_event(Player *player)
 {
     if(player->gold < 10)
     {
-        printf("お金が足りない！\n");
+        show_message("お金が足りない！");
         return;
     }
 
@@ -46,21 +47,12 @@ void inn_event(Player *player)
     player->hp = player->max_hp;
     player->mp = player->max_mp;
 
-    printf("宿屋に泊まった！\n");
-
-    printf("HP:%d\n",
-           player->hp);
-
-    printf("MP:%d\n",
-           player->mp);
-
-    printf("所持金:%dG\n",
-           player->gold);
+    show_message("宿屋に泊まってステータス全快！");
 }
 
 void npc_event(void)
 {
-    printf("こんにちは！\n");
+    show_message("こんにちは！");
 }
 
 void enemy_event(
@@ -69,8 +61,6 @@ void enemy_event(
     int y
 )
 {
-    printf("敵が現れた！\n");
-
     map[y][x] = '.';
 }
 
@@ -108,7 +98,7 @@ void handle_field_event(
         *in_town = false;
         player->x = 7;
         player->y = 1;
-        printf("町を出た！\n");
+        show_message("町を出た！");
     }
 
     if(tile == 'V')
@@ -118,7 +108,7 @@ void handle_field_event(
         player->x = 1;
         player->y = 1;
 
-        printf("洞窟に入った！\n");
+        show_message("洞窟に入った！");
     }
 
     if(tile == 'N')
@@ -153,7 +143,7 @@ void handle_field_event(
         player->x = 4;
         player->y = 8;
 
-        printf("謎の神殿に入った！\n");
+        show_message("謎の神殿に入った！");
     }
 
     if(tile == 'E')

@@ -5,6 +5,7 @@
 #include "chest.h"
 #include "magic.h"
 #include "enemy.h"
+#include "message_ui.h"
 
 char cave_b2_map[15][21] = {
 
@@ -55,7 +56,7 @@ void handle_cave_b2_event(
         player->x = 12;
         player->y = 4;
 
-        printf("洞窟地下１階へ戻った！");
+        show_message("洞窟地下１階へ戻った！");
     }
 
     if(tile == 'P')
@@ -65,7 +66,7 @@ void handle_cave_b2_event(
         player->x = 14;
         player->y = 4;
 
-        printf("洞窟地下１階へ戻った！");
+        show_message("洞窟地下１階へ戻った！");
     }
     
     if(tile == 'C')
