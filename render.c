@@ -1015,6 +1015,7 @@ void draw_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case '.':
                 case 'G':
                     SDL_SetRenderDrawColor(
                         renderer,
@@ -1061,6 +1062,7 @@ void draw_map(SDL_Renderer *renderer)
                         255,0,0,255
                     );
                     break;
+
             }
             SDL_RenderFillRect(renderer, &rect);
         }
@@ -1161,6 +1163,7 @@ void draw_cave_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case '.':
                 case 'F':
                     SDL_SetRenderDrawColor(
                         renderer,
@@ -1238,6 +1241,7 @@ void draw_cave_b1_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case '.':
                 case 'F':
                     SDL_SetRenderDrawColor(
                         renderer,
@@ -1322,6 +1326,7 @@ void draw_cave_b2_map(SDL_Renderer *renderer)
                     );
                     break;
 
+                case '.':
                 case 'F':
                     SDL_SetRenderDrawColor(
                         renderer,

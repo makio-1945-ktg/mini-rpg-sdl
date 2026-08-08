@@ -933,7 +933,6 @@ void enemy_action(
 
         case ENEMY_LAMIA:
         {
-
             int special_move = rand() % 5;
 
             switch(special_move)
@@ -983,6 +982,7 @@ void enemy_action(
                     );
                     break;
             }
+            break;
         }
 
         case ENEMY_DRAGON:
@@ -1086,6 +1086,7 @@ void enemy_action(
                         }
                         break;
                 }
+                break;
             }
         }
     }
