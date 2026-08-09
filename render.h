@@ -126,6 +126,13 @@ void update_battle_effects(
     EnemySprite *enemy_sprite
 );
 
+void draw_shop(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int shop_cursor
+);
+
 void draw_message(
     SDL_Renderer *renderer,
     TTF_Font *font,

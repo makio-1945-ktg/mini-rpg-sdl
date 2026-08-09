@@ -30,10 +30,6 @@ typedef struct {
 
 } Equipment;
 
-void equipment_shop_event(
-    Player *player
-);
-
 void buy_sword(
     Player *player
 );

@@ -76,6 +76,7 @@ void handle_field_event(
     int *battle_cursor,
     int *magic_cursor,
     int *use_item_cursor,
+    int *shop_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,
@@ -123,7 +124,8 @@ void handle_field_event(
 
     if(tile == 'Q')
     {
-        equipment_shop_event(player);
+        *battle_mode = MODE_SHOP;
+        *shop_cursor = 0;
     }
 
     if(tile == 'C')

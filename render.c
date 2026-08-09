@@ -2042,6 +2042,105 @@ void draw_battle_effects(
     }
 }
 
+void draw_shop(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int shop_cursor
+)
+{
+    SDL_Rect window = {
+        80,
+        100,
+        400,
+        280
+    };
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        100,
+        40,
+        40,
+        255
+    );
+
+    SDL_RenderFillRect(
+        renderer,
+        &window
+    );
+
+    draw_text(
+        renderer,
+        font,
+        "購入選択",
+        130,
+        110
+    );
+
+    if(shop_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　剣",
+            120,
+            150
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　剣",
+            120,
+            150
+        );
+    }
+
+    if(shop_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　革の鎧",
+            120,
+            180
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　革の鎧",
+            120,
+            180
+        );
+    }
+
+    if(shop_cursor == 2)
+    {
+        draw_text(
+            renderer,
+            font,
+            "▶　店を出る",
+            120,
+            210
+        );
+    }
+    else
+    {
+        draw_text(
+            renderer,
+            font,
+            " 　店を出る",
+            120,
+            210
+        );
+    }
+}
+
 void draw_message(
     SDL_Renderer *renderer,
     TTF_Font *font,

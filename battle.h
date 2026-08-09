@@ -15,8 +15,9 @@ typedef enum {
     MODE_STATUS,
     MODE_ITEM,
     MODE_EQUIPMENT,
-    MODE_SAVE
+    MODE_SAVE,
 
+    MODE_SHOP
 } BattleMode;
 
 #define LOG_LINES 3

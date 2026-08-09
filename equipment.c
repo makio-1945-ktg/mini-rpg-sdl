@@ -4,18 +4,62 @@
 #include "player.h"
 #include "equipment.h"
 #include "message_ui.h"
+#include "shop.h"
+
+void handle_shop_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *shop_cursor,
+    Player *player
+)
+{
+    if(event->key.keysym.sym == SDLK_UP)
+    {
+        (*shop_cursor)--;
+
+        if(*shop_cursor < 0)
+            *shop_cursor = 2;
+    }
+
+    if(event->key.keysym.sym == SDLK_DOWN)
+    {
+        (*shop_cursor)++;
+
+        if(*shop_cursor > 2)
+            *shop_cursor = 0;
+    }
+
+    if(event->key.keysym.sym == SDLK_RETURN)
+    {
+        switch(*shop_cursor)
+        {
+            case 0:
+                buy_sword(player);
+                break;
+
+            case 1:
+                buy_leather_armor(player);
+                break;
+
+            case 2:
+                show_message("またのお越しを！");
+                *battle_mode = MODE_FIELD;
+                break;
+        }
+    }
+}
 
 void buy_sword(Player *player)
 {
     if(player->equipment.sword)
     {
-        show_message("すでに装備している！\n");
+        show_message("すでに装備している！");
         return;
     }
 
     if(player->gold < 20)
     {
-        show_message("お金が足りない！\n");
+        show_message("お金が足りない！");
         return;
     }
 
@@ -25,20 +69,20 @@ void buy_sword(Player *player)
 
     calc_player_status(player);
 
-    show_message("剣を購入した！\n");
+    show_message("剣を購入した！");
 }
 
 void buy_leather_armor(Player *player)
 {
     if(player->equipment.leather_armor)
     {
-        show_message("すでに装備している！\n");
+        show_message("すでに装備している！");
         return;
     }
 
     if(player->gold < 30)
     {
-        show_message("お金が足りない！\n");
+        show_message("お金が足りない！");
         return;
     }
 
@@ -48,51 +92,6 @@ void buy_leather_armor(Player *player)
 
     calc_player_status(player);
 
-    show_message("皮の鎧を購入した！\n");
+    show_message("皮の鎧を購入した！");
 }
 
-void equipment_shop_event(Player *player)
-{
-    int choice;
-
-    bool shopping = true;
-
-    while(shopping)
-    {
-        printf("=== 武器屋 ===\n");
-
-        printf("1. 剣 20G\n");
-        printf("2. 皮の鎧 30G\n");
-        printf("3. 買わない\n");
-
-        printf(">");
-
-        if(scanf("%d", &choice) != 1)
-        {
-            printf("無効な入力！\n");
-            return;
-        }
-
-        switch(choice)
-        {
-            case 1:
-
-                buy_sword(player);
-                break;
-
-            case 2:
-
-                buy_leather_armor(player);
-                break;
-
-            case 3:
-                printf("またのお越しを！\n");
-                shopping = false;
-                break;
-
-            default:
-                printf("無効な入力！\n");
-                break;
-        }
-    }
-}

@@ -17,6 +17,7 @@
 #include "temple.h"
 #include "message_ui.h"
 #include "save.h"
+#include "shop.h"
 
 int main(void)
 {
@@ -171,6 +172,7 @@ int main(void)
     int battle_cursor = 0;
     int magic_cursor = 0;
     int use_item_cursor = 0;
+    int shop_cursor = 0;
 
     bool in_town = false;
     bool in_cave = false;
@@ -434,6 +436,7 @@ int main(void)
                             &battle_cursor,
                             &magic_cursor,
                             &use_item_cursor,
+                            &shop_cursor,
                             &enemy,
                             &current_enemy_texture,
                             slime_texture,
@@ -824,6 +827,16 @@ int main(void)
                         &enemy
                     );
                 }
+//ショップイベント処理
+                else if(battle_mode == MODE_SHOP)
+                {
+                    handle_shop_input(
+                        &event,
+                        &battle_mode,
+                        &shop_cursor,
+                        &player
+                    );
+                }
             }
         }
 //プレイヤー表示
@@ -1080,6 +1093,16 @@ int main(void)
                     popup.y
                 );
             }
+        }
+//武器屋購入画面描画
+        if(battle_mode == MODE_SHOP)
+        {
+            draw_shop(
+                renderer,
+                font,
+                &player,
+                shop_cursor
+            );
         }
 
         update_message();
