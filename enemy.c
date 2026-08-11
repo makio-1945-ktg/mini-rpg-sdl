@@ -3,29 +3,29 @@
 EnemyData field_enemy_table[] = {
 
     {ENEMY_SLIME, "スライム", 10, 2, 1, 5, 3, -50, 0, 50},
-    {ENEMY_GOBLIN, "ゴブリン", 15, 3, 2, 10, 8, 0, 0, 0},
-    {ENEMY_ORC, "オーク", 20, 5, 3, 20, 15, 50, -50, 0}
+    {ENEMY_GOBLIN, "ゴブリン", 15, 3, 2, 8, 5, 0, 0, 0},
+    {ENEMY_ORC, "オーク", 20, 5, 3, 12, 8, 50, -50, 0}
 };
 
 EnemyData cave_enemy_table[] = {
 
-    {ENEMY_BAT, "こうもり", 30, 4, 2, 15, 10, 0, 0, -50},
-    {ENEMY_SKELETON, "スケルトン", 35, 6, 4, 25, 15, -50, 0, 0},
+    {ENEMY_BAT, "こうもり", 30, 4, 2, 12, 7, 0, 0, -50},
+    {ENEMY_SKELETON, "スケルトン", 35, 6, 4, 18, 8, -50, 0, 0},
     {ENEMY_GOLEM, "ゴーレム", 50, 10, 8, 40, 25, 50, 50, -50}
 };
 
 EnemyData cave_b1_enemy_table[] = {
 
-    {ENEMY_SCORPION, "スコルピオ", 40, 8, 8, 30, 20, 0, -50, 50},
+    {ENEMY_SCORPION, "スコルピオ", 40, 8, 8, 20, 10, 0, -50, 50},
     {ENEMY_LUCKY_FAIRY, "ラッキーフェアリー", 30, 30, 4, 80, 25, 50, 50, 50},
-    {ENEMY_WIZARD, "まどうし", 60, 6, 4, 50, 30, 50, 50, 50}
+    {ENEMY_WIZARD, "まどうし", 60, 6, 4, 50, 15, 50, 50, 50}
 };
 
 EnemyData cave_b2_enemy_table[] = {
 
-    {ENEMY_KOBOLD, "コボルト", 80, 12, 10, 40, 30, 0, 0, 0},
-    {ENEMY_WISP, "ウィスプ", 70, 8, 12, 45, 25, 100, -100, 0},
-    {ENEMY_LAMIA, "ラミア", 90, 10, 10, 60, 50, 0, 100, 0}
+    {ENEMY_KOBOLD, "コボルト", 80, 12, 10, 25, 13, 0, 0, 0},
+    {ENEMY_WISP, "ウィスプ", 70, 8, 12, 35, 8, 100, -100, 0},
+    {ENEMY_LAMIA, "ラミア", 90, 10, 10, 60, 20, 0, 100, 0}
 };
 
 EnemyData temple_enemy_table[] = {
@@ -111,55 +111,59 @@ void setup_cave_enemy(
     SDL_Texture *golem_texture
 )
 {
-    int enemy_type = rand() % 3;
+    int enemy_type = rand() % 10;
+    int enemy_index;
 
-    if(enemy_type == 0)
+    if(enemy_type < 5)
     {
         *current_enemy_texture = bat_texture;
+        enemy_index = 0;
     }
-    else if(enemy_type == 1)
+    else if(enemy_type < 8)
     {
         *current_enemy_texture = skeleton_texture;
+        enemy_index = 1;
     }
     else
     {
         *current_enemy_texture = golem_texture;
+        enemy_index = 2;
     }
 
     strcpy(
         enemy->name,
-        cave_enemy_table[enemy_type].name
+        cave_enemy_table[enemy_index].name
     );
 
     enemy->type =
-        cave_enemy_table[enemy_type].type;
+        cave_enemy_table[enemy_index].type;
 
     enemy->hp =
-        cave_enemy_table[enemy_type].hp;
+        cave_enemy_table[enemy_index].hp;
 
     enemy->max_hp =
-        cave_enemy_table[enemy_type].hp;
+        cave_enemy_table[enemy_index].hp;
 
     enemy->attack =
-        cave_enemy_table[enemy_type].attack;
+        cave_enemy_table[enemy_index].attack;
 
     enemy->defense =
-        cave_enemy_table[enemy_type].defense;
+        cave_enemy_table[enemy_index].defense;
 
     enemy->exp =
-        cave_enemy_table[enemy_type].exp;
+        cave_enemy_table[enemy_index].exp;
 
     enemy->gold =
-        cave_enemy_table[enemy_type].gold;
+        cave_enemy_table[enemy_index].gold;
 
     enemy->fire_resist =
-        cave_enemy_table[enemy_type].fire_resist;
+        cave_enemy_table[enemy_index].fire_resist;
 
     enemy->ice_resist =
-        cave_enemy_table[enemy_type].ice_resist;
+        cave_enemy_table[enemy_index].ice_resist;
 
     enemy->thunder_resist =
-        cave_enemy_table[enemy_type].thunder_resist;
+        cave_enemy_table[enemy_index].thunder_resist;
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;
@@ -181,55 +185,59 @@ void setup_cave_b1_enemy(
     SDL_Texture *wizard_texture
 )
 {
-    int enemy_type = rand() % 3;
+    int enemy_type = rand() % 10;
+    int enemy_index;
 
-    if(enemy_type == 0)
+    if(enemy_type < 6)
     {
         *current_enemy_texture = scorpion_texture;
+        enemy_index = 0;
     }
-    else if(enemy_type == 1)
+    else if(enemy_type < 8)
     {
         *current_enemy_texture = luckyfairy_texture;
+        enemy_index = 1;
     }
     else
     {
         *current_enemy_texture = wizard_texture;
+        enemy_index = 2;
     }
 
     strcpy(
         enemy->name,
-        cave_b1_enemy_table[enemy_type].name
+        cave_b1_enemy_table[enemy_index].name
     );
 
     enemy->type =
-        cave_b1_enemy_table[enemy_type].type;
+        cave_b1_enemy_table[enemy_index].type;
 
     enemy->hp =
-        cave_b1_enemy_table[enemy_type].hp;
+        cave_b1_enemy_table[enemy_index].hp;
 
     enemy->max_hp =
-        cave_b1_enemy_table[enemy_type].hp;
+        cave_b1_enemy_table[enemy_index].hp;
 
     enemy->attack =
-        cave_b1_enemy_table[enemy_type].attack;
+        cave_b1_enemy_table[enemy_index].attack;
 
     enemy->defense =
-        cave_b1_enemy_table[enemy_type].defense;
+        cave_b1_enemy_table[enemy_index].defense;
 
     enemy->exp =
-        cave_b1_enemy_table[enemy_type].exp;
+        cave_b1_enemy_table[enemy_index].exp;
 
     enemy->gold =
-        cave_b1_enemy_table[enemy_type].gold;
+        cave_b1_enemy_table[enemy_index].gold;
 
     enemy->fire_resist =
-        cave_b1_enemy_table[enemy_type].fire_resist;
+        cave_b1_enemy_table[enemy_index].fire_resist;
 
     enemy->ice_resist =
-        cave_b1_enemy_table[enemy_type].ice_resist;
+        cave_b1_enemy_table[enemy_index].ice_resist;
 
     enemy->thunder_resist =
-        cave_b1_enemy_table[enemy_type].thunder_resist;
+        cave_b1_enemy_table[enemy_index].thunder_resist;
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;
@@ -251,55 +259,59 @@ void setup_cave_b2_enemy(
     SDL_Texture *lamia_texture
 )
 {
-    int enemy_type = rand() % 3;
+    int enemy_type = rand() % 10;
+    int enemy_index;
 
-    if(enemy_type == 0)
+    if(enemy_type < 4)
     {
         *current_enemy_texture = kobold_texture;
+        enemy_index = 0;
     }
-    else if(enemy_type == 1)
+    else if(enemy_type < 9)
     {
         *current_enemy_texture = wisp_texture;
+        enemy_index = 1;
     }
     else
     {
         *current_enemy_texture = lamia_texture;
+        enemy_index = 2;
     }
 
     strcpy(
         enemy->name,
-        cave_b2_enemy_table[enemy_type].name
+        cave_b2_enemy_table[enemy_index].name
     );
 
     enemy->type =
-        cave_b2_enemy_table[enemy_type].type;
+        cave_b2_enemy_table[enemy_index].type;
 
     enemy->hp =
-        cave_b2_enemy_table[enemy_type].hp;
+        cave_b2_enemy_table[enemy_index].hp;
 
     enemy->max_hp =
-        cave_b2_enemy_table[enemy_type].hp;
+        cave_b2_enemy_table[enemy_index].hp;
 
     enemy->attack =
-        cave_b2_enemy_table[enemy_type].attack;
+        cave_b2_enemy_table[enemy_index].attack;
 
     enemy->defense =
-        cave_b2_enemy_table[enemy_type].defense;
+        cave_b2_enemy_table[enemy_index].defense;
 
     enemy->exp =
-        cave_b2_enemy_table[enemy_type].exp;
+        cave_b2_enemy_table[enemy_index].exp;
 
     enemy->gold =
-        cave_b2_enemy_table[enemy_type].gold;
+        cave_b2_enemy_table[enemy_index].gold;
 
     enemy->fire_resist =
-        cave_b2_enemy_table[enemy_type].fire_resist;
+        cave_b2_enemy_table[enemy_index].fire_resist;
 
     enemy->ice_resist =
-        cave_b2_enemy_table[enemy_type].ice_resist;
+        cave_b2_enemy_table[enemy_index].ice_resist;
 
     enemy->thunder_resist =
-        cave_b2_enemy_table[enemy_type].thunder_resist;
+        cave_b2_enemy_table[enemy_index].thunder_resist;
 
     enemy->frozen = false;
     enemy->frozen_timer = 0;

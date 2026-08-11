@@ -11,7 +11,13 @@
 #include "cave_b1.h"
 #include "cave_b2.h"
 #include "temple.h"
+#include "message_ui.h"
 
+//必要累積EXP計算式
+int required_exp(int level)
+{
+    return 10 * level * (level + 1);
+}
 //属性魔法関連
 int apply_element_resistance(
     int damage,
@@ -115,12 +121,11 @@ void enemy_defeat(
     printf("%d EXP獲得！\n", enemy->exp);
     printf("%d GOLD獲得！\n", enemy->gold);
 
-    if(player->exp >= 30)
+    while(player->exp >= required_exp(player->level))
     {
         player->level++;
-        player->exp -= 30;
 
-        player->max_hp += 5;
+        player->max_hp += 10;
         player->hp = player->max_hp;
 
         player->max_mp += 5;
@@ -131,7 +136,7 @@ void enemy_defeat(
 
         calc_player_status(player);
 
-        printf("レベルアップ！\n");
+        show_message("レベルアップ！");
         printf("Lv:%d\n", player->level);
     }
     end_battle(battle_mode);

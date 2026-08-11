@@ -1628,7 +1628,7 @@ void draw_battle_ui(
     SDL_Rect command_box = {
         80,
         130,
-        130,
+        150,
         160
     };
 
@@ -1667,7 +1667,7 @@ void draw_battle_ui(
     SDL_Rect status_box = {
         80,
         300,
-        130,
+        150,
         70
     };
 
@@ -1692,10 +1692,10 @@ void draw_battle_ui(
     );
 
     SDL_Rect log_box = {
-        165,
-        390,
-        400,
-        100
+        80,
+        380,
+        600,
+        110
     };
 
     SDL_SetRenderDrawColor(
@@ -2082,7 +2082,7 @@ void draw_shop(
         draw_text(
             renderer,
             font,
-            "▶　剣",
+            "▶　　剣　 20G",
             120,
             150
         );
@@ -2092,7 +2092,7 @@ void draw_shop(
         draw_text(
             renderer,
             font,
-            " 　剣",
+            " 　　剣　 20G",
             120,
             150
         );
@@ -2103,7 +2103,7 @@ void draw_shop(
         draw_text(
             renderer,
             font,
-            "▶　革の鎧",
+            "▶　革の鎧 30G",
             120,
             180
         );
@@ -2113,7 +2113,7 @@ void draw_shop(
         draw_text(
             renderer,
             font,
-            " 　革の鎧",
+            " 　革の鎧 30G",
             120,
             180
         );
@@ -2139,6 +2139,59 @@ void draw_shop(
             210
         );
     }
+
+    draw_text(
+        renderer,
+        font,
+        "===装備説明===",
+        120,
+        280
+    );
+
+    if(shop_cursor == 0)
+    {
+        draw_text(
+            renderer,
+            font,
+            "攻撃力 +2",
+            120,
+            310
+        );
+    }
+    else if(shop_cursor == 1)
+    {
+        draw_text(
+            renderer,
+            font,
+            "防御力 +4",
+            120,
+            310
+        );
+    }
+
+    draw_text(
+        renderer,
+        font,
+        "所持金:",
+        300,
+        120
+    );
+
+    char status[32];
+
+    sprintf(
+        status,
+        "%d",
+        player->gold
+    );
+
+    draw_text(
+        renderer,
+        font,
+        status,
+        420,
+        120
+    );
 }
 
 void draw_message(

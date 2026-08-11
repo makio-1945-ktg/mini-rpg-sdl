@@ -548,164 +548,31 @@ int main(void)
                         switch(equipment_cursor)
                         {
                         case 0:
-                            if(player.equipment.sword)
-                            {
-                                player.equipment.sword_equipped =
-                                    !player.equipment.sword_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.sword_equipped)
-                                {
-                                    show_message("剣を装備した！");
-                                }
-                                else
-                                {
-                                    show_message("剣を外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("剣を持ってない！");
-                            }
+                            equip_sword(&player);
                             break;
 
                         case 1:
-                            if(player.equipment.leather_armor)
-                            {
-                                player.equipment.leather_armor_equipped =
-                                    !player.equipment.leather_armor_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.leather_armor_equipped)
-                                {
-                                    show_message("革の鎧を装備した！");
-                                }
-                                else
-                                {
-                                    show_message("革の鎧を外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("革の鎧を持ってない！");
-                            }
+                            equip_leather_armor(&player);
                             break;
 
                         case 2:
-                            if(player.equipment.wooden_shield)
-                            {
-                                player.equipment.wooden_shield_equipped =
-                                    !player.equipment.wooden_shield_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.wooden_shield_equipped)
-                                {
-                                    show_message("木の盾を装備した！");
-                                }
-                                else
-                                {
-                                    show_message("木の盾を外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("木の盾を持ってない！");
-                            }
+                            equip_wooden_shield(&player);
                             break;
 
                         case 3:
-                            if(player.equipment.broad_sword)
-                            {
-                                player.equipment.broad_sword_equipped =
-                                    !player.equipment.broad_sword_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.broad_sword_equipped)
-                                {
-                                    show_message("ブロードソードを装備した！");
-                                }
-                                else
-                                {
-                                    show_message("ブロードソードを外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("ブロードソードを持ってない！");
-                            }
+                            equip_broad_sword(&player);
                             break;
 
                         case 4:
-                            if(player.equipment.rune_sword)
-                            {
-                                player.equipment.rune_sword_equipped =
-                                    !player.equipment.rune_sword_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.rune_sword_equipped)
-                                {
-                                    show_message("ルーンソードを装備した！");
-                                }
-                                else
-                                {
-                                    show_message("ルーンソードを外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("ルーンソードを持ってない！");
-                            }
+                            equip_rune_sword(&player);
                             break;
 
                         case 5:
-                            if(player.equipment.rune_armor)
-                            {
-                                player.equipment.rune_armor_equipped =
-                                    !player.equipment.rune_armor_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.rune_armor_equipped)
-                                {
-                                    show_message("ルーンアーマーを装備した！");
-                                }
-                                else
-                                {
-                                    show_message("ルーンアーマーを外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("ルーンアーマーを持ってない！");
-                            }
+                            equip_rune_armor(&player);
                             break;
 
                         case 6:
-                            if(player.equipment.rune_shield)
-                            {
-                                player.equipment.rune_shield_equipped =
-                                    !player.equipment.rune_shield_equipped;
-
-                                calc_player_status(&player);
-
-                                if(player.equipment.rune_shield_equipped)
-                                {
-                                    show_message("ルーンシールドを装備した！");
-                                }
-                                else
-                                {
-                                    show_message("ルーンシールドを外した！");
-                                }
-                            }
-                            else
-                            {
-                                show_message("ルーンシールドを持ってない！");
-                            }
+                            equip_rune_shield(&player);
                             break;
                         }
                     }
@@ -1078,8 +945,8 @@ int main(void)
                     renderer,
                     font,
                     battle_logs[i],
-                    200,
-                    390 + i * 25
+                    100,
+                    380 + i * 25
                 );
             }
 
