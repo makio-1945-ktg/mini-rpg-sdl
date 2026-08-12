@@ -84,6 +84,7 @@ void handle_field_event(
     SDL_Texture *orc_texture
 )
 {
+//町の入口
     if(tile == 'T')
     {
         town_event();
@@ -93,7 +94,7 @@ void handle_field_event(
         player->x = 3;
         player->y = 5;
     }
-
+//町の出口
     if(tile == 'O')
     {
         *in_town = false;
@@ -101,7 +102,7 @@ void handle_field_event(
         player->y = 1;
         show_message("町を出た！");
     }
-
+//洞窟入口
     if(tile == 'V')
     {
         *in_cave = true;
@@ -111,23 +112,23 @@ void handle_field_event(
 
         show_message("洞窟に入った！");
     }
-
+//NPC
     if(tile == 'N')
     {
         npc_event();
     }
-
+//宿屋
     if(tile == 'I')
     {
         inn_event(player);
     }
-
+//武器・防具屋
     if(tile == 'Q')
     {
         *battle_mode = MODE_SHOP;
         *shop_cursor = 0;
     }
-
+//宝箱
     if(tile == 'C')
     {
         chest_event(
@@ -137,7 +138,7 @@ void handle_field_event(
             new_y
         );
     }
-
+//神殿入口
     if(tile == 'S')
     {
         *in_temple = true;
@@ -147,7 +148,7 @@ void handle_field_event(
 
         show_message("謎の神殿に入った！");
     }
-
+//エネミーキャラ
     if(tile == 'E')
     {
         start_battle(

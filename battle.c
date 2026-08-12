@@ -113,13 +113,12 @@ void enemy_defeat(
     BattleMode *battle_mode
 )
 {
-    printf("敵を倒した！\n");
-
     player->exp += enemy->exp;
     player->gold += enemy->gold;
 
-    printf("%d EXP獲得！\n", enemy->exp);
-    printf("%d GOLD獲得！\n", enemy->gold);
+    char msg[64];
+    sprintf(msg, "敵を倒した！%d EXP %d G獲得！", enemy->exp, enemy->gold);
+    show_message(msg);
 
     while(player->exp >= required_exp(player->level))
     {
