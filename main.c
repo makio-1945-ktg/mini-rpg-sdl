@@ -17,6 +17,7 @@
 #include "temple.h"
 #include "message_ui.h"
 #include "save.h"
+#include "game_state.h"
 #include "shop.h"
 
 int main(void)
@@ -611,26 +612,109 @@ int main(void)
                         switch(save_cursor)
                         {
                         case 0:
-                            if(save_game(&player))
                             {
-                                show_message("セーブしました！");
-                            }
-                            else
-                            {
-                                show_message("セーブに失敗しました");
-                            }
-                            break;
+                                GameState game;
 
+                                game.player = player;
+                                game.in_town = in_town;
+                                game.in_cave = in_cave;
+                                game.in_cave_b1 = in_cave_b1;
+                                game.in_cave_b2 = in_cave_b2;
+                                game.in_temple = in_temple;
+
+                                memcpy(
+                                    game.field_map,
+                                    field_map,
+                                    sizeof(field_map)
+                                );
+                                memcpy(
+                                    game.town_map,
+                                    town_map,
+                                    sizeof(town_map)
+                                );
+                                memcpy(
+                                    game.cave_map,
+                                    cave_map,
+                                    sizeof(cave_map)
+                                );
+                                memcpy(
+                                    game.cave_b1_map,
+                                    cave_b1_map,
+                                    sizeof(cave_b1_map)
+                                );
+                                memcpy(
+                                    game.cave_b2_map,
+                                    cave_b2_map,
+                                    sizeof(cave_b2_map)
+                                );
+                                memcpy(
+                                    game.temple_map,
+                                    temple_map,
+                                    sizeof(temple_map)
+                                );
+
+                                if(save_game(&game))
+                                {
+                                    show_message("セーブしました！");
+                                }
+                                else
+                                {
+                                    show_message("セーブに失敗しました");
+                                }
+                                break;
+                            }
                         case 1:
-                            if(load_game(&player))
                             {
-                                show_message("ロードしました！");
+                                GameState game;
+
+                                if(load_game(&game))
+                                {
+                                    player = game.player;
+                                    in_town = game.in_town;
+                                    in_cave = game.in_cave;
+                                    in_cave_b1 = game.in_cave_b1;
+                                    in_cave_b2 = game.in_cave_b2;
+                                    in_temple = game.in_temple;
+
+                                    memcpy(
+                                        field_map,
+                                        game.field_map,
+                                        sizeof(field_map)
+                                    );
+                                    memcpy(
+                                        town_map,
+                                        game.town_map,
+                                        sizeof(town_map)
+                                    );
+                                    memcpy(
+                                        cave_map,
+                                        game.cave_map,
+                                        sizeof(cave_map)
+                                    );
+                                    memcpy(
+                                        cave_b1_map,
+                                        game.cave_b1_map,
+                                        sizeof(cave_b1_map)
+                                    );
+                                    memcpy(
+                                        cave_b2_map,
+                                        game.cave_b2_map,
+                                        sizeof(cave_b2_map)
+                                    );
+                                    memcpy(
+                                        temple_map,
+                                        game.temple_map,
+                                        sizeof(temple_map)
+                                    );
+
+                                    show_message("ロードしました！");
+                                }
+                                else
+                                {
+                                    show_message("ロードに失敗しました");
+                                }
+                                break;
                             }
-                            else
-                            {
-                                show_message("ロードに失敗しました");
-                            }
-                            break;
                         }
                     }
 

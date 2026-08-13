@@ -2,7 +2,7 @@
 
 #include "save.h"
 
-bool save_game(Player *player)
+bool save_game(GameState *game)
 {
     FILE *fp = fopen("save.dat", "wb");
 
@@ -11,7 +11,7 @@ bool save_game(Player *player)
         return false;
     }
 
-    if(fwrite(player, sizeof(Player), 1, fp) != 1)
+    if(fwrite(game, sizeof(GameState), 1, fp) != 1)
     {
         fclose(fp);
         return false;
@@ -22,7 +22,7 @@ bool save_game(Player *player)
     return true;
 }
 
-bool load_game(Player *player)
+bool load_game(GameState *game)
 {
     FILE *fp = fopen("save.dat", "rb");
 
@@ -31,7 +31,7 @@ bool load_game(Player *player)
         return false;
     }
 
-    if(fread(player, sizeof(Player), 1, fp) != 1)
+    if(fread(game, sizeof(GameState), 1, fp) != 1)
     {
         fclose(fp);
         return false;
@@ -39,7 +39,7 @@ bool load_game(Player *player)
 
     fclose(fp);
 
-    calc_player_status(player);
+    calc_player_status(&game->player);
 
     return true;
 }

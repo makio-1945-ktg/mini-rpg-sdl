@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-#include "player.h"
+#include "game_state.h"
 
-bool save_game(Player *player);
+bool save_game(GameState *game);
 
-bool load_game(Player *player);
+bool load_game(GameState *game);
 
 #endif

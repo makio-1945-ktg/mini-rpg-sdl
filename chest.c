@@ -2,6 +2,7 @@
 
 #include "chest.h"
 #include "map.h"
+#include "message_ui.h"
 
 void chest_event(
     Player *player,
@@ -12,7 +13,7 @@ void chest_event(
 {
     player->inventory.potion++;
 
-    printf("ポーションを入手した！\n");
+    show_message("ポーションを入手した！");
     printf(
         "現在:%d個\n",
         player->inventory.potion
@@ -41,7 +42,7 @@ void cave_chest_event(
     {
         player->gold += 50;
 
-        printf("50Gを入手した！\n");
+        show_message("50Gを入手した！");
         printf(
             "所持金:%dG\n",
             player->gold
@@ -53,7 +54,7 @@ void cave_chest_event(
 
         calc_player_status(player);
 
-        printf("木の盾を入手した！\n");
+        show_message("木の盾を入手した！");
         printf(
             "DEF:%d\n",
             player->defense
@@ -63,7 +64,7 @@ void cave_chest_event(
     {
         player->inventory.ether++;
 
-        printf("エーテルを入手した！\n");
+        show_message("エーテルを入手した！");
         printf(
             "現在:%d個\n",
             player->inventory.ether
@@ -86,13 +87,13 @@ void cave_b1_chest_event(
 
         calc_player_status(player);
 
-        printf("ブロードソードを入手した！\n");
+        show_message("ブロードソードを入手した！");
     }
     else if(x == 11 && y == 5)
     {
         player->inventory.potion++;
 
-        printf("ポーションを入手した！\n");
+        show_message("ポーションを入手した！");
         printf(
             "現在:%d個\n",
             player->inventory.potion
@@ -102,7 +103,7 @@ void cave_b1_chest_event(
     {
         player->inventory.bomb++;
 
-        printf("爆薬を入手した！\n");
+        show_message("爆薬を入手した！");
         printf(
             "現在:%d個\n",
             player->inventory.bomb
@@ -125,7 +126,7 @@ void cave_b2_chest_event(
 
         calc_player_status(player);
 
-        printf("ルーンソードを手に入れた！\n");
+        show_message("ルーンソードを手に入れた！");
     }
 
     if(x == 10 && y == 3)
@@ -134,14 +135,14 @@ void cave_b2_chest_event(
 
         calc_player_status(player);
 
-        printf("ルーンアーマーを手に入れた！\n");
+        show_message("ルーンアーマーを手に入れた！");
     }
 
     if(x == 12 && y == 7)
     {
         player->inventory.dragon_jewel++;
 
-        printf("ドラゴンオーブを入手した！\n");
+        show_message("ドラゴンオーブを入手した！");
         printf(
             "現在:%d個\n",
             player->inventory.dragon_jewel
@@ -154,7 +155,7 @@ void cave_b2_chest_event(
 
         calc_player_status(player);
 
-        printf("ルーンシールドを手に入れた！\n");
+        show_message("ルーンシールドを手に入れた！");
     }
     open_chest(map, x, y);
 }

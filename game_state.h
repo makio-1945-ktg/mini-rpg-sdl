@@ -15,6 +15,13 @@ typedef struct
     bool in_cave_b2;
     bool in_temple;
 
+    char field_map[15][21];
+    char town_map[8][9];
+    char cave_map[15][21];
+    char cave_b1_map[15][21];
+    char cave_b2_map[15][21];
+    char temple_map[11][10];
+
 } GameState;
 
 #endif
