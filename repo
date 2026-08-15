@@ -1,0 +1,7 @@
+1.draw_tile_mapでMAP描画統一(予定通り) → ビルド・見た目確認
+2.draw_menu_item/draw_equip_stateでメニュー描画統一 → 確認
+3.render.cのファイル分割
+4.apply_enemy_dataでenemy.cのsetup系統一(新規・低リスクなのでここで挟む) → 確認
+5.deal_damage_to_player/calc_physical_damageでenemy_skill.c整理 → 確認
+6.battle.cの3分割
+7.main.cのMODE_STATUS〜MODE_SAVE切り出し + save/loadのmemcpy関数化

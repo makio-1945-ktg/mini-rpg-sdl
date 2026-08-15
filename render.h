@@ -7,6 +7,11 @@
 #include "player.h"
 #include "battle.h"
 
+typedef struct {
+    char tile;
+    Uint8 r, g, b, a;
+} TileColor;
+
 void draw_player(
     SDL_Renderer *renderer,
     int x,
@@ -46,6 +51,16 @@ void draw_save(
     TTF_Font *font,
     Player *player,
     int save_cursor
+);
+
+void draw_tile_map(
+    SDL_Renderer *renderer,
+    const char *map,
+    int stride,
+    int draw_width,
+    int height,
+    const TileColor *colors,
+    int color_count
 );
 
 void draw_map(
