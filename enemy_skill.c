@@ -432,6 +432,11 @@ static void kobold_special_move(
 
     enemy->hp += enemy_damage;
 
+    if(enemy->hp > enemy->max_hp)
+    {
+        enemy->hp = enemy->max_hp;
+    }
+
     char msg[128];
     sprintf(msg,
             "HPを%d吸収された！！",
