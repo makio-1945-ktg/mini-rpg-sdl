@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdbool.h>
 
 #include "player.h"
 #include "battle.h"
@@ -22,6 +23,24 @@ void draw_text(
     SDL_Renderer *renderer,
     TTF_Font *font,
     const char *text,
+    int x,
+    int y
+);
+
+void draw_menu_item(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    const char *label,
+    int x,
+    int y,
+    bool selected
+);
+
+void draw_equip_state(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    bool owned,
+    bool equipped,
     int x,
     int y
 );

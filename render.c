@@ -5,6 +5,7 @@
 #include "cave_b2.h"
 #include "temple.h"
 
+#include <stdio.h>
 #include <SDL2/SDL_ttf.h>
 
 #define TILE_SIZE 32
@@ -86,41 +87,69 @@ void draw_text(
 
     SDL_DestroyTexture(texture);
 }
-
 //メニュー画面描画
+void draw_menu_item(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    const char *label,
+    int x,
+    int y,
+    bool selected
+)
+{
+    char buf[64];
+
+    snprintf(
+        buf,
+        sizeof(buf),
+        "%s %s",
+        selected ? "▶ " : " ",
+        label
+    );
+
+    draw_text(renderer, font, buf, x, y);
+}
+
+void draw_equip_state(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    bool owned,
+    bool equipped,
+    int x,
+    int y
+)
+{
+    const char *label;
+
+    if(!owned)
+    {
+        label = "【未所持】";
+    }
+    else if(equipped)
+    {
+        label = "【装備中】";
+    }
+    else
+    {
+        label = "【未装備】";
+    }
+
+    draw_text(renderer, font, label, x, y);
+}
+
 void draw_status(
     SDL_Renderer *renderer,
     TTF_Font *font,
     Player *player
 )
 {
-    SDL_Rect window = {
-        80,
-        100,
-        400,
-        280
-    };
+    SDL_Rect window = {80, 100, 400, 280};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        40,
-        40,
-        40,
-        255
-    );
+    SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    SDL_RenderFillRect(renderer, &window);
 
-    draw_text(
-        renderer,
-        font,
-        "ステータス画面",
-        130,
-        110
-    );
+    draw_text(renderer, font, "ステータス画面", 130, 110);
 
     char text[64];
 
@@ -130,99 +159,31 @@ void draw_status(
         player->level
     );
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        150
-    );
+    draw_text(renderer, font, text, 120, 150);
 
-    sprintf(
-        text,
-        "HP : %d / %d",
-        player->hp,
-        player->max_hp
-    );
+    sprintf(text, "HP : %d / %d", player->hp, player->max_hp);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        180
-    );
+    draw_text(renderer, font, text, 120, 180);
 
-    sprintf(
-        text,
-        "MP : %d / %d",
-        player->mp,
-        player->max_mp
-    );
+    sprintf(text, "MP : %d / %d", player->mp, player->max_mp);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        210
-    );
+    draw_text(renderer, font, text, 120, 210);
 
-    sprintf(
-        text,
-        "ATK : %d",
-        player->attack
-    );
+    sprintf(text, "ATK : %d", player->attack);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        240
-    );
+    draw_text(renderer, font, text, 120, 240);
 
-    sprintf(
-        text,
-        "DEF : %d",
-        player->defense
-    );
+    sprintf(text, "DEF : %d", player->defense);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        270
-    );
+    draw_text(renderer, font, text, 120, 270);
 
-    sprintf(
-        text,
-        "EXP : %d",
-        player->exp
-    );
+    sprintf(text, "EXP : %d", player->exp);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        300
-    );
+    draw_text(renderer, font, text, 120, 300);
 
-    sprintf(
-        text,
-        "GOLD : %d",
-        player->gold
-    );
+    sprintf(text, "GOLD : %d", player->gold);
 
-    draw_text(
-        renderer,
-        font,
-        text,
-        120,
-        330
-    );
+    draw_text(renderer, font, text, 120, 330);
 }
 
 void draw_item(
@@ -232,117 +193,17 @@ void draw_item(
     int item_cursor
 )
 {
-    SDL_Rect window = {
-        80,
-        100,
-        400,
-        280
-    };
+    SDL_Rect window = {80, 100, 400, 280};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        40,
-        80,
-        40,
-        255
-    );
+    SDL_SetRenderDrawColor(renderer, 40, 80, 40, 255);
+    SDL_RenderFillRect(renderer, &window);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    draw_text(renderer, font, "所持アイテム", 130, 110);
 
-    draw_text(
-        renderer,
-        font,
-        "所持アイテム",
-        130,
-        110
-    );
-
-    if(item_cursor == 0)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ポーション",
-            120,
-            150
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ポーション",
-            120,
-            150
-        );
-    }
-
-    if(item_cursor == 1)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　エーテル",
-            120,
-            180
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　エーテル",
-            120,
-            180
-        );
-    }
-
-    if(item_cursor == 2)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　爆薬",
-            120,
-            210
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　爆薬",
-            120,
-            210
-        );
-    }
-
-    if(item_cursor == 3)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ドラゴンの宝玉",
-            120,
-            240
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ドラゴンの宝玉",
-            120,
-            240
-        );
-    }
+    draw_menu_item(renderer, font, "ポーション", 120, 150, item_cursor == 0);
+    draw_menu_item(renderer, font, "エーテル", 120, 180, item_cursor == 1);
+    draw_menu_item(renderer, font, "爆薬", 120, 210, item_cursor == 2);
+    draw_menu_item(renderer, font, "ドラゴンの宝玉", 120, 240, item_cursor == 3);
 }
 
 void draw_equipment(
@@ -352,560 +213,84 @@ void draw_equipment(
     int equipment_cursor
 )
 {
-    SDL_Rect window = {
-        100,
-        30,
-        400,
-        480
-    };
+    SDL_Rect window = {100, 30, 400, 480};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        40,
-        80,
-        40,
-        255
-    );
+    SDL_SetRenderDrawColor(renderer, 40, 80, 40, 255);
+    SDL_RenderFillRect(renderer, &window);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    draw_text(renderer, font, "装備一覧", 220, 40);
 
-    draw_text(
-        renderer,
-        font,
-        "装備一覧",
-        220,
-        40
-    );
+    draw_menu_item(renderer, font, "剣", 120, 80, equipment_cursor == 0);
+    draw_equip_state(renderer, font,
+        player->equipment.sword,
+        player->equipment.sword_equipped,
+        350, 80);
 
-    if(equipment_cursor == 0)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　剣",
-            120,
-            80
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　剣",
-            120,
-            80
-        );
-    }
+    draw_menu_item(renderer, font, "革の鎧", 120, 110, equipment_cursor == 1);
+    draw_equip_state(renderer, font,
+        player->equipment.leather_armor,
+        player->equipment.leather_armor_equipped,
+        350, 110);
 
-    if(player->equipment.sword)
-    {
-        if(player->equipment.sword_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                80
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                80
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            80
-        );
-    }
+    draw_menu_item(renderer, font, "木の盾", 120, 140, equipment_cursor == 2);
+    draw_equip_state(renderer, font,
+        player->equipment.wooden_shield,
+        player->equipment.wooden_shield_equipped,
+        350, 140);
 
-    if(equipment_cursor == 1)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　革の鎧",
-            120,
-            110
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　革の鎧",
-            120,
-            110
-        );
-    }
+    draw_menu_item(renderer, font, "ブロードソード", 120, 170, equipment_cursor == 3);
+    draw_equip_state(renderer, font,
+        player->equipment.broad_sword,
+        player->equipment.broad_sword_equipped,
+        350, 170);
 
-    if(player->equipment.leather_armor)
-    {
-        if(player->equipment.leather_armor_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                110
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                110
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            110
-        );
-    }
+    draw_menu_item(renderer, font, "ルーンソード", 120, 200, equipment_cursor == 4);
+    draw_equip_state(renderer, font,
+        player->equipment.rune_sword,
+        player->equipment.rune_sword_equipped,
+        350, 200);
 
-    if(equipment_cursor == 2)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　木の盾",
-            120,
-            140
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　木の盾",
-            120,
-            140
-        );
-    }
+    draw_menu_item(renderer, font, "ルーンアーマー", 120, 230, equipment_cursor == 5);
+    draw_equip_state(renderer, font,
+        player->equipment.rune_armor,
+        player->equipment.rune_armor_equipped,
+        350, 230);
 
-    if(player->equipment.wooden_shield)
-    {
-        if(player->equipment.wooden_shield_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                140
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                140
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            140
-        );
-    }
+    draw_menu_item(renderer, font, "ルーンシールド", 120, 260, equipment_cursor == 6);
+    draw_equip_state(renderer, font,
+        player->equipment.rune_shield,
+        player->equipment.rune_shield_equipped,
+        350, 260);
 
-    if(equipment_cursor == 3)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ブロードソード",
-            120,
-            170
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ブロードソード",
-            120,
-            170
-        );
-    }
-
-    if(player->equipment.broad_sword)
-    {
-        if(player->equipment.broad_sword_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                170
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                170
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            170
-        );
-    }
-
-    if(equipment_cursor == 4)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ルーンソード",
-            120,
-            200
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ルーンソード",
-            120,
-            200
-        );
-    }
-
-    if(player->equipment.rune_sword)
-    {
-        if(player->equipment.rune_sword_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                200
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                200
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            200
-        );
-    }
-
-    if(equipment_cursor == 5)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ルーンアーマー",
-            120,
-            230
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ルーンアーマー",
-            120,
-            230
-        );
-    }
-
-    if(player->equipment.rune_armor)
-    {
-        if(player->equipment.rune_armor_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                230
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                230
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            230
-        );
-    }
-
-    if(equipment_cursor == 6)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　ルーンシールド",
-            120,
-            260
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　ルーンシールド",
-            120,
-            260
-        );
-    }
-
-    if(player->equipment.rune_shield)
-    {
-        if(player->equipment.rune_shield_equipped)
-        {
-            draw_text(
-                renderer,
-                font,
-                "【装備中】",
-                350,
-                260
-            );
-        }
-        else
-        {
-            draw_text(
-                renderer,
-                font,
-                "【未装備】",
-                350,
-                260
-            );
-        }
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "【未所持】",
-            350,
-            260
-        );
-    }
-
-    draw_text(
-        renderer,
-        font,
-        "ATK:",
-        120,
-        330
-    );
+    draw_text(renderer, font, "ATK:", 120, 330);
 
     char status[32];
+    sprintf(status, "%d", player->attack);
+    draw_text(renderer, font, status, 190, 330);
 
-    sprintf(
-        status,
-        "%d",
-        player->attack
-    );
+    draw_text(renderer, font, "DEF:", 120, 360);
 
-    draw_text(
-        renderer,
-        font,
-        status,
-        190,
-        330
-    );
+    sprintf(status, "%d", player->defense);
+    draw_text(renderer, font, status, 190, 360);
 
-    draw_text(
-        renderer,
-        font,
-        "DEF:",
-        120,
-        360
-    );
+    draw_text(renderer, font, "===装備説明===", 120, 400);
+    draw_text(renderer, font, "ENTER：装備/解除", 290, 430);
+    draw_text(renderer, font, "ESC：戻る", 290, 460);
 
-    sprintf(
-        status,
-        "%d",
-        player->defense
-    );
+    static const char *equip_desc[] = {
+        "攻撃力 +2",
+        "防御力 +4",
+        "防御力 +2",
+        "攻撃力 +5",
+        "攻撃力 +9",
+        "防御力 +8",
+        "防御力 +5"
+    };
 
-    draw_text(
-        renderer,
-        font,
-        status,
-        190,
-        360
-    );
-
-    draw_text(
-        renderer,
-        font,
-        "===装備説明===",
-        120,
-        400
-    );
-
-    draw_text(
-        renderer,
-        font,
-        "ENTER：装備/解除",
-        290,
-        430
-    );
-
-    draw_text(
-        renderer,
-        font,
-        "ESC：戻る",
-        290,
-        460
-    );
-
-    if(equipment_cursor == 0)
+    if(equipment_cursor >= 0 && equipment_cursor < 7)
     {
-        draw_text(
-            renderer,
-            font,
-            "攻撃力 +2",
-            120,
-            430
-        );
+        draw_text(renderer, font, equip_desc[equipment_cursor], 120, 430);
     }
-    else if(equipment_cursor == 1)
-    {
-        draw_text(
-            renderer,
-            font,
-            "防御力 +4",
-            120,
-            430
-        );
-    }
-    else if(equipment_cursor == 2)
-    {
-        draw_text(
-            renderer,
-            font,
-            "防御力 +2",
-            120,
-            430
-        );
-    }
-    else if(equipment_cursor == 3)
-    {
-        draw_text(
-            renderer,
-            font,
-            "攻撃力 +5",
-            120,
-            430
-        );
-    }
-    else if(equipment_cursor == 4)
-    {
-        draw_text(
-            renderer,
-            font,
-            "攻撃力 +9",
-            120,
-            430
-        );
-    }
-    else if(equipment_cursor == 5)
-    {
-        draw_text(
-            renderer,
-            font,
-            "防御力 +8",
-            120,
-            430
-        );
-    }
-    else if(equipment_cursor == 6)
-    {
-        draw_text(
-            renderer,
-            font,
-            "防御力 +5",
-            120,
-            430
-        );
-    }
-
 }
 
 void draw_save(
@@ -915,75 +300,15 @@ void draw_save(
     int save_cursor
 )
 {
-    SDL_Rect window = {
-        80,
-        100,
-        400,
-        280
-    };
+    SDL_Rect window = {80, 100, 400, 280};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        40,
-        80,
-        80,
-        255
-    );
+    SDL_SetRenderDrawColor(renderer, 40, 80, 80, 255);
+    SDL_RenderFillRect(renderer, &window);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    draw_text(renderer, font, "セーブ管理", 130, 110);
 
-    draw_text(
-        renderer,
-        font,
-        "セーブ管理",
-        130,
-        110
-    );
-
-    if(save_cursor == 0)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶ セーブ",
-            120,
-            150
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "　セーブ",
-            120,
-            150
-        );
-    }
-
-    if(save_cursor == 1)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶ ロード",
-            120,
-            180
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            "　ロード",
-            120,
-            180
-        );
-    }
+    draw_menu_item(renderer, font, "セーブ", 120, 150, save_cursor == 0);
+    draw_menu_item(renderer, font, "ロード", 120, 180, save_cursor == 1);
 }
 //MAP描画
 void draw_tile_map(
@@ -1633,149 +958,33 @@ void draw_shop(
     int shop_cursor
 )
 {
-    SDL_Rect window = {
-        80,
-        100,
-        400,
-        280
-    };
+    SDL_Rect window = {80, 100, 400, 280};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        100,
-        40,
-        40,
-        255
-    );
+    SDL_SetRenderDrawColor(renderer, 100, 40, 40, 255);
+    SDL_RenderFillRect(renderer, &window);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    draw_text(renderer, font, "購入選択", 130, 110);
 
-    draw_text(
-        renderer,
-        font,
-        "購入選択",
-        130,
-        110
-    );
+    draw_menu_item(renderer, font, "　剣　 20G", 120, 150, shop_cursor == 0);
+    draw_menu_item(renderer, font, "革の鎧 30G", 120, 180, shop_cursor == 1);
+    draw_menu_item(renderer, font, "店を出る", 120, 210, shop_cursor == 2);
+
+    draw_text(renderer, font, "===装備説明===", 120, 280);
 
     if(shop_cursor == 0)
     {
-        draw_text(
-            renderer,
-            font,
-            "▶　　剣　 20G",
-            120,
-            150
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　　剣　 20G",
-            120,
-            150
-        );
-    }
-
-    if(shop_cursor == 1)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　革の鎧 30G",
-            120,
-            180
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　革の鎧 30G",
-            120,
-            180
-        );
-    }
-
-    if(shop_cursor == 2)
-    {
-        draw_text(
-            renderer,
-            font,
-            "▶　店を出る",
-            120,
-            210
-        );
-    }
-    else
-    {
-        draw_text(
-            renderer,
-            font,
-            " 　店を出る",
-            120,
-            210
-        );
-    }
-
-    draw_text(
-        renderer,
-        font,
-        "===装備説明===",
-        120,
-        280
-    );
-
-    if(shop_cursor == 0)
-    {
-        draw_text(
-            renderer,
-            font,
-            "攻撃力 +2",
-            120,
-            310
-        );
+        draw_text(renderer, font, "攻撃力 +2", 120, 310);
     }
     else if(shop_cursor == 1)
     {
-        draw_text(
-            renderer,
-            font,
-            "防御力 +4",
-            120,
-            310
-        );
+        draw_text(renderer, font, "防御力 +4", 120, 310);
     }
 
-    draw_text(
-        renderer,
-        font,
-        "所持金:",
-        300,
-        120
-    );
+    draw_text(renderer, font, "所持金:", 300, 120);
 
     char status[32];
-
-    sprintf(
-        status,
-        "%d",
-        player->gold
-    );
-
-    draw_text(
-        renderer,
-        font,
-        status,
-        420,
-        120
-    );
+    sprintf(status, "%d", player->gold);
+    draw_text(renderer, font, status, 420, 120);
 }
 
 void draw_message(
@@ -1784,28 +993,11 @@ void draw_message(
     const char *message
 )
 {
-    SDL_Rect window = {
-        40,
-        480,
-        560,
-        60
-    };
+    SDL_Rect window = {40, 480, 560, 60};
 
-    SDL_SetRenderDrawColor(
-        renderer,
-        20, 120, 20, 255
-    );
+    SDL_SetRenderDrawColor(renderer, 20, 120, 20, 255);
 
-    SDL_RenderFillRect(
-        renderer,
-        &window
-    );
+    SDL_RenderFillRect(renderer, &window);
 
-    draw_text(
-        renderer,
-        font,
-        message,
-        60,
-        480
-    );
+    draw_text(renderer, font, message, 60, 480);
 }

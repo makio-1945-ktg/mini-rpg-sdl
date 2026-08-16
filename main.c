@@ -841,102 +841,17 @@ int main(void)
 
         if(menu_open)
         {
-            SDL_Rect menu = {
-                80,
-                150,
-                280,
-                200
-            };
+            SDL_Rect menu = {80, 150, 280, 200};
 
-            SDL_SetRenderDrawColor(
-                renderer,
-                50,50,50,255
-            );
+            SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
 
             SDL_RenderFillRect(renderer, &menu);
 
-            if(menu_cursor == 0)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    "▶　ステータス",
-                    110,
-                    180
-                );
-            }
-            else
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    " 　ステータス",
-                    110,
-                    180
-                );
-            }
+            draw_menu_item(renderer, font, "ステータス", 110, 180, menu_cursor == 0);
+            draw_menu_item(renderer, font, "アイテム", 110, 210, menu_cursor == 1);
+            draw_menu_item(renderer, font, "装備", 110, 240, menu_cursor == 2);
+            draw_menu_item(renderer, font, "セーブ＆ロード", 110, 270, menu_cursor == 3);
 
-            if(menu_cursor == 1)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    "▶　アイテム",
-                    110,
-                    210
-                );
-            }
-            else
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    " 　アイテム",
-                    110,
-                    210
-                );
-            }
-
-            if(menu_cursor == 2)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    "▶　装備",
-                    110,
-                    240
-                );
-            }
-            else
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    " 　装備",
-                    110,
-                    240
-                );
-            }
-            if(menu_cursor == 3)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    "▶　セーブ＆ロード",
-                    110,
-                    270
-                );
-            }
-            else
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    " 　セーブ＆ロード",
-                    110,
-                    270
-                );
-            }
         }
 //フィールドメニュー描画
         if(battle_mode == MODE_STATUS)
