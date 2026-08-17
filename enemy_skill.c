@@ -2,6 +2,46 @@
 #include <string.h>
 
 #include "enemy_skill.h"
+#include "message_ui.h"
+
+static bool deal_damage_to_player(
+    Player *player,
+    int damage,
+    BattleMode *battle_mode
+)
+{
+    player->hp -= damage;
+
+    printf("プレイヤーHP:%d\n", player->hp);
+
+    if(player->hp <= 0)
+    {
+        printf("ゲームオーバー！\n");
+        end_battle(battle_mode);
+        return true;
+    }
+    return false;
+}
+
+static int calc_physical_damage(
+    Player *player,
+    int attack
+)
+{
+    int damage = attack - player->defense;
+
+    if(player->defending)
+    {
+        damage /= 2;
+    }
+
+    if(damage < 1)
+    {
+        damage = 1;
+    }
+
+    return damage;
+}
 
 void normal_enemy_attack(
     Player *player,
@@ -10,34 +50,13 @@ void normal_enemy_attack(
     BattleMode *battle_mode
 )
 {
-    int enemy_damage =
-        attack - player->defense;
-
-    if(player->defending)
-    {
-        enemy_damage /= 2;
-    }
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
+   int damage = calc_physical_damage(player, attack);
 
     char msg[128];
-    sprintf(msg, "敵の攻撃！%dダメージ！", enemy_damage);
+    sprintf(msg, "敵の攻撃！%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-           player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-        return;
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 }
 
 static void orc_special_move(
@@ -48,37 +67,14 @@ static void orc_special_move(
 )
 {
     add_battle_log("オークの強烈なラリアット！");
-    int enemy_damage =
-        attack * 2 - player->defense;
 
-    if(player->defending)
-    {
-        enemy_damage /= 2;
-    }
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
+    int damage = calc_physical_damage(player, attack * 2);
 
     char msg[128];
-    sprintf(msg,
-            "%dダメージ！",
-            enemy_damage
-    );
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-           player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 }
 
 static void bat_special_move(
@@ -240,37 +236,19 @@ void static scorpion_special_move(
 )
 {
     add_battle_log("スコーピオンは毒針を刺してきた！");
-    int enemy_damage =
-        attack - player->defense;
 
-    if(player->defending)
-    {
-        enemy_damage /= 2;
-    }
+    int damage = calc_physical_damage(player, attack);
 
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
+    char msg[128];
+    sprintf(msg, "%dダメージ！", damage);
+    add_battle_log(msg);
 
-    player->hp -= enemy_damage;
+    add_battle_log("毒を受けた！");
 
     player->poisoned = true;
     player->poison_timer = 3;
 
-    char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
-    add_battle_log(msg);
-
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 }
 
 static void lucky_fairy_special_move(
@@ -279,7 +257,7 @@ static void lucky_fairy_special_move(
     BattleMode *battle_mode
 )
 {
-    add_battle_log("ラッキーフェアリーは逃げ出した！");
+    show_message("ラッキーフェアリーは逃げ出した！");
 
     end_battle(battle_mode);
 }
@@ -293,23 +271,13 @@ static void wizard_magic_fire(
 {
     add_battle_log("まどうしはファイアを唱えた！");
 
-    int enemy_damage = attack * 2;
-
-    player->hp -= enemy_damage;
+    int damage = attack * 2;
 
     char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 
     if(rand() % 5 == 0)
     {
@@ -319,7 +287,6 @@ static void wizard_magic_fire(
         add_battle_log("火傷を負った！");
     }
 }
-
 static void wizard_magic_ice(
     Player *player,
     Enemy *enemy,
@@ -329,23 +296,13 @@ static void wizard_magic_ice(
 {
     add_battle_log("まどうしはアイスを唱えた！");
 
-    int enemy_damage = attack;
-
-    player->hp -= enemy_damage;
+    int damage = attack;
 
     char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 
     if(rand() % 5 == 0)
     {
@@ -365,23 +322,13 @@ static void wizard_magic_thunder(
 {
     add_battle_log("まどうしはサンダーを唱えた！");
 
-    int enemy_damage = attack * 2;
-
-    player->hp -= enemy_damage;
+    int damage = attack * 2;
 
     char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 
     if(rand() % 5 == 0)
     {
@@ -517,23 +464,13 @@ static void lamia_magic_ice(
 {
     add_battle_log("ラミアはアイスを唱えた！");
 
-    int enemy_damage = attack;
-
-    player->hp -= enemy_damage;
+    int damage = attack;
 
     char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 
     if(rand() % 5 == 0)
     {
@@ -552,37 +489,16 @@ static void lamia_special_move(
 )
 {
     add_battle_log("ラミアは胴体でしめつけてきた！！");
-    int enemy_damage =
-        attack - player->defense;
+    int damage = calc_physical_damage(player, attack);
 
-    if(player->defending)
-    {
-        enemy_damage /= 2;
-    }
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
+    char msg[128];
+    sprintf(msg, "%dダメージ！", damage);
+    add_battle_log(msg);
 
     player->stunned = true;
     player->stun_timer = 1;
 
-    char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
-    add_battle_log(msg);
-
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 }
 
 static void dragon_smash(
@@ -594,37 +510,13 @@ static void dragon_smash(
 {
     add_battle_log("竜神は鋭い爪で襲いかかった！");
 
-    int enemy_damage =
-        attack * 2 - player->defense;
-
-    if(player->defending)
-    {
-        enemy_damage /= 2;
-    }
-
-    if(enemy_damage < 1)
-    {
-        enemy_damage = 1;
-    }
-
-    player->hp -= enemy_damage;
+    int damage = calc_physical_damage(player, attack * 2);
 
     char msg[128];
-    sprintf(msg,
-            "%dダメージ！",
-            enemy_damage
-    );
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-           player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 }
 
 static void dragon_breath(
@@ -636,23 +528,13 @@ static void dragon_breath(
 {
     add_battle_log("竜神のブレス攻撃！");
 
-    int enemy_damage = attack * 2;
-
-    player->hp -= enemy_damage;
+    int damage = attack * 2;
 
     char msg[128];
-    sprintf(msg, "%dダメージ！", enemy_damage);
-
+    sprintf(msg, "%dダメージ！", damage);
     add_battle_log(msg);
 
-    printf("プレイヤーHP:%d\n",
-            player->hp);
-
-    if(player->hp <= 0)
-    {
-        printf("ゲームオーバー！\n");
-        end_battle(battle_mode);
-    }
+    deal_damage_to_player(player, damage, battle_mode);
 
     if(rand() % 4 == 0)
     {
