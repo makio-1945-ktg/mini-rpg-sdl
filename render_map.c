@@ -70,6 +70,42 @@ static const TileColor cave_b2_colors[] = {
     {'E', 255,0,0,255},
 };
 
+void draw_tile_map(
+    SDL_Renderer *renderer,
+    const char *map,
+    int stride,
+    int draw_width,
+    int height,
+    const TileColor *colors,
+    int color_count
+)
+{
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < draw_width; x++)
+        {
+            char c = map[y * stride + x];
+
+            TileColor found = {0, 255, 0, 255, 255};
+            for (int i = 0; i < color_count; i++)
+            {
+                if (colors[i].tile == c)
+                {
+                    found = colors[i];
+                    break;
+                }
+            }
+
+            SDL_Rect rect = {
+                x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE
+            };
+
+            SDL_SetRenderDrawColor(renderer, found.r, found.g, found.b, found.a);
+            SDL_RenderFillRect(renderer, &rect);
+        }
+    }
+}
+
 void draw_map(SDL_Renderer *renderer)
 {
     draw_tile_map(renderer, (const char *)field_map, 21, 20, 15,
