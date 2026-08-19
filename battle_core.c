@@ -256,14 +256,23 @@ void battle_heal(
 
     player->mp -= 3;
 
-    player->hp += 10;
+    int heal_amount = player->max_hp * 3 / 10;
+
+    if(heal_amount < 1)
+    {
+        heal_amount = 1;
+    }
+
+    player->hp += heal_amount;
 
     if(player->hp > player->max_hp)
     {
         player->hp = player->max_hp;
     }
 
-    add_battle_log("ヒール！ HP+10");
+    char msg[64];
+    sprintf(msg, "ヒール！ HP+%d", heal_amount);
+    add_battle_log(msg);
 
     printf("HP:%d\n",
            player->hp);
