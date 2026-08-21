@@ -12,4 +12,11 @@ void handle_shop_input(
     Player *player
 );
 
+void handle_item_shop_input(
+    SDL_Event *event,
+    BattleMode *battle_mode,
+    int *item_shop_cursor,
+    Player *player
+);
+
 #endif

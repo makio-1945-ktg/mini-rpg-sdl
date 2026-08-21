@@ -65,8 +65,9 @@ void draw_item(
 
     draw_menu_item(renderer, font, "ポーション", 120, 150, item_cursor == 0);
     draw_menu_item(renderer, font, "エーテル", 120, 180, item_cursor == 1);
-    draw_menu_item(renderer, font, "爆薬", 120, 210, item_cursor == 2);
-    draw_menu_item(renderer, font, "ドラゴンの宝玉", 120, 240, item_cursor == 3);
+    draw_menu_item(renderer, font, "戻りの紐", 120, 210, item_cursor == 2);
+    draw_menu_item(renderer, font, "爆薬", 120, 240, item_cursor == 3);
+    draw_menu_item(renderer, font, "ドラゴンの宝玉", 120, 270, item_cursor == 4);
 }
 
 void draw_equipment(

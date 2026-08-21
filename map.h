@@ -27,6 +27,10 @@ void equipment_shop_event(
     Player *player
 );
 
+void item_shop_event(
+    Player *player
+);
+
 void enemy_event(
     char map[15][21],
     int x,
@@ -46,6 +50,7 @@ void handle_field_event(
     int *magic_cursor,
     int *use_item_cursor,
     int *shop_cursor,
+    int *item_shop_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,

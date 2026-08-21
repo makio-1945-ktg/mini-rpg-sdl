@@ -176,6 +176,7 @@ int main(void)
     int magic_cursor = 0;
     int use_item_cursor = 0;
     int shop_cursor = 0;
+    int item_shop_cursor = 0;
 
     bool in_town = false;
     bool in_cave = false;
@@ -440,6 +441,7 @@ int main(void)
                             &magic_cursor,
                             &use_item_cursor,
                             &shop_cursor,
+                            &item_shop_cursor,
                             &enemy,
                             &current_enemy_texture,
                             slime_texture,
@@ -456,7 +458,8 @@ int main(void)
 //アイテム処理
                 else if(battle_mode == MODE_ITEM)
                 {
-                    handle_item_menu_input(&event, &battle_mode, &item_cursor, &player);
+                    handle_item_menu_input(&event, &battle_mode, &item_cursor, &player,
+                        &in_cave, &in_cave_b1, &in_cave_b2);
                 }
 //装備処理
                 else if(battle_mode == MODE_EQUIPMENT)
@@ -526,6 +529,16 @@ int main(void)
                         &event,
                         &battle_mode,
                         &shop_cursor,
+                        &player
+                    );
+                }
+//アイテムショップ処理
+                else if(battle_mode == MODE_ITEM_SHOP)
+                {
+                    handle_item_shop_input(
+                        &event,
+                        &battle_mode,
+                        &item_shop_cursor,
                         &player
                     );
                 }
@@ -709,6 +722,16 @@ int main(void)
                 font,
                 &player,
                 shop_cursor
+            );
+        }
+//道具屋購入画面描画
+        if(battle_mode == MODE_ITEM_SHOP)
+        {
+            draw_item_shop(
+                renderer,
+                font,
+                &player,
+                item_shop_cursor
             );
         }
 

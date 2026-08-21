@@ -167,6 +167,13 @@ void draw_shop(
     int shop_cursor
 );
 
+void draw_item_shop(
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    Player *player,
+    int item_shop_cursor
+);
+
 void draw_message(
     SDL_Renderer *renderer,
     TTF_Font *font,

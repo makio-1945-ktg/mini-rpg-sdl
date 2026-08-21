@@ -18,7 +18,10 @@ void handle_item_menu_input(
     SDL_Event *event,
     BattleMode *battle_mode,
     int *item_cursor,
-    Player *player
+    Player *player,
+    bool *in_cave,
+    bool *in_cave_b1,
+    bool *in_cave_b2
 )
 {
     if(event->key.keysym.sym == SDLK_ESCAPE)
@@ -69,10 +72,35 @@ void handle_item_menu_input(
                 break;
 
             case 2:
-                show_message("戦闘中に使おう！");
+                if(player->inventory.rope <= 0)
+                {
+                    show_message("戻りの紐がない！");
+                    break;
+                }
+                if(*in_cave || *in_cave_b1 || *in_cave_b2)
+                {
+                    player->inventory.rope--;
+
+                    *in_cave = false;
+                    *in_cave_b1 = false;
+                    *in_cave_b2 = false;
+
+                    player->x = 18;
+                    player->y = 4;
+
+                    show_message("戻りの紐で入口へ戻った！");
+                }
+                else
+                {
+                    show_message("ここでは使えない！");
+                }
                 break;
 
             case 3:
+                show_message("戦闘中に使おう！");
+                break;
+
+            case 4:
                 show_message("？？？？？？");
                 break;
         }

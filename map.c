@@ -77,6 +77,7 @@ void handle_field_event(
     int *magic_cursor,
     int *use_item_cursor,
     int *shop_cursor,
+    int *item_shop_cursor,
     Enemy *enemy,
     SDL_Texture **current_enemy_texture,
     SDL_Texture *slime_texture,
@@ -128,6 +129,12 @@ void handle_field_event(
         *battle_mode = MODE_SHOP;
         *shop_cursor = 0;
     }
+//道具屋
+    if(tile == 'A')
+    {
+        *battle_mode = MODE_ITEM_SHOP;
+        *item_shop_cursor = 0;
+    }
 //宝箱
     if(tile == 'C')
     {
@@ -173,7 +180,7 @@ char town_map[8][9] = {
     "MGGGGGM",
     "MGIGQGM",
     "MGGGGGM",
-    "MGNGGGM",
+    "MGNGAGM",
     "MGGGGGM",
     "MGGOGGM",
     "MMMMMMM"

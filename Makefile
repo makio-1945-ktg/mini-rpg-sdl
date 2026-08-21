@@ -8,7 +8,7 @@ TARGET = game
 
 OBJS = main.o render_core.o render_map.o player.o equipment.o \
 render_menu.o render_battle.o render_shop.o render_message.o \
-battle_core.o battle_input.o battle_start.o magic.o \
+battle_core.o battle_input.o battle_start.o magic.o item_shop.o \
 chest.o map.o cave.o cave_b1.o cave_b2.o temple.o \
 enemy.o enemy_skill.o message_ui.o save.o \
 input_field_menu.o input_save.o
