@@ -21,12 +21,15 @@
 #include "input_save.h"
 #include "game_state.h"
 #include "shop.h"
+#include "title.h"
 
 int main(void)
 {
     srand(time(NULL));
 
     Player player = create_player();
+
+    GameScreen screen = SCREEN_TITLE;
 
     Enemy enemy = {"",0,0,0,0,0,0};
 
@@ -210,340 +213,381 @@ int main(void)
 //フィールドイベント処理
             if(event.type == SDL_KEYDOWN)
             {
-                if(battle_mode == MODE_FIELD)
+                if(screen == SCREEN_TITLE)
                 {
-                    int new_x = player.x;
-                    int new_y = player.y;
+                    handle_title_input(&event, &screen);
 
-                    if(menu_open &&
-                        event.key.keysym.sym == SDLK_RETURN)
+                    if(screen == SCREEN_PLAYING)
                     {
-                        switch(menu_cursor)
-                        {
-                            case 0:
-                                battle_mode = MODE_STATUS;
-                                menu_open = false;
-                                break;
+                        player = create_player();
+                        in_town = false;
+                        in_cave = false;
+                        in_cave_b1 = false;
+                        in_cave_b2 = false;
+                        in_temple = false;
 
-                            case 1:
-                                battle_mode = MODE_ITEM;
-                                menu_open = false;
-                                item_cursor = 0;
-                                break;
-
-                            case 2:
-                                battle_mode = MODE_EQUIPMENT;
-                                menu_open = false;
-                                break;
-
-                            case 3:
-                                battle_mode = MODE_SAVE;
-                                menu_open = false;
-                                break;
-                        }
+                        save_initial_state(&player);
                     }
+                }
+                else if(screen == SCREEN_GAME_OVER)
+                {
+                    handle_game_over_input(&event, &screen);
 
-                    if(event.key.keysym.sym == SDLK_ESCAPE)
+                    if(screen == SCREEN_TITLE)
                     {
-                        menu_open = !menu_open;
+                        reset_to_initial_state(
+                            &player,
+                            &in_town,
+                            &in_cave,
+                            &in_cave_b1,
+                            &in_cave_b2,
+                            &in_temple
+                        );
+                    }
+                }
+                else if(screen == SCREEN_PLAYING)
+                {
+                    if(battle_mode == MODE_FIELD)
+                    {
+                        int new_x = player.x;
+                        int new_y = player.y;
+
+                        if(menu_open &&
+                            event.key.keysym.sym == SDLK_RETURN)
+                        {
+                            switch(menu_cursor)
+                            {
+                                case 0:
+                                    battle_mode = MODE_STATUS;
+                                    menu_open = false;
+                                    break;
+
+                                case 1:
+                                    battle_mode = MODE_ITEM;
+                                    menu_open = false;
+                                    item_cursor = 0;
+                                    break;
+
+                                case 2:
+                                    battle_mode = MODE_EQUIPMENT;
+                                    menu_open = false;
+                                    break;
+
+                                case 3:
+                                    battle_mode = MODE_SAVE;
+                                    menu_open = false;
+                                    break;
+                            }
+                        }
+
+                        if(event.key.keysym.sym == SDLK_ESCAPE)
+                        {
+                            menu_open = !menu_open;
+
+                            if(menu_open)
+                            {
+                                menu_cursor = 0;
+                            }
+                        }
 
                         if(menu_open)
                         {
-                            menu_cursor = 0;
-                        }
-                    }
+                            if(event.key.keysym.sym == SDLK_UP)
+                            {
+                                menu_cursor--;
+                            }
 
-                    if(menu_open)
-                    {
-                        if(event.key.keysym.sym == SDLK_UP)
+                            if(event.key.keysym.sym == SDLK_DOWN)
+                            {
+                                menu_cursor++;
+                            }
+
+                            if(menu_cursor < 0)
+                            {
+                                menu_cursor = 3;
+                            }
+
+                            if(menu_cursor > 3)
+                            {
+                                menu_cursor = 0;
+                            }
+                                continue;
+                        }
+
+                        switch(event.key.keysym.sym)
                         {
-                            menu_cursor--;
+                            case SDLK_UP:
+                                new_y--;
+                                break;
+
+                            case SDLK_DOWN:
+                                new_y++;
+                                break;
+
+                            case SDLK_LEFT:
+                                new_x--;
+                                break;
+
+                            case SDLK_RIGHT:
+                                new_x++;
+                                break;
                         }
 
-                        if(event.key.keysym.sym == SDLK_DOWN)
+                        char tile;
+
+                        if(in_temple)
                         {
-                            menu_cursor++;
+                            tile = get_temple_tile(
+                                new_x,
+                                new_y
+                            );
                         }
-
-                        if(menu_cursor < 0)
+                        else if(in_cave_b2)
                         {
-                            menu_cursor = 3;
+                            tile = get_cave_b2_tile(
+                                new_x,
+                                new_y
+                            );
                         }
-
-                        if(menu_cursor > 3)
+                        else if(in_cave_b1)
                         {
-                            menu_cursor = 0;
+                            tile = get_cave_b1_tile(
+                                new_x,
+                                new_y
+                            );
                         }
-                            continue;
-                    }
+                        else if(in_cave)
+                        {
+                            tile = get_cave_tile(
+                                new_x,
+                                new_y
+                            );
+                        }
+                        else if(in_town)
+                        {
+                            tile = get_town_tile(
+                                new_x,
+                                new_y
+                            );
+                        }
+                        else
+                        {
+                            tile = get_tile(
+                                new_x,
+                                new_y
+                            );
+                        }
 
-                    switch(event.key.keysym.sym)
-                    {
-                        case SDLK_UP:
-                            new_y--;
-                            break;
+                        if(tile != 'M' && tile != 'W')
+                        {
+                            player.x = new_x;
+                            player.y = new_y;
+                        }
 
-                        case SDLK_DOWN:
-                            new_y++;
-                            break;
-
-                        case SDLK_LEFT:
-                            new_x--;
-                            break;
-
-                        case SDLK_RIGHT:
-                            new_x++;
-                            break;
-                    }
-
-                    char tile;
-
-                    if(in_temple)
-                    {
-                        tile = get_temple_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-                    else if(in_cave_b2)
-                    {
-                        tile = get_cave_b2_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-                    else if(in_cave_b1)
-                    {
-                        tile = get_cave_b1_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-                    else if(in_cave)
-                    {
-                        tile = get_cave_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-                    else if(in_town)
-                    {
-                        tile = get_town_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-                    else
-                    {
-                        tile = get_tile(
-                            new_x,
-                            new_y
-                        );
-                    }
-
-                    if(tile != 'M' && tile != 'W')
-                    {
-                        player.x = new_x;
-                        player.y = new_y;
-                    }
-
-                    if(in_temple)
-                    {
-                        handle_temple_event(
-                            tile,
-                            &in_temple,
-                            &player,
-                            new_x,
-                            new_y,
-                            &battle_mode,
-                            &battle_cursor,
-                            &magic_cursor,
-                            &use_item_cursor,
-                            &enemy,
-                            &current_enemy_texture,
-                            dragon_texture
-                        );
-                    }
+                        if(in_temple)
+                        {
+                            handle_temple_event(
+                                tile,
+                                &in_temple,
+                                &player,
+                                new_x,
+                                new_y,
+                                &battle_mode,
+                                &battle_cursor,
+                                &magic_cursor,
+                                &use_item_cursor,
+                                &enemy,
+                                &current_enemy_texture,
+                                dragon_texture
+                            );
+                        }
  
-                    else if(in_cave_b2)
-                    {
-                        handle_cave_b2_event(
-                            tile,
-                            &in_cave_b1,
-                            &in_cave_b2,
-                            &player,
-                            new_x,
-                            new_y,
-                            &battle_mode,
-                            &battle_cursor,
-                            &magic_cursor,
-                            &use_item_cursor,
-                            &enemy,
-                            &current_enemy_texture,
-                            kobold_texture,
-                            wisp_texture,
-                            lamia_texture
-                        );
+                        else if(in_cave_b2)
+                        {
+                            handle_cave_b2_event(
+                                tile,
+                                &in_cave_b1,
+                                &in_cave_b2,
+                                &player,
+                                new_x,
+                                new_y,
+                                &battle_mode,
+                                &battle_cursor,
+                                &magic_cursor,
+                                &use_item_cursor,
+                                &enemy,
+                                &current_enemy_texture,
+                                kobold_texture,
+                                wisp_texture,
+                                lamia_texture
+                            );
+                        }
+                        else if(in_cave_b1)
+                        {
+                            handle_cave_b1_event(
+                                tile,
+                                &in_cave,
+                                &in_cave_b1,
+                                &in_cave_b2,
+                                &player,
+                                new_x,
+                                new_y,
+                                &battle_mode,
+                                &battle_cursor,
+                                &magic_cursor,
+                                &use_item_cursor,
+                                &enemy,
+                                &current_enemy_texture,
+                                scorpion_texture,
+                                luckyfairy_texture,
+                                wizard_texture
+                            );
+                        }
+                        else if(in_cave)
+                        {
+                            handle_cave_event(
+                                tile,
+                                &in_cave,
+                                &in_cave_b1,
+                                &player,
+                                new_x,
+                                new_y,
+                                &battle_mode,
+                                &battle_cursor,
+                                &magic_cursor,
+                                &use_item_cursor,
+                                &enemy,
+                                &current_enemy_texture,
+                                bat_texture,
+                                skeleton_texture,
+                                golem_texture
+                            );
+                        }
+                        else
+                        {
+                            handle_field_event(
+                                tile,
+                                &in_town,
+                                &in_cave,
+                                &in_temple,
+                                &player,
+                                new_x,
+                                new_y,
+                                &battle_mode,
+                                &battle_cursor,
+                                &magic_cursor,
+                                &use_item_cursor,
+                                &shop_cursor,
+                                &item_shop_cursor,
+                                &enemy,
+                                &current_enemy_texture,
+                                slime_texture,
+                                goblin_texture,
+                                orc_texture
+                            );
+                        }
                     }
-                    else if(in_cave_b1)
+//ステータス処理
+                    else if(battle_mode == MODE_STATUS)
                     {
-                        handle_cave_b1_event(
-                            tile,
-                            &in_cave,
-                            &in_cave_b1,
-                            &in_cave_b2,
-                            &player,
-                            new_x,
-                            new_y,
-                            &battle_mode,
-                            &battle_cursor,
-                            &magic_cursor,
-                            &use_item_cursor,
-                            &enemy,
-                            &current_enemy_texture,
-                            scorpion_texture,
-                            luckyfairy_texture,
-                            wizard_texture
-                        );
+                        handle_status_input(&event, &battle_mode);
                     }
-                    else if(in_cave)
+//アイテム処理
+                    else if(battle_mode == MODE_ITEM)
                     {
-                        handle_cave_event(
-                            tile,
-                            &in_cave,
-                            &in_cave_b1,
-                            &player,
-                            new_x,
-                            new_y,
-                            &battle_mode,
-                            &battle_cursor,
-                            &magic_cursor,
-                            &use_item_cursor,
-                            &enemy,
-                            &current_enemy_texture,
-                            bat_texture,
-                            skeleton_texture,
-                            golem_texture
-                        );
+                        handle_item_menu_input(&event, &battle_mode, &item_cursor, &player,
+                            &in_cave, &in_cave_b1, &in_cave_b2);
                     }
-                    else
+//装備処理
+                    else if(battle_mode == MODE_EQUIPMENT)
                     {
-                        handle_field_event(
-                            tile,
+                        handle_equipment_input(&event, &battle_mode, &equipment_cursor,
+                            &player);
+                    }
+//セーブ管理処理
+                    else if(battle_mode == MODE_SAVE)
+                    {
+                        handle_save_input(
+                            &event,
+                            &battle_mode,
+                            &save_cursor,
+                            &player,
                             &in_town,
                             &in_cave,
-                            &in_temple,
-                            &player,
-                            new_x,
-                            new_y,
-                            &battle_mode,
-                            &battle_cursor,
-                            &magic_cursor,
-                            &use_item_cursor,
-                            &shop_cursor,
-                            &item_shop_cursor,
-                            &enemy,
-                            &current_enemy_texture,
-                            slime_texture,
-                            goblin_texture,
-                            orc_texture
+                            &in_cave_b1,
+                            &in_cave_b2,
+                            &in_temple
                         );
                     }
-                }
-//ステータス処理
-                else if(battle_mode == MODE_STATUS)
-                {
-                    handle_status_input(&event, &battle_mode);
-                }
-//アイテム処理
-                else if(battle_mode == MODE_ITEM)
-                {
-                    handle_item_menu_input(&event, &battle_mode, &item_cursor, &player,
-                        &in_cave, &in_cave_b1, &in_cave_b2);
-                }
-//装備処理
-                else if(battle_mode == MODE_EQUIPMENT)
-                {
-                    handle_equipment_input(&event, &battle_mode, &equipment_cursor, &player);
-                }
-
-//セーブ管理処理
-                else if(battle_mode == MODE_SAVE)
-                {
-                    handle_save_input(
-                        &event,
-                        &battle_mode,
-                        &save_cursor,
-                        &player,
-                        &in_town,
-                        &in_cave,
-                        &in_cave_b1,
-                        &in_cave_b2,
-                        &in_temple
-                    );
-                }
 //通常戦闘処理
-                else if(battle_mode == MODE_BATTLE)
-                {
-                    handle_normal_battle_input(
-                        &event,
-                        &battle_mode,
-                        &battle_cursor,
-                        &player,
-                        &enemy,
-                        &popup,
-                        &hit_effect,
-                        &slash_effect,
-                        &enemy_sprite
-                    );
-                }
+                    else if(battle_mode == MODE_BATTLE)
+                    {
+                        handle_normal_battle_input(
+                            &event,
+                            &battle_mode,
+                            &battle_cursor,
+                            &player,
+                            &enemy,
+                            &popup,
+                            &hit_effect,
+                            &slash_effect,
+                            &enemy_sprite
+                        );
+                    }
 //魔法メニュー処理
-                else if(battle_mode == MODE_MAGIC)
-                {
-                    handle_magic_input(
-                        &event,
-                        &battle_mode,
-                        &magic_cursor,
-                        &player,
-                        &enemy,
-                        &fire_effect,
-                        &ice_effect,
-                        &thunder_effect
-                    );
-                }
+                    else if(battle_mode == MODE_MAGIC)
+                    {
+                        handle_magic_input(
+                            &event,
+                            &battle_mode,
+                            &magic_cursor,
+                            &player,
+                            &enemy,
+                            &fire_effect,
+                            &ice_effect,
+                            &thunder_effect
+                        );
+                    }
 //アイテム使用処理
-                else if(battle_mode == MODE_USE_ITEM)
-                {
-                    handle_item_input(
-                        &event,
-                        &battle_mode,
-                        &use_item_cursor,
-                        &player,
-                        &enemy
-                    );
-                }
+                    else if(battle_mode == MODE_USE_ITEM)
+                    {
+                        handle_item_input(
+                            &event,
+                            &battle_mode,
+                            &use_item_cursor,
+                            &player,
+                            &enemy
+                        );
+                    }
 //ショップイベント処理
-                else if(battle_mode == MODE_SHOP)
-                {
-                    handle_shop_input(
-                        &event,
-                        &battle_mode,
-                        &shop_cursor,
-                        &player
-                    );
-                }
+                    else if(battle_mode == MODE_SHOP)
+                    {
+                        handle_shop_input(
+                            &event,
+                            &battle_mode,
+                            &shop_cursor,
+                            &player
+                        );
+                    }
 //アイテムショップ処理
-                else if(battle_mode == MODE_ITEM_SHOP)
-                {
-                    handle_item_shop_input(
-                        &event,
-                        &battle_mode,
-                        &item_shop_cursor,
-                        &player
-                    );
+                    else if(battle_mode == MODE_ITEM_SHOP)
+                    {
+                        handle_item_shop_input(
+                            &event,
+                            &battle_mode,
+                            &item_shop_cursor,
+                            &player
+                        );
+                    }
                 }
             }
         }
+//ゲームオーバー検知(毎フレームチェック)
+        if(screen == SCREEN_PLAYING && player.hp <= 0)
+        {
+            screen = SCREEN_GAME_OVER;
+        }
+
 //プレイヤー表示
         SDL_SetRenderDrawColor(
             renderer,
@@ -552,199 +596,207 @@ int main(void)
 
         SDL_RenderClear(renderer);
 
-        update_battle_effects(
-            &popup,
-            &hit_effect,
-            &slash_effect,
-            &fire_effect,
-            &ice_effect,
-            &thunder_effect,
-            &enemy_sprite
-        );
-
-        if(in_temple)
+        if(screen = SCREEN_TITLE)
         {
-            draw_temple_map(renderer);
+            draw_title(renderer, font);
         }
-        else if(in_cave_b2)
+        else if(screen = SCREEN_GAME_OVER)
         {
-            draw_cave_b2_map(renderer);
+            draw_game_over(renderer, font);
         }
-        else if(in_cave_b1)
+        else if(screen == SCREEN_PLAYING)
         {
-            draw_cave_b1_map(renderer);
-        }
-        else if(in_cave)
-        {
-            draw_cave_map(renderer);
-        }
-        else if(in_town)
-        {
-            draw_town_map(renderer);
-        }
-        else
-        {
-            draw_map(renderer);
-        }
-
-        draw_player(
-            renderer,
-            player.x,
-            player.y
-        );
-
-        if(menu_open)
-        {
-            SDL_Rect menu = {80, 150, 280, 200};
-
-            SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-
-            SDL_RenderFillRect(renderer, &menu);
-
-            draw_menu_item(renderer, font, "ステータス", 110, 180, menu_cursor == 0);
-            draw_menu_item(renderer, font, "アイテム", 110, 210, menu_cursor == 1);
-            draw_menu_item(renderer, font, "装備", 110, 240, menu_cursor == 2);
-            draw_menu_item(renderer, font, "セーブ＆ロード", 110, 270, menu_cursor == 3);
-
-        }
-//フィールドメニュー描画
-        if(battle_mode == MODE_STATUS)
-        {
-            draw_status(
-                renderer,
-                font,
-                &player
-            );
-        }
-
-        if(battle_mode == MODE_ITEM)
-        {
-            draw_item(
-                renderer,
-                font,
-                &player,
-                item_cursor
-            );
-        }
-
-        if(battle_mode == MODE_EQUIPMENT)
-        {
-            draw_equipment(
-                renderer,
-                font,
-                &player,
-                equipment_cursor
-            );
-        }
-
-        if(battle_mode == MODE_SAVE)
-        {
-            draw_save(
-                renderer,
-                font,
-                &player,
-                save_cursor
-            );
-        }
-
-//戦闘描画
-        if(battle_mode == MODE_BATTLE ||
-           battle_mode == MODE_MAGIC ||
-           battle_mode == MODE_USE_ITEM)
-        {
-            draw_battle_background(renderer);
-
-            draw_battle_ui(
-                renderer,
-                font,
-                &player,
-                &enemy,
-                &enemy_sprite,
-                current_enemy_texture,
-                battle_cursor
-            );
-//魔法メニュー表示
-            if(battle_mode == MODE_MAGIC)
-            {
-                draw_magic_menu(
-                    renderer,
-                    font,
-                    magic_cursor
-                );
-            }
-//アイテムメニュー表示
-            if(battle_mode == MODE_USE_ITEM)
-            {
-                draw_item_menu(
-                    renderer,
-                    font,
-                    use_item_cursor
-                );
-            }
-//呪文エフェクト描画
-            draw_battle_effects(
-                renderer,
+            update_battle_effects(
+                &popup,
+                &hit_effect,
+                &slash_effect,
                 &fire_effect,
                 &ice_effect,
                 &thunder_effect,
-                &hit_effect,
-                &slash_effect,
                 &enemy_sprite
             );
+
+            if(in_temple)
+            {
+                draw_temple_map(renderer);
+            }
+            else if(in_cave_b2)
+            {
+                draw_cave_b2_map(renderer);
+            }
+            else if(in_cave_b1)
+            {
+                draw_cave_b1_map(renderer);
+            }
+            else if(in_cave)
+            {
+                draw_cave_map(renderer);
+            }
+            else if(in_town)
+            {
+                draw_town_map(renderer);
+            }
+            else
+            {
+                draw_map(renderer);
+            }
+
+            draw_player(
+                renderer,
+                player.x,
+                player.y
+            );
+
+            if(menu_open)
+            {
+                SDL_Rect menu = {80, 150, 280, 200};
+                SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+                SDL_RenderFillRect(renderer, &menu);
+
+                draw_menu_item(renderer, font, "ステータス", 110, 180, menu_cursor == 0);
+                draw_menu_item(renderer, font, "アイテム", 110, 210, menu_cursor == 1);
+                draw_menu_item(renderer, font, "装備", 110, 240, menu_cursor == 2);
+                draw_menu_item(renderer, font, "セーブ＆ロード", 110, 270, menu_cursor == 3);
+            }
+//フィールドメニュー描画
+            if(battle_mode == MODE_STATUS)
+            {
+                draw_status(
+                    renderer,
+                    font,
+                    &player
+                );
+            }
+
+            if(battle_mode == MODE_ITEM)
+            {
+                draw_item(
+                    renderer,
+                    font,
+                    &player,
+                    item_cursor
+                );
+            }
+
+            if(battle_mode == MODE_EQUIPMENT)
+            {
+                draw_equipment(
+                    renderer,
+                    font,
+                    &player,
+                    equipment_cursor
+                );
+            }
+
+            if(battle_mode == MODE_SAVE)
+            {
+                draw_save(
+                    renderer,
+                    font,
+                    &player,
+                    save_cursor
+                );
+            }
+//戦闘描画
+            if(battle_mode == MODE_BATTLE ||
+               battle_mode == MODE_MAGIC ||
+               battle_mode == MODE_USE_ITEM)
+            {
+                draw_battle_background(renderer);
+
+                draw_battle_ui(
+                    renderer,
+                    font,
+                    &player,
+                    &enemy,
+                    &enemy_sprite,
+                    current_enemy_texture,
+                    battle_cursor
+                );
+//魔法メニュー表示
+                if(battle_mode == MODE_MAGIC)
+                {
+                    draw_magic_menu(
+                        renderer,
+                        font,
+                        magic_cursor
+                    );
+                }
+//アイテムメニュー表示
+                if(battle_mode == MODE_USE_ITEM)
+                {
+                    draw_item_menu(
+                        renderer,
+                        font,
+                        use_item_cursor
+                    );
+                }
+//呪文エフェクト描画
+                draw_battle_effects(
+                    renderer,
+                    &fire_effect,
+                    &ice_effect,
+                    &thunder_effect,
+                    &hit_effect,
+                    &slash_effect,
+                    &enemy_sprite
+                );
 //戦闘ログ描画
-            for(int i = 0; i < LOG_LINES; i++)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    battle_logs[i],
-                    100,
-                    380 + i * 25
-                );
-            }
+                for(int i = 0; i < LOG_LINES; i++)
+                {
+                    draw_text(
+                        renderer,
+                        font,
+                        battle_logs[i],
+                        100,
+                        380 + i * 25
+                    );
+                }
 
-            if(popup.active)
-            {
-                draw_text(
-                    renderer,
-                    font,
-                    popup.text,
-                    popup.x,
-                    popup.y
-                );
+                if(popup.active)
+                {
+                    draw_text(
+                        renderer,
+                        font,
+                        popup.text,
+                        popup.x,
+                        popup.y
+                    );
+                }
             }
-        }
 //武器屋購入画面描画
-        if(battle_mode == MODE_SHOP)
-        {
-            draw_shop(
-                renderer,
-                font,
-                &player,
-                shop_cursor
-            );
-        }
+            if(battle_mode == MODE_SHOP)
+            {
+                draw_shop(
+                    renderer,
+                    font,
+                    &player,
+                    shop_cursor
+                );
+            }
 //道具屋購入画面描画
-        if(battle_mode == MODE_ITEM_SHOP)
-        {
-            draw_item_shop(
-                renderer,
-                font,
-                &player,
-                item_shop_cursor
-            );
+            if(battle_mode == MODE_ITEM_SHOP)
+            {
+                draw_item_shop(
+                    renderer,
+                    font,
+                    &player,
+                    item_shop_cursor
+                );
+            }
+
+            update_message();
+
+            if(get_message()[0] != '\0')
+            {
+                draw_message(
+                    renderer,
+                    font,
+                    get_message()
+                );
+            }
         }
 
-        update_message();
-
-        if(get_message()[0] != '\0')
-        {
-            draw_message(
-                renderer,
-                font,
-                get_message()
-            );
-        }
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }

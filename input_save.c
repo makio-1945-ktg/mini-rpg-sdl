@@ -122,3 +122,44 @@ void handle_save_input(
         *save_cursor = 0;
     }
 }
+
+static GameState initial_state;
+static bool initial_state_saved = false;
+
+void save_initial_state(Player *player)
+{
+    initial_state.player = *player;
+    initial_state.in_town = false;
+    initial_state.in_cave = false;
+    initial_state.in_cave_b1 = false;
+    initial_state.in_cave_b2 = false;
+    initial_state.in_temple = false;
+
+    copy_maps_to_state(&initial_state);
+
+    initial_state_saved = true;
+}
+
+void reset_to_initial_state(
+    Player *player,
+    bool *in_town,
+    bool *in_cave,
+    bool *in_cave_b1,
+    bool *in_cave_b2,
+    bool *in_temple
+)
+{
+    if(!initial_state_saved)
+    {
+        return;
+    }
+
+    *player = initial_state.player;
+    *in_town = initial_state.in_town;
+    *in_cave = initial_state.in_cave;
+    *in_cave_b1 = initial_state.in_cave_b1;
+    *in_cave_b2 = initial_state.in_cave_b2;
+    *in_temple = initial_state.in_temple;
+
+    copy_maps_from_state(&initial_state);
+}
