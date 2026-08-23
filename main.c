@@ -596,11 +596,11 @@ int main(void)
 
         SDL_RenderClear(renderer);
 
-        if(screen = SCREEN_TITLE)
+        if(screen == SCREEN_TITLE)
         {
             draw_title(renderer, font);
         }
-        else if(screen = SCREEN_GAME_OVER)
+        else if(screen == SCREEN_GAME_OVER)
         {
             draw_game_over(renderer, font);
         }
