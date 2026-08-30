@@ -3,14 +3,17 @@
 #include <SDL2/SDL_ttf.h>
 
 #define TILE_SIZE 32
+#define PLAYER_FRAME_SIZE 104
 
-void draw_player(SDL_Renderer *renderer, int x, int y)
+void draw_player(SDL_Renderer *renderer, SDL_Texture *player_texture,
+    int x, int y, int direction, int frame)
 {
-    SDL_Rect rect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+    SDL_Rect src = {frame * PLAYER_FRAME_SIZE, direction * PLAYER_FRAME_SIZE,
+        PLAYER_FRAME_SIZE, PLAYER_FRAME_SIZE};
 
-    SDL_SetRenderDrawColor(renderer, 0,0,255,255);
+    SDL_Rect dst = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
 
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderCopy(renderer, player_texture, &src, &dst);
 }
 
 
@@ -58,8 +61,6 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text,
         NULL,
         &dst
     );
-
-    SDL_DestroyTexture(texture);
 }
 
 void draw_menu_item(SDL_Renderer *renderer, TTF_Font *font,

@@ -15,8 +15,8 @@ Player create_player(void)
         player.base_attack = 6,
         player.base_defense = 2,
 
-        player.attack = player.base_attack,
-        player.defense = player.base_defense,
+        player.attack = 6,
+        player.defense = 2,
 
         .level = 1,
         .exp = 0,

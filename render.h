@@ -15,8 +15,11 @@ typedef struct {
 
 void draw_player(
     SDL_Renderer *renderer,
+    SDL_Texture *player_texture,
     int x,
-    int y
+    int y,
+    int direction,
+    int frame
 );
 
 void draw_text(

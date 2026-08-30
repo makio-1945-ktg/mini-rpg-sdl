@@ -82,6 +82,17 @@ int main(void)
             SDL_RENDERER_ACCELERATED
             );
 
+    SDL_Texture *player_texture =
+        IMG_LoadTexture(
+            renderer,
+            "assets/player.png"
+        );
+
+    SDL_SetTextureScaleMode(
+        player_texture,
+        SDL_ScaleModeNearest
+    );
+
     SDL_Texture *slime_texture =
         IMG_LoadTexture(
             renderer,
@@ -186,6 +197,9 @@ int main(void)
     bool in_cave_b1 = false;
     bool in_cave_b2 = false;
     bool in_temple = false;
+
+    int player_direction = 1;
+    int player_frame = 0;
 //フォント
     TTF_Font *font =
         TTF_OpenFont(
@@ -318,18 +332,22 @@ int main(void)
                         {
                             case SDLK_UP:
                                 new_y--;
+                                player_direction = 1;
                                 break;
 
                             case SDLK_DOWN:
                                 new_y++;
+                                player_direction = 0;
                                 break;
 
                             case SDLK_LEFT:
                                 new_x--;
+                                player_direction = 2;
                                 break;
 
                             case SDLK_RIGHT:
                                 new_x++;
+                                player_direction = 3;
                                 break;
                         }
 
@@ -382,6 +400,8 @@ int main(void)
                         {
                             player.x = new_x;
                             player.y = new_y;
+
+                            player_frame = (player_frame + 1) % 4;
                         }
 
                         if(in_temple)
@@ -643,8 +663,11 @@ int main(void)
 
             draw_player(
                 renderer,
+                player_texture,
                 player.x,
-                player.y
+                player.y,
+                player_direction,
+                player_frame
             );
 
             if(menu_open)

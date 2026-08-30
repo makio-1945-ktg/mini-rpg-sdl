@@ -139,6 +139,8 @@ static void skeleton_special_move(
         enemy_damage = 1;
     }
 
+    player->hp -= enemy_damage;
+
     char msg[128];
     sprintf(msg, "%dダメージ！", enemy_damage);
 
@@ -152,8 +154,6 @@ static void skeleton_special_move(
         printf("ゲームオーバー！\n");
         end_battle(battle_mode);
     }
-
-    player->hp -= enemy_damage;
 
     enemy->hp = 3;
 
